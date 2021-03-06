@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>team.software</groupId>
-    <artifactId>irbl</artifactId>
+    <artifactId>IRBL</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>irbl</name>
+    <name>A system for Information-Retrieval-based Bug Localization</name>
     <description>SoftwareIII Project</description>
     <properties>
         <java.version>1.8</java.version>
