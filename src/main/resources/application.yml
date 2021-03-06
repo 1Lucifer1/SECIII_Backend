@@ -1,0 +1,17 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    username: root
+    #password: fill it in application-dev.yml
+    url: jdbc:mysql://localhost:3306/judge?serverTimezone=CTT&characterEncoding=UTF-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    #password: fill it in application-dev.yml
+    timeout: 1000
+    database: 0
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false
+    default-enum-type-handler: com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler
