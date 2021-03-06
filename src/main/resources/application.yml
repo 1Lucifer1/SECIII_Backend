@@ -4,7 +4,7 @@ spring:
   datasource:
     username: root
     #password: fill it in application-dev.yml
-    url: jdbc:mysql://localhost:3306/judge?serverTimezone=CTT&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/irbl?serverTimezone=CTT&characterEncoding=UTF-8
     driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
     #password: fill it in application-dev.yml
