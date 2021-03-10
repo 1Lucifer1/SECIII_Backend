@@ -7,7 +7,7 @@ public class Res {
     public String msg;
 
     public static Res success(Object data) {
-        var r = new Res();
+        Res r = new Res();
         r.data = data;
         r.success = true;
         return r;
@@ -18,7 +18,7 @@ public class Res {
     }
 
     public static Res failure(String msg) {
-        var r = new Res();
+        Res r = new Res();
         r.data = null;
         r.msg = msg;
         r.success = false;
