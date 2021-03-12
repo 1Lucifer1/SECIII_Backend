@@ -12,6 +12,7 @@ public class EasySqlInjector extends DefaultSqlInjector {
     public List<AbstractMethod> getMethodList(Class<?> mapperClass) {
         List<AbstractMethod> methodList =super.getMethodList(mapperClass);
         methodList.add(new InsertBatchSomeColumn());
+        methodList.add(new SelfInsertOrUpdateBatch());
         return methodList;
     }
 }

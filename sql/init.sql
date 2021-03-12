@@ -24,8 +24,8 @@ CREATE TABLE `code_file` (
 )ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 BEGIN;
-INSERT INTO `code_file` VALUES (1, 'test1.java', 0, 'test/test1.java', 10),
-                               (2, 'test2.java', 0, 'test/test2.java', 10);
+INSERT INTO `code_file` VALUES (1, 'test1.java', 1, 'test/test1.java', 10),
+                               (2, 'test2.java', 1, 'test/test2.java', 10);
 
 DROP TABLE IF EXISTS `project_word`;
 CREATE TABLE `project_word` (
@@ -37,7 +37,7 @@ CREATE TABLE `project_word` (
 )ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 BEGIN;
-INSERT INTO `project_word` VALUES (1, 0, 'a', 2, 2), (2, 0, 'b', 2, 2);
+INSERT INTO `project_word` VALUES (1, 1,'a', 2, 2), (2, 1, 'b', 2, 2);
 COMMIT;
 
 DROP TABLE IF EXISTS `file_word`;
@@ -49,5 +49,5 @@ CREATE TABLE `file_word` (
                              tf                  double DEFAULT 0
 )ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 BEGIN;
-INSERT INTO `file_word` VALUES (1, 0, 'a', 10, 1), (2, 1, 'b', 10, 1);
+INSERT INTO `file_word` VALUES (1, 1, 'a', 10, 1), (2, 2, 'b', 10, 1);
 COMMIT;
