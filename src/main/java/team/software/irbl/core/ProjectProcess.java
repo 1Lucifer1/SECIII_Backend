@@ -1,5 +1,7 @@
 package team.software.irbl.core;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.sun.org.apache.bcel.internal.classfile.Code;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import team.software.irbl.core.Preprocess;
@@ -7,6 +9,7 @@ import team.software.irbl.domain.CodeFile;
 import team.software.irbl.domain.FileWord;
 import team.software.irbl.domain.Project;
 import team.software.irbl.domain.ProjectWord;
+import team.software.irbl.enums.WordType;
 import team.software.irbl.mapper.CodeFileMapper;
 import team.software.irbl.mapper.FileWordMapper;
 import team.software.irbl.mapper.ProjectMapper;
@@ -35,15 +38,18 @@ public class ProjectProcess {
     @Autowired
     private ProjectWordMapper projectWordMapper;
 
-
-    public Project preprocess(String projectName){
-        return null;
+    public Project getProject(String projectName){
+        Project project = projectMapper.selectOne(new QueryWrapper<Project>().eq("project_name", projectName));
+        if(project!=null){
+            return getProjectFromDB(project.getProjectIndex());
+        }else{
+            return traverseAndSaveProject(projectName);
+        }
     }
 
-    public Project traverseAndSaveProject(){
-        return traverseAndSaveProject("swt-3.1");
+    public Project getProject(int projectIndex){
+        return getProjectFromDB(projectIndex);
     }
-
 
     public Project traverseAndSaveProject(String projectName) {
         String projectPath = SavePath.getAbsolutePath(projectName);
@@ -81,13 +87,13 @@ public class ProjectProcess {
             projectMapper.updateById(project);
             codeFileMapper.insertBatchSomeColumn(codeFiles);
 
-            scanFile(project);
+            scanFileWord(project);
             return project;
         }
         return null;
     }
 
-    public void scanFile(Project project){
+    private void scanFileWord(Project project){
         List<CodeFile> codeFiles = project.getCodeFiles();
         ConcurrentHashMap<String, ProjectWord> projectWordMap = new ConcurrentHashMap<>();
         codeFiles.forEach(codeFile -> {
@@ -103,15 +109,15 @@ public class ProjectProcess {
                         if (fileWordMap.containsKey(word)) {
                             fileWordMap.get(word).addAppearTimes();
                         } else {
-                            fileWordMap.put(word, new FileWord(word, codeFile.getFileIndex()));
+                            fileWordMap.put(word, new FileWord(word, codeFile.getFileIndex(), WordType.CodeFileWord));
                         }
                     }
                     line = reader.readLine();
                 }
                 // 避免lambda表达式报错
-                final double finalCount = wordCount;
+                final int finalCount = wordCount;
                 fileWordMap.values().forEach(fileWord -> {
-                    double tf = fileWord.getAppearTimes() / finalCount;
+                    double tf = Calculate.calculateTf(fileWord.getAppearTimes(), finalCount);
                     fileWord.setTf(tf);
                     String word = fileWord.getWord();
                     // 可能会出现线程并发不安全，改为使用ConcurrentHashMap
@@ -131,13 +137,41 @@ public class ProjectProcess {
         });
         codeFileMapper.insertOrUpdateBatch(codeFiles);
 
-        final double fileCount = project.getCodeFileCount();
+        // 避免lambda表达式报错
+        final int fileCount = project.getCodeFileCount();
         projectWordMap.values().forEach(word -> {
-            double idf = fileCount/ word.getAppearFiles();
+            double idf = Calculate.calculateIdf(word.getAppearFiles(), fileCount);
             word.setIdf(idf);
         });
         List<ProjectWord> projectWords = new ArrayList<>(projectWordMap.values());
         projectWordMapper.insertBatchSomeColumn(projectWords);
         project.setWordMap(projectWordMap);
+    }
+
+    public Project getProjectFromDB(int projectIndex){
+        Project project = projectMapper.selectById(projectIndex);
+        if(project != null){
+            List<CodeFile> codeFiles = codeFileMapper.selectList(new QueryWrapper<CodeFile>()
+                                                                    .eq("project_index", projectIndex));
+            codeFiles.forEach(codeFile -> {
+                List<FileWord> fileWords = fileWordMapper.selectList(new QueryWrapper<FileWord>()
+                                                                        .eq("file_index", codeFile.getFileIndex())
+                                                                        .eq("type", WordType.CodeFileWord.value()));
+                ConcurrentHashMap<String, FileWord> fileWordMap = new ConcurrentHashMap<>();
+                fileWords.forEach(fileWord -> {
+                    fileWordMap.put(fileWord.getWord(), fileWord);
+                });
+                codeFile.setWordMap(fileWordMap);
+            });
+            project.setCodeFiles(codeFiles);
+
+            List<ProjectWord> projectWords = projectWordMapper.selectList(new QueryWrapper<ProjectWord>().eq("project_index", projectIndex));
+            ConcurrentHashMap<String, ProjectWord> projectWordMap = new ConcurrentHashMap<>();
+            projectWords.forEach( projectWord -> {
+                projectWordMap.put(projectWord.getWord(), projectWord);
+            });
+            project.setWordMap(projectWordMap);
+        }
+        return project;
     }
 }

@@ -6,14 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-import team.software.irbl.domain.CodeFile;
-import team.software.irbl.domain.FileWord;
-import team.software.irbl.domain.Project;
-import team.software.irbl.domain.ProjectWord;
-import team.software.irbl.mapper.CodeFileMapper;
-import team.software.irbl.mapper.FileWordMapper;
-import team.software.irbl.mapper.ProjectMapper;
-import team.software.irbl.mapper.ProjectWordMapper;
+import team.software.irbl.domain.*;
+import team.software.irbl.enums.WordType;
+import team.software.irbl.mapper.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -34,10 +29,17 @@ public class DataBaseMethodsTests {
     @Autowired
     private FileWordMapper fileWordMapper;
 
+    @Autowired
+    private BugReportMapper bugReportMapper;
+
+    @Autowired
+    private FixedFileMapper fixedFileMapper;
+
+
     @Test
     @Transactional
     @Rollback
-    public void testInsertAndDelete(){
+    public void testInsert(){
         System.out.println("----- insert method test -----");
         Project project = new Project("test");
         projectMapper.insert(project);
@@ -45,8 +47,12 @@ public class DataBaseMethodsTests {
         codeFileMapper.insert(codeFile);
         ProjectWord projectWord = new ProjectWord("a",project.getProjectIndex());
         projectWordMapper.insert(projectWord);
-        FileWord fileWord = new FileWord("a", codeFile.getFileIndex());
+        FileWord fileWord = new FileWord("a", codeFile.getFileIndex(), WordType.CodeFileWord);
         fileWordMapper.insert(fileWord);
+        BugReport bugReport = new BugReport(project.getProjectIndex(), 10001, "2020-11-12 08:08:08", "", "test insert report", "", null);
+        bugReportMapper.insert(bugReport);
+        FixedFile fixedFile = new FixedFile(bugReport.getReportIndex(), codeFile.getFileIndex());
+        fixedFileMapper.insert(fixedFile);
     }
 
     @Test

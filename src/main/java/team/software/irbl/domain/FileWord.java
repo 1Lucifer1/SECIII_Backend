@@ -3,6 +3,7 @@ package team.software.irbl.domain;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import team.software.irbl.enums.WordType;
 
 
 public class FileWord {
@@ -14,10 +15,12 @@ public class FileWord {
     @TableField(value = "appear_times")
     private int appearTimes;
     private double tf;
+    private int type;
 
-    public FileWord(String word, int fileIndex){
+    public FileWord(String word, int fileIndex, WordType wordType){
         this.word = word;
         this.fileIndex = fileIndex;
+        this.type = wordType.value();
         this.appearTimes = 1;
     }
 
@@ -33,12 +36,13 @@ public class FileWord {
      *
      * @param 所有表中字段对应属性
      */
-    public FileWord(int id, int fileIndex, String word, int appearTimes, int tf) {
+    public FileWord(int id, int fileIndex, String word, int appearTimes, int tf, int type) {
         this.id = id;
         this.fileIndex = fileIndex;
         this.word = word;
         this.appearTimes = appearTimes;
         this.tf = tf;
+        this.type = type;
     }
 
     public int getId() {
@@ -79,5 +83,13 @@ public class FileWord {
 
     public void setTf(double tf) {
         this.tf = tf;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }

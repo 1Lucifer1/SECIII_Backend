@@ -3,14 +3,8 @@ package team.software.irbl.database;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import team.software.irbl.domain.CodeFile;
-import team.software.irbl.domain.FileWord;
-import team.software.irbl.domain.Project;
-import team.software.irbl.domain.ProjectWord;
-import team.software.irbl.mapper.CodeFileMapper;
-import team.software.irbl.mapper.FileWordMapper;
-import team.software.irbl.mapper.ProjectMapper;
-import team.software.irbl.mapper.ProjectWordMapper;
+import team.software.irbl.domain.*;
+import team.software.irbl.mapper.*;
 
 import java.util.List;
 
@@ -29,24 +23,26 @@ public class DataBaseConnectTests {
     @Autowired
     private FileWordMapper fileWordMapper;
 
+    @Autowired
+    private BugReportMapper bugReportMapper;
+
+    @Autowired
+    private FixedFileMapper fixedFileMapper;
+
     @Test
     public void testSelect() {
         System.out.println(("----- selectAll method test ------"));
         List<Project> projectList = projectMapper.selectList(null);
-        for(Project project:projectList) {
-            System.out.println(project);
-        }
+        System.out.println(projectList.size());
         List<CodeFile> codeFileList = codeFileMapper.selectList(null);
-        for(CodeFile codeFile:codeFileList){
-            System.out.println(codeFile);
-        }
+        System.out.println(codeFileList.size());
         List<ProjectWord> projectWordList = projectWordMapper.selectList(null);
-        for(ProjectWord word:projectWordList) {
-            System.out.println(word);
-        }
+        System.out.println(projectWordList.size());
         List<FileWord> fileWordList = fileWordMapper.selectList(null);
-        for(FileWord word:fileWordList) {
-            System.out.println(word);
-        }
+        System.out.println(fileWordList.size());
+        List<BugReport> bugReportList = bugReportMapper.selectList(null);
+        System.out.println(bugReportList.size());
+        List<FixedFile> fixedFileList = fixedFileMapper.selectList(null);
+        System.out.println(fixedFileList.size());
     }
 }

@@ -6,4 +6,9 @@ public class SavePath {
     public static String getAbsolutePath(String source){
         return ROOT_PATH + source;
     }
+
+    public static String getPathFromPackage(String pack){
+        return pack.replace(".", "\\\\").replaceFirst("\\\\java$", ".java");
+    }
+
 }
