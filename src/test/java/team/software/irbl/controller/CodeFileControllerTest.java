@@ -15,7 +15,7 @@ public class CodeFileControllerTest {
     @Test
     public void readFileTest() throws Exception{
         CodeFileService codeFileService = mock(CodeFileService.class);
-        when(codeFileService.readFile(1)).thenReturn("文件内容");
+//        when(codeFileService.readFile(1)).thenReturn("文件内容");
 
         CodeFileController controller = new CodeFileController(codeFileService);
         MockMvc mockMvc = standaloneSetup(controller).build();

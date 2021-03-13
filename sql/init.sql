@@ -25,7 +25,8 @@ CREATE TABLE `code_file` (
 
 BEGIN;
 INSERT INTO `code_file` VALUES (1, 'test1.java', 1, 'test/test1.java', 10),
-                               (2, 'test2.java', 1, 'test/test2.java', 10);
+                               (2, 'test2.java', 1, 'test/test2.java', 10),
+                               (3, 'ACC.java', 1, 'swt-3.1/src/org/eclipse/swt/accessibility/ACC.java', 247);
 
 DROP TABLE IF EXISTS `project_word`;
 CREATE TABLE `project_word` (
