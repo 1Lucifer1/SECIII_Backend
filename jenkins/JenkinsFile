@@ -1,0 +1,54 @@
+pipeline {
+    agent none
+    stages {
+        stage('Clone to develop') {
+            agent {
+                label 'develop'
+            }
+            steps {
+                echo "1. Git Clone Stage"
+                git url: "http://212.129.149.40/181250010_irbl/backend.git"
+            }
+
+        }
+        stage('Maven Build') {
+            agent {
+                docker {
+                    image 'maven:latest'
+                    args '-v /root/.m2:/root/.m2'
+
+                }
+
+            }
+            steps {
+                echo "2. Maven Build Stage"
+                sh 'mvn -B clean package -Dmaven.test.skip=true'
+
+            }
+        }
+        stage('Image Build') {
+            agent {
+                label 'master'
+            }
+            steps {
+                echo "3. Image Build Stage"
+                sh 'docker build -f Dockerfile --build-arg jar_name=target/IRBL-0.0.1-SNAPSHOT.jar -t IRBL:${BUILD_ID} . '
+                sh 'docker tag SOURCE_IMAGE:${BUILD_ID} 101.132.148.43/backend/IMAGE:${BUILD_ID}'
+
+            }
+
+        }
+        stage('Push') {
+            agent {
+                label 'master'
+
+            }
+            steps {
+                echo "4. Push Docker Image Stage"
+                sh "docker login --username=admin http://101.132.148.43 -p Harbor12345@irbl"
+                sh "docker push 101.132.148.43/backend/IMAGE:${BUILD_ID}"
+            }
+        }
+
+    }
+}

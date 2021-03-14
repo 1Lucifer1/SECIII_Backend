@@ -1,0 +1,25 @@
+node('slave') {
+    container('jnlp-kubectl') {
+        stage('Git Clone') {
+            git url: "http://212.129.149.40/181250010_irbl/backend.git"
+
+        }
+        stage('YAML') {
+            echo "5. Change YAML File Stage"
+            sh 'sed -i "s#{VERSION}#${BUILD_ID}#g" ./jenkins/scripts/IRBL.yaml'
+
+        }
+        stage('Deploy') {
+            echo "6. Deploy To K8s Stage"
+            sh 'kubectl apply -f ./jenkins/scripts/IRBL.yaml -n cn202006'
+            sh 'kubectl apply -f ./jenkins/scripts/IRBL-serviceMonitor.yaml'
+
+        }
+        stage('RTF Test'){
+            echo "RTF Test Stage"
+            sh 'kubectl apply -f ./jenkins/scripts/rtf.yaml -n cn202006'
+
+        }
+    }
+
+}
