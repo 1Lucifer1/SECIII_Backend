@@ -1,9 +1,9 @@
 pipeline {
     agent none
     stages {
-        stage('Clone to develop') {
+        stage('Clone to master') {
             agent {
-                label 'develop'
+                label 'master'
             }
             steps {
                 echo "1. Git Clone Stage"
