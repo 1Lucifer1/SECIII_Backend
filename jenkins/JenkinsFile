@@ -7,6 +7,7 @@ pipeline {
             }
             steps {
                 echo "1. Git Clone Stage"
+                git credentialsId: "_d5WmRcJ-47bk4nbe8yX"
                 git url: "http://212.129.149.40/181250010_irbl/backend.git"
             }
 
