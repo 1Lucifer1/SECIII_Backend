@@ -45,7 +45,7 @@ pipeline {
             }
             steps {
                 echo "4. Push Docker Image Stage"
-                sh "docker login --username=admin http://101.132.148.43 -p Harbor12345@irbl"
+                sh "docker login --username=admin http://101.132.148.43/harbor -p Harbor12345@irbl"
                 sh "docker push 101.132.148.43/backend/irbl:${BUILD_ID}"
             }
         }
