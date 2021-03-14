@@ -33,7 +33,7 @@ pipeline {
             steps {
                 echo "3. Image Build Stage"
                 sh 'docker build -f Dockerfile --build-arg jar_name=target/IRBL-0.0.1-SNAPSHOT.jar -t irbl:${BUILD_ID} . '
-                sh 'docker tag irbl:${BUILD_ID} 101.132.148.43/backend/IRBL:${BUILD_ID}'
+                sh 'docker tag irbl:${BUILD_ID} 101.132.148.43/backend/irbl:${BUILD_ID}'
 
             }
 
@@ -46,7 +46,7 @@ pipeline {
             steps {
                 echo "4. Push Docker Image Stage"
                 sh "docker login --username=admin http://101.132.148.43 -p Harbor12345@irbl"
-                sh "docker push 101.132.148.43/backend/IRBL:${BUILD_ID}"
+                sh "docker push 101.132.148.43/backend/irbl:${BUILD_ID}"
             }
         }
 
