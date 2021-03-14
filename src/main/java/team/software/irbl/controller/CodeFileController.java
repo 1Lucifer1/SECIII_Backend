@@ -24,4 +24,9 @@ public class CodeFileController {
     public Res readFile(@PathVariable Integer fileIndex) throws Err {
         return Res.success(codeFileService.readFile(fileIndex));
     }
+
+    @GetMapping("/localizationOfBugReport/{reportIndex}")
+    public Res localizationOfBugReport(@PathVariable Integer reportIndex) throws Err {
+        return Res.success(codeFileService.getSortedFiles(reportIndex));
+    }
 }

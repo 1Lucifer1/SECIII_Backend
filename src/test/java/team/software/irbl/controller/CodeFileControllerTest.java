@@ -25,4 +25,18 @@ public class CodeFileControllerTest {
 
         verify(codeFileService).readFile(1);
     }
+
+    @Test
+    public void localizationOfBugReportTest() throws Exception{
+        CodeFileService codeFileService = mock(CodeFileService.class);
+//        when(codeFileService.getSortedFiles(1)).thenReturn();
+
+        CodeFileController controller = new CodeFileController(codeFileService);
+        MockMvc mockMvc = standaloneSetup(controller).build();
+        mockMvc.perform(get("/api/file/localizationOfBugReport/{reportIndex}",1))
+                .andExpect(status().isOk());
+//                .andExpect(view().name("readFile"));
+        verify(codeFileService).getSortedFiles(1);
+
+    }
 }

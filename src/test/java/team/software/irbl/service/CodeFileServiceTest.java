@@ -5,9 +5,13 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import team.software.irbl.dto.file.File;
 import team.software.irbl.dto.file.FileContent;
 import team.software.irbl.service.file.CodeFileService;
 import team.software.irbl.util.Err;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -103,5 +107,28 @@ public class CodeFileServiceTest {
         assertEquals(content,fileContent.getContent());
         // ==TODO==
         assertEquals(0,fileContent.getSimilarity(),0);
+    }
+
+
+    @Test
+    public void getSortedFilesTest() throws Err {
+        List<File> files = codeFileService.getSortedFiles(1);
+//        files.forEach(item->System.out.println(item.getFileRank()));
+        List<File> expected = new ArrayList<>();
+        File file1 = new File();
+        file1.setFileIndex(1);
+        file1.setFileName("test1.java");
+        file1.setFileRank(2);
+        file1.setCosineSimilarity(2.1);
+        File file2 = new File();
+        file2.setFileIndex(2);
+        file2.setFileName("test2.java");
+        file2.setFileRank(1);
+        file2.setCosineSimilarity(1.2);
+
+        expected.add(file2);
+        expected.add(file1);
+
+        assertEquals(expected,files);
     }
 }
