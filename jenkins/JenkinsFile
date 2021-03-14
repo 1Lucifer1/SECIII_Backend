@@ -7,11 +7,7 @@ pipeline {
             }
             steps {
                 echo "1. Git Clone Stage"
-                git user:{
-                    name:"181250090"
-                    password:"181250090"
-                }
-                , url: "http://212.129.149.40/181250010_irbl/backend.git"
+                git credentialsId: '79d2c1e6-d63c-4284-bd1f-6b4f1dfe7f56', url: "http://212.129.149.40/181250010_irbl/backend.git"
             }
 
         }
