@@ -45,7 +45,7 @@ public class BugReport {
     /**
      * 用于mybatis-plus的构造函数
      *
-     * @param 所有表中字段对应属性
+     * @param //所有表中字段对应属性
      */
     public BugReport(int reportIndex, int projectIndex, int bugId, String openDate, String fixDate, String summary, int wordCount) {
         this.reportIndex = reportIndex;
