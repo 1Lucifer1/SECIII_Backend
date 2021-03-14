@@ -35,6 +35,8 @@ public class DataBaseMethodsTests {
     @Autowired
     private FixedFileMapper fixedFileMapper;
 
+    @Autowired
+    private RankRecordMapper rankRecordMapper;
 
     @Test
     @Transactional
@@ -83,6 +85,13 @@ public class DataBaseMethodsTests {
         }
         int res = codeFileMapper.insertOrUpdateBatch(codeFileList);
         System.out.println(res);
+
+        List<RankRecord> rankRecordList = rankRecordMapper.selectList(new QueryWrapper<RankRecord>().eq("report_index", 1));
+        for(RankRecord rankRecord: rankRecordList){
+            rankRecord.setCosineSimilarity(9.9);
+        }
+        System.out.println(rankRecordMapper.insertOrUpdateBatch(rankRecordList));
+
     }
 
 }

@@ -17,12 +17,16 @@ public class ProjectProcessTests {
     private ProjectProcess process;
 
     @Test
+    @Transactional
+    @Rollback
     public void testTraverseAndSaveProject(){
         Project res = process.traverseAndSaveProject("swt-3.1");
         assertNotNull(res);
     }
 
     @Test
+    @Transactional
+    @Rollback
     public void testGetProjectFromDB(){
         Project res = process.getProjectFromDB(2);
         assertNotNull(res);
@@ -31,6 +35,8 @@ public class ProjectProcessTests {
     }
 
     @Test
+    @Transactional
+    @Rollback
     public void testGetProject(){
         Project res = process.getProject("swt-3.1");
         assertNotNull(res);

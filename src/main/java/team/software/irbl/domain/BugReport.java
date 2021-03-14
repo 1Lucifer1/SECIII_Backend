@@ -27,6 +27,8 @@ public class BugReport {
     private List<FixedFile> fixedFiles;
     @TableField(exist = false)
     private ConcurrentHashMap<String, FileWord> wordMap;
+    @TableField(exist = false)
+    private List<RankRecord> ranks;
 
 
     public BugReport(int projectIndex, int bugId, String openDate, String fixDate, String summary, String description, List<FixedFile> fixedFiles) {
@@ -133,5 +135,13 @@ public class BugReport {
 
     public void setWordCount(int wordCount) {
         this.wordCount = wordCount;
+    }
+
+    public List<RankRecord> getRanks() {
+        return ranks;
+    }
+
+    public void setRanks(List<RankRecord> ranks) {
+        this.ranks = ranks;
     }
 }

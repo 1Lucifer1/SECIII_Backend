@@ -77,3 +77,15 @@ CREATE TABLE `fixed_file`(
 BEGIN;
 INSERT INTO `fixed_file` VALUES (1, 1, 1);
 COMMIT;
+
+DROP TABLE  IF EXISTS `rank_record`;
+CREATE TABLE `rank_record`(
+    report_index        int(32) unsigned NOT NULL ,
+    file_index          int(32) unsigned NOT NULL ,
+    file_rank           int(32) unsigned NOT NULL ,
+    cosine_similarity   double  NOT NULL
+)ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+ALTER TABLE `rank_record` ADD PRIMARY KEY (report_index, file_index);
+BEGIN;
+INSERT INTO `rank_record` VALUES (1, 1, 2, 2.1), (1, 2, 1, 1.2);
+COMMIT;

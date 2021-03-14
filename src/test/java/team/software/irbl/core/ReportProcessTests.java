@@ -3,6 +3,8 @@ package team.software.irbl.core;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.core.ReportProcess;
 import team.software.irbl.util.SavePath;
@@ -17,6 +19,8 @@ public class ReportProcessTests {
     private ReportProcess process;
 
     @Test
+    @Transactional
+    @Rollback
     public void testGetBugReportsFromXML(){
         List<BugReport> res = process.getBugReportsFromXML("SWTBugRepository.xml", 2);
         assertNotNull(res);
@@ -24,6 +28,8 @@ public class ReportProcessTests {
     }
 
     @Test
+    @Transactional
+    @Rollback
     public void testGetBugReportsFromDB(){
         List<BugReport> res = process.getBugReportsFromDB( 2);
         assertNotNull(res);

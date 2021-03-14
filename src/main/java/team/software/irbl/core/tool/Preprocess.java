@@ -1,4 +1,4 @@
-package team.software.irbl.core;
+package team.software.irbl.core.tool;
 
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.CodeFile;

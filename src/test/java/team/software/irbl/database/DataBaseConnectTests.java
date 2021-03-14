@@ -29,6 +29,9 @@ public class DataBaseConnectTests {
     @Autowired
     private FixedFileMapper fixedFileMapper;
 
+    @Autowired
+    private RankRecordMapper rankRecordMapper;
+
     @Test
     public void testSelect() {
         System.out.println(("----- selectAll method test ------"));
@@ -44,5 +47,7 @@ public class DataBaseConnectTests {
         System.out.println(bugReportList.size());
         List<FixedFile> fixedFileList = fixedFileMapper.selectList(null);
         System.out.println(fixedFileList.size());
+        List<RankRecord> rankRecordList = rankRecordMapper.selectList(null);
+        System.out.println(rankRecordList.size());
     }
 }

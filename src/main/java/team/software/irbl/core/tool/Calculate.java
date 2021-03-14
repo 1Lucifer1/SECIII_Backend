@@ -1,4 +1,4 @@
-package team.software.irbl.core;
+package team.software.irbl.core.tool;
 
 public class Calculate {
     // private static final int IDF_BASE = 10;

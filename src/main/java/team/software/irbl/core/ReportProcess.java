@@ -1,20 +1,15 @@
 package team.software.irbl.core;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.sun.org.apache.bcel.internal.classfile.Code;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
-import team.software.irbl.domain.BugReport;
-import team.software.irbl.domain.CodeFile;
-import team.software.irbl.domain.FileWord;
-import team.software.irbl.domain.FixedFile;
+import team.software.irbl.core.tool.Calculate;
+import team.software.irbl.core.tool.Preprocess;
+import team.software.irbl.domain.*;
 import team.software.irbl.enums.WordType;
-import team.software.irbl.mapper.BugReportMapper;
-import team.software.irbl.mapper.CodeFileMapper;
-import team.software.irbl.mapper.FileWordMapper;
-import team.software.irbl.mapper.FixedFileMapper;
+import team.software.irbl.mapper.*;
 import team.software.irbl.util.SavePath;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -40,6 +35,9 @@ public class ReportProcess {
 
     @Autowired
     private FileWordMapper fileWordMapper;
+
+    @Autowired
+    private RankRecordMapper rankRecordMapper;
 
     public List<BugReport> getBugReportsFromXML(String reportFileName, int projectIndex){
         List<BugReport> bugReports = new ArrayList<>();
@@ -143,5 +141,9 @@ public class ReportProcess {
             bugReport.setWordMap(wordMap);
         });
         return bugReports;
+    }
+
+    public void saveRanks(List<RankRecord> records){
+        rankRecordMapper.insertOrUpdateBatch(records);
     }
 }
