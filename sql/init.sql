@@ -7,11 +7,12 @@ CREATE TABLE `project`
 (
     project_index       int(11) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY ,
     project_name        varchar(255) NOT NULL ,
-    code_file_count     int(32) unsigned DEFAULT 0
+    code_file_count     int(32) unsigned DEFAULT 0,
+    report_count        int(32) unsigned DEFAULT 0
 )ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 BEGIN;
-INSERT INTO `project` VALUES(1, 'test', 2);
+INSERT INTO `project` VALUES(1, 'test', 2, 1);
 COMMIT;
 
 DROP TABLE IF EXISTS `code_file`;

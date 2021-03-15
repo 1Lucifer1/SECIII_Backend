@@ -45,6 +45,7 @@ public class VSM {
         return ranks;
     }
 
+
     public double getCosineSimilarity(BugReport bugReport, CodeFile codeFile, ConcurrentHashMap<String, ProjectWord> lexicon){
         List<FileWord> reportWords = new ArrayList<>(bugReport.getWordMap().values());
         ConcurrentHashMap<String, FileWord> fileWordMap = codeFile.getWordMap();

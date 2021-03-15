@@ -15,6 +15,8 @@ public class Project {
     private String projectName;
     @TableField(value = "code_file_count")
     private int codeFileCount;
+    @TableField(value = "report_count")
+    private int reportCount;
     @TableField(exist = false)
     private List<CodeFile> codeFiles;
     @TableField(exist = false)
@@ -29,10 +31,11 @@ public class Project {
      *
      * @param 所有表中字段对应属性
      */
-    public Project(int projectIndex, String projectName, int codeFileCount) {
+    public Project(int projectIndex, String projectName, int codeFileCount, int reportCount) {
         this.projectIndex = projectIndex;
         this.projectName = projectName;
         this.codeFileCount = codeFileCount;
+        this.reportCount = reportCount;
     }
 
     public int getProjectIndex() {
@@ -73,5 +76,13 @@ public class Project {
 
     public void setWordMap(ConcurrentHashMap<String, ProjectWord> wordMap) {
         this.wordMap = wordMap;
+    }
+
+    public int getReportCount() {
+        return reportCount;
+    }
+
+    public void setReportCount(int reportCount) {
+        this.reportCount = reportCount;
     }
 }

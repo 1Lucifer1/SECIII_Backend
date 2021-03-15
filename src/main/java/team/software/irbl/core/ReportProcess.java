@@ -25,6 +25,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ReportProcess {
 
     @Autowired
+    private ProjectMapper projectMapper;
+
+    @Autowired
     private CodeFileMapper codeFileMapper;
 
     @Autowired
@@ -87,6 +90,9 @@ public class ReportProcess {
                 bugReports.add(new BugReport(projectIndex, bugId, openDate, fixDate, summary, description,files));
             }
             bugReportMapper.insertBatchSomeColumn(bugReports);
+            Project project = projectMapper.selectById(projectIndex);
+            project.setReportCount(bugReports.size());
+            projectMapper.updateById(project);
             scanReportWord(bugReports);
             return bugReports;
         } catch (ParserConfigurationException | SAXException | IOException e) {
