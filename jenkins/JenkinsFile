@@ -49,6 +49,5 @@ pipeline {
                 sh "docker push 101.132.148.43/backend/irbl:${BUILD_ID}"
             }
         }
-
     }
 }
