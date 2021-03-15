@@ -1,10 +1,12 @@
 package team.software.irbl.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+@Configuration
 public class CROSConfig {
     private static String[] originsVal = new String[]{
             "localhost:8081",
