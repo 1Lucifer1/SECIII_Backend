@@ -17,4 +17,4 @@ mybatis-plus:
     default-enum-type-handler: com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler
 
 server:
-  port: 30001
+  port: 40000
