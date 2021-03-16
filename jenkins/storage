@@ -1,0 +1,43 @@
+stage('Image Build') {
+            agent {
+                label 'master'
+            }
+            steps {
+                echo "3. Image Build Stage"
+                sh 'docker build -f Dockerfile --build-arg jar_name=target/IRBL-0.0.1-SNAPSHOT.jar -t irbl:${BUILD_ID} . '
+                sh 'docker tag irbl:${BUILD_ID} 101.132.148.43/backend/irbl:${BUILD_ID}'
+
+            }
+
+        }
+        stage('Push') {
+            agent {
+                label 'master'
+            }
+            steps {
+                echo "4. Push Docker Image Stage"
+                sh "docker login -u admin -p Harbor12345@irbl 101.132.148.43"
+                sh "docker push 101.132.148.43/backend/irbl:${BUILD_ID}"
+            }
+        }
+
+        stage('Pull'){
+            agent {
+                label 'master'
+            }
+            steps {
+                 echo "5. Login Docker Image Stage"
+                 script{
+                     remoteServer = GetRemoteServer('101.132.253.222')
+                     sshCommand remote: remoteServer, command: "docker login -u admin -p Harbor12345@irbl 101.132.148.43"
+                 }
+                 echo "6. Push Docker Image Stage"
+                 script{
+                     sshCommand remote: remoteServer, command: "docker pull 101.132.148.43/backend/irbl:${BUILD_ID}"
+                 }
+                 echo "7. Run Docker Image Stage"
+                 script{
+                     sshCommand remote: remoteServer, command: "nohup docker run --rm -p 40000:40000 101.132.148.43/backend/irbl:${BUILD_ID}&"
+                 }
+            }
+        }

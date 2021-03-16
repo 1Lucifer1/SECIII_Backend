@@ -1,3 +1,8 @@
+@Grab('org.yaml:snakeyaml:1.17')
+import org.yaml.snakeyaml.Yaml
+import org.yaml.snakeyaml.DumperOptions
+import static org.yaml.snakeyaml.DumperOptions.FlowStyle.BLOCK
+
 def GetRemoteServer(ip){
     def remote = [:]
     remote.name = 'remoteServer'
@@ -8,7 +13,12 @@ def GetRemoteServer(ip){
     remote.allowAnyHosts = true
     return remote
 }
-
+@NonCPS
+String yamlToString(Object data){
+    def opts = new DumperOptions()
+    opts.setDefaultFlowStyle(BLOCK)
+    return new Yaml(opts).dump(data)
+}
 pipeline {
     agent none
     stages {
@@ -20,7 +30,13 @@ pipeline {
                 echo "1. Git Clone Stage"
                 git credentialsId: '79d2c1e6-d63c-4284-bd1f-6b4f1dfe7f56', url: "http://212.129.149.40/181250010_irbl/backend.git"
             }
-
+        }
+        stage('Change yml property'){
+            script{
+                def yaml = readYaml file: "backend-test/src/main/resources/application.yml"
+                yaml.data.info = 'hello world!'
+                writeFile file:"test.yml", text:yamlToString(yaml)
+            }
         }
         stage('Maven Build') {
             agent {
@@ -37,48 +53,6 @@ pipeline {
 
             }
         }
-        stage('Image Build') {
-            agent {
-                label 'master'
-            }
-            steps {
-                echo "3. Image Build Stage"
-                sh 'docker build -f Dockerfile --build-arg jar_name=target/IRBL-0.0.1-SNAPSHOT.jar -t irbl:${BUILD_ID} . '
-                sh 'docker tag irbl:${BUILD_ID} 101.132.148.43/backend/irbl:${BUILD_ID}'
 
-            }
-
-        }
-        stage('Push') {
-            agent {
-                label 'master'
-            }
-            steps {
-                echo "4. Push Docker Image Stage"
-                sh "docker login -u admin -p Harbor12345@irbl 101.132.148.43"
-                sh "docker push 101.132.148.43/backend/irbl:${BUILD_ID}"
-            }
-        }
-
-        stage('Pull'){
-            agent {
-                label 'master'
-            }
-            steps {
-                 echo "5. Login Docker Image Stage"
-                 script{
-                     remoteServer = GetRemoteServer('101.132.253.222')
-                     sshCommand remote: remoteServer, command: "docker login -u admin -p Harbor12345@irbl 101.132.148.43"
-                 }
-                 echo "6. Push Docker Image Stage"
-                 script{
-                     sshCommand remote: remoteServer, command: "docker pull 101.132.148.43/backend/irbl:${BUILD_ID}"
-                 }
-                 echo "7. Run Docker Image Stage"
-                 script{
-                     sshCommand remote: remoteServer, command: "nohup docker run --rm 101.132.148.43/backend/irbl:${BUILD_ID}&"
-                 }
-            }
-        }
     }
 }
