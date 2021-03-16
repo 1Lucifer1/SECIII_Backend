@@ -55,7 +55,7 @@ pipeline {
             }
             steps {
                  echo "4. Pull Docker Image Stage"
-                 sh "sshpass -p 'chenganchun.0811' root@101.132.253.222"
+                 sh "sshpass -p 'chenganchun.0811' ssh root@101.132.253.222"
                  sh "docker pull 101.132.148.43/backend/irbl:${BUILD_ID}"
             }
         }
