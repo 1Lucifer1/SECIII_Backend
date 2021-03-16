@@ -1,5 +1,6 @@
 def GetRemoteServer(ip){
     def remote = [:]
+    remote.name = 'remoteServer'
     remote.host = ip
     remote.port = 22
     remote.user = 'root'
@@ -71,12 +72,10 @@ pipeline {
                  }
                  echo "6. Push Docker Image Stage"
                  script{
-                     remoteServer = GetRemoteServer('101.132.253.222')
                      sshCommand remote: remoteServer, command: "docker pull 101.132.148.43/backend/irbl:${BUILD_ID}"
                  }
                  echo "7. Run Docker Image Stage"
                  script{
-                     remoteServer = GetRemoteServer('101.132.253.222')
                      sshCommand remote: remoteServer, command: "docker run --rm 101.132.148.43/backend/irbl:${BUILD_ID}"
                  }
             }
