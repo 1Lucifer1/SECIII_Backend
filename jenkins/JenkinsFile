@@ -1,8 +1,3 @@
-@Grab('org.yaml:snakeyaml:1.17')
-import org.yaml.snakeyaml.Yaml
-import org.yaml.snakeyaml.DumperOptions
-import static org.yaml.snakeyaml.DumperOptions.FlowStyle.BLOCK
-
 def GetRemoteServer(ip){
     def remote = [:]
     remote.name = 'remoteServer'
@@ -13,12 +8,7 @@ def GetRemoteServer(ip){
     remote.allowAnyHosts = true
     return remote
 }
-@NonCPS
-String yamlToString(Object data){
-    def opts = new DumperOptions()
-    opts.setDefaultFlowStyle(BLOCK)
-    return new Yaml(opts).dump(data)
-}
+
 pipeline {
     agent none
     stages {
@@ -29,13 +19,6 @@ pipeline {
             steps {
                 echo "1. Git Clone Stage"
                 git credentialsId: '79d2c1e6-d63c-4284-bd1f-6b4f1dfe7f56', url: "http://212.129.149.40/181250010_irbl/backend.git"
-            }
-        }
-        stage('Change yml property'){
-            script{
-                def yaml = readYaml file: "backend-test/src/main/resources/application.yml"
-                yaml.data.info = 'hello world!'
-                writeFile file:"test.yml", text:yamlToString(yaml)
             }
         }
         stage('Maven Build') {
