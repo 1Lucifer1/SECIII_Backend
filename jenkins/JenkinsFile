@@ -64,11 +64,19 @@ pipeline {
                 label 'master'
             }
             steps {
-                 echo "4. Pull Docker Image Stage"
+                 echo "4. Login Docker Image Stage"
                  script{
                      remoteServer = GetRemoteServer('101.132.253.222')
                      sshDockerLogin remote: remoteServer, command: "docker login -u admin -p Harbor12345@irbl 101.132.148.43"
+                 }
+                 echo "5. Push Docker Image Stage"
+                 script{
+                     remoteServer = GetRemoteServer('101.132.253.222')
                      sshDockerPull remote: remoteServer, command: "docker pull 101.132.148.43/backend/irbl:${BUILD_ID}"
+                 }
+                 echo "5. Run Docker Image Stage"
+                 script{
+                     remoteServer = GetRemoteServer('101.132.253.222')
                      sshDockerRun remote: remoteServer, command: "docker run --rm 101.132.148.43/backend/irbl:${BUILD_ID}"
                  }
             }
