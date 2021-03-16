@@ -76,7 +76,7 @@ pipeline {
                  }
                  echo "7. Run Docker Image Stage"
                  script{
-                     sshCommand remote: remoteServer, command: "docker run --rm 101.132.148.43/backend/irbl:${BUILD_ID}"
+                     sshCommand remote: remoteServer, command: "nohup docker run --rm 101.132.148.43/backend/irbl:${BUILD_ID}&"
                  }
             }
         }
