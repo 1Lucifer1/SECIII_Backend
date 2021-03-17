@@ -8,7 +8,30 @@ def GetRemoteServer(ip){
     remote.allowAnyHosts = true
     return remote
 }
-node{
+
+
+pipeline{
+    /*
+       * Run everything on an existing agent configured with a label 'docker'.
+       * This agent will need docker, git and a jdk installed at a minimum.
+       */
+      agent {
+        node {
+          label 'docker'
+        }
+      }
+
+      // using the Timestamper plugin we can add timestamps to the console log
+      options {
+        timestamps()
+      }
+
+      environment {
+        //Use Pipeline Utility Steps plugin to read information from pom.xml into env variables
+        IMAGE = readMavenPom().getArtifactId()
+        VERSION = readMavenPom().getVersion()
+      }
+      stages {
         stage('Clone to master') {
 
                 echo "1. Git Clone Stage"
@@ -34,7 +57,10 @@ node{
 
         }
         stage('Maven Build') {
-
+                docker {
+                            image 'maven:latest'
+                            args '-v /root/.m2:/root/.m2'
+                        }
                 echo "2. Maven Build Stage"
                 sh 'mvn clean package -Dmaven.test.skip=true'
 
@@ -70,4 +96,5 @@ node{
                  }
 
         }
+      }
 }
