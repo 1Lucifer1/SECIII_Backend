@@ -16,3 +16,5 @@ ENTRYPOINT ["sh", "-c", "set -e && java -XX:+PrintFlagsFinal \
                                            -XX:+UnlockExperimentalVMOptions \
                                            -XX:+UseCGroupMemoryLimitForHeap \
                                            $JAVA_OPTS -jar IRBL-0.0.1-SNAPSHOT.jar"]
+
+EXPOSE 40000

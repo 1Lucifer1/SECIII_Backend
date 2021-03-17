@@ -29,6 +29,11 @@ pipeline {
                 sh "sed -i 's/localhost:3306/101.132.253.222/g' ${WORKSPACE}/src/main/resources/application.yml"
             }
         }
+        stage('change path'){
+                    steps{
+                        sh "sed -i 's#ROOT_PATH = *#ROOT_PATH = "~/data/";#g' ${WORKSPACE}/src/main/java/team/software/irbl/util/SavePath.java"
+                    }
+                }
         stage('Maven Build') {
             agent {
                 docker {
@@ -83,7 +88,7 @@ pipeline {
                  }
                  echo "7. Run Docker Image Stage"
                  script{
-                     sshCommand remote: remoteServer, command: "nohup docker run --rm -p 40000:40000 101.132.148.43/backend/irbl:${BUILD_ID}&"
+                     sshCommand remote: remoteServer, command: "docker run --rm -it -p 40000:40000 --link mybatis-mysql:mysql -d 101.132.148.43/backend/irbl:${BUILD_ID}"
                  }
             }
         }
