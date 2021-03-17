@@ -10,7 +10,7 @@ def GetRemoteServer(ip){
 }
 
 pipeline {
-    agent any
+    agent none
     stages {
         stage('Clone to master') {
             agent {
@@ -41,12 +41,13 @@ pipeline {
         }
         stage('Maven Build') {
             agent {
-                label 'master'
                 docker {
                     image 'maven:latest'
                     args '-v /root/.m2:/root/.m2'
                 }
-
+            }
+            agent {
+                label 'master'
             }
             steps {
                 echo "2. Maven Build Stage"
