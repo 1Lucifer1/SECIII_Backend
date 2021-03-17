@@ -10,7 +10,7 @@ def GetRemoteServer(ip){
 }
 
 pipeline {
-    agent any
+    agent none
     stages {
         stage('Clone to master') {
             agent {
@@ -33,18 +33,18 @@ pipeline {
             }
         }
         stage('change path'){
-                    steps{
-                        sh """
-                           sed -i 's#ROOT_PATH.*#ROOT_PATH = "~/data/";#g' ${WORKSPACE}/src/main/java/team/software/irbl/util/SavePath.java
-                           """
-                    }
-                }
+            steps{
+                sh """
+                   sed -i 's#ROOT_PATH.*#ROOT_PATH = "~/data/";#g' ${WORKSPACE}/src/main/java/team/software/irbl/util/SavePath.java
+                   """
+            }
+        }
         stage('Maven Build') {
             agent {
+                label 'master'
                 docker {
                     image 'maven:latest'
                     args '-v /root/.m2:/root/.m2'
-
                 }
 
             }
