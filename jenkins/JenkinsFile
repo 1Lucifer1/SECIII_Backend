@@ -23,7 +23,7 @@ pipeline {
         }
         stage('change yml file properties'){
             steps{
-                sh 'sed -i "spring:\n datasource:\n password: chenganchun.0811" ${WORKSPACE}/src/main/resources/application.yml'
+                sed -i "spring:\n datasource:\n password: chenganchun.0811" ${WORKSPACE}/src/main/resources/application.yml
             }
         }
         stage('Maven Build') {
