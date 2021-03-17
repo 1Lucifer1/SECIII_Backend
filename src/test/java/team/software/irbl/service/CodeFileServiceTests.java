@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class CodeFileServiceTest {
+public class CodeFileServiceTests {
     @Autowired
     private CodeFileService codeFileService;
 

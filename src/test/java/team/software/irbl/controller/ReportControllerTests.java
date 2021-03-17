@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 
-public class ReportControllerTest {
+public class ReportControllerTests {
 
     @Test
     public void getAllReportsByProjectIndexTest() throws Exception{
@@ -26,7 +26,7 @@ public class ReportControllerTest {
 
         ReportController controller = new ReportController(reportService);
         MockMvc mockMvc = standaloneSetup(controller).build();
-        mockMvc.perform(get("api/report/getAllReportsByProjectIndex/{projectIndex}",1))
+        mockMvc.perform(get("/api/report/getAllReportsByProjectIndex/{projectIndex}",1))
                 .andExpect(status().isOk());
 //                .andExpect(view().name(""));
 
