@@ -24,6 +24,7 @@ pipeline {
         stage('change yml file properties'){
             steps{
                 sh """
+                   rm -f src/target/IRBL-0.0.1-SNAPSHOT.jar
                    sed -i 's/root/visitor/g' ${WORKSPACE}/src/main/resources/application.yml
                    sed -i 's/#password: fill it in application-dev.yml/password: mysql@irbl/g' ${WORKSPACE}/src/main/resources/application.yml
                    sed -i 's/com.mysql.cj.jdbc.Driver/com.mysql.jdbc.Driver/g' ${WORKSPACE}/src/main/resources/application.yml
@@ -49,7 +50,7 @@ pipeline {
             }
             steps {
                 echo "2. Maven Build Stage"
-                sh 'mvn -B clean package -Dmaven.test.skip=true -Pprod'
+                sh 'mvn clean package -Dmaven.test.skip=true'
 
             }
         }
