@@ -10,7 +10,7 @@ def GetRemoteServer(ip){
 }
 
 pipeline {
-    agent none
+    agent any
     stages {
         stage('Clone to master') {
             agent {
@@ -23,7 +23,7 @@ pipeline {
         }
         stage('change yml file properties'){
             steps{
-                sed -i "spring:\n datasource:\n password: chenganchun.0811" ${WORKSPACE}/src/main/resources/application.yml
+                sh 'sed -i "spring:\n datasource:\n password: chenganchun.0811" ${WORKSPACE}/src/main/resources/application.yml'
             }
         }
         stage('Maven Build') {
