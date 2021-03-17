@@ -21,6 +21,12 @@ pipeline {
                 git credentialsId: '79d2c1e6-d63c-4284-bd1f-6b4f1dfe7f56', url: "http://212.129.149.40/181250010_irbl/backend.git"
             }
         }
+        stage('change yml file properties'){
+            steps{
+                sh 'sed -i "spring:\n datasource:\n password: chenganchun.0811" ${WORKSPACE}/src/main/resources/application.yml'
+                chenganchun.0811
+            }
+        }
         stage('Maven Build') {
             agent {
                 docker {
