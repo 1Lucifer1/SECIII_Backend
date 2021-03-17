@@ -23,7 +23,7 @@ public class ReportController {
         this.reportService = reportService;
     }
 
-    @GetMapping("/getAllReportByProjectIndex/{projectIndex}")
+    @GetMapping("/getAllReportsByProjectIndex/{projectIndex}")
     public Res getAllReportsByProjectIndex(@PathVariable Integer projectIndex) throws Err {
         return Res.success(reportService.getAllReportsByProjectIndex(projectIndex));
     }

@@ -26,7 +26,7 @@ public class ReportControllerTests {
 
         ReportController controller = new ReportController(reportService);
         MockMvc mockMvc = standaloneSetup(controller).build();
-        mockMvc.perform(get("api/report/getAllReportsByProjectIndex/{projectIndex}",1))
+        mockMvc.perform(get("/api/report/getAllReportsByProjectIndex/{projectIndex}",1))
                 .andExpect(status().isOk());
 //                .andExpect(view().name(""));
 
