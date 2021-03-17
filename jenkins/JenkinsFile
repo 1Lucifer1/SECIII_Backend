@@ -51,16 +51,17 @@ pipeline {
         stage('Image Build') {
             steps {
                 echo "3. Image Build Stage"
-                docker.build('-f Dockerfile', '--build-arg jar_name=target/IRBL-0.0.1-SNAPSHOT.jar','-t irbl:${BUILD_ID} .')
-                docker.tad('irbl:${BUILD_ID}', '101.132.148.43/backend/irbl:${BUILD_ID}')
+                sh 'docker build -f Dockerfile --build-arg jar_name=target/IRBL-0.0.1-SNAPSHOT.jar -t irbl:${BUILD_ID} . '
+                sh 'docker tag irbl:${BUILD_ID} 101.132.148.43/backend/irbl:${BUILD_ID}'
+
             }
 
         }
         stage('Push') {
             steps {
                 echo "4. Push Docker Image Stage"
-                docker.login("-u admin -p Harbor12345@irbl 101.132.148.43")
-                docker.push("101.132.148.43/backend/irbl:${BUILD_ID}")
+                sh "docker login -u admin -p Harbor12345@irbl 101.132.148.43"
+                sh "docker push 101.132.148.43/backend/irbl:${BUILD_ID}"
             }
         }
         stage('Pull and Run'){
