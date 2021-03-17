@@ -10,7 +10,7 @@ def GetRemoteServer(ip){
 }
 
 pipeline {
-    agent none
+    agent any
     stages {
         stage('Clone to master') {
             agent {
