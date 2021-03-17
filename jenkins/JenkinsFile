@@ -10,13 +10,13 @@ def GetRemoteServer(ip){
 }
 node('slave'){
         stage('Clone to master') {
-            steps {
+
                 echo "1. Git Clone Stage"
                 git credentialsId: '79d2c1e6-d63c-4284-bd1f-6b4f1dfe7f56', url: "http://212.129.149.40/181250010_irbl/backend.git", branch: 'docker-test'
-            }
+
         }
         stage('change yml file properties'){
-            steps{
+
                 sh """
                    rm -f src/target/IRBL-0.0.1-SNAPSHOT.jar
                    sed -i 's/root/visitor/g' ${WORKSPACE}/src/main/resources/application.yml
@@ -24,40 +24,37 @@ node('slave'){
                    sed -i 's/com.mysql.cj.jdbc.Driver/com.mysql.jdbc.Driver/g' ${WORKSPACE}/src/main/resources/application.yml
                    sed -i 's/localhost:3306/101.132.253.222/g' ${WORKSPACE}/src/main/resources/application.yml
                    """
-            }
+
         }
         stage('change path'){
-            steps{
+
                 sh """
                    sed -i 's#ROOT_PATH.*#ROOT_PATH = "~/data/";#g' ${WORKSPACE}/src/main/java/team/software/irbl/util/SavePath.java
                    """
-            }
+
         }
         stage('Maven Build') {
-            steps {
+
                 echo "2. Maven Build Stage"
                 sh 'mvn clean package -Dmaven.test.skip=true'
-            }
+
         }
 
         stage('Image Build') {
-            steps {
+
                 echo "3. Image Build Stage"
                 sh 'docker build -f Dockerfile --build-arg jar_name=target/IRBL-0.0.1-SNAPSHOT.jar -t irbl:${BUILD_ID} . '
                 sh 'docker tag irbl:${BUILD_ID} 101.132.148.43/backend/irbl:${BUILD_ID}'
 
-            }
-
         }
         stage('Push') {
-            steps {
+
                 echo "4. Push Docker Image Stage"
                 sh "docker login -u admin -p Harbor12345@irbl 101.132.148.43"
                 sh "docker push 101.132.148.43/backend/irbl:${BUILD_ID}"
-            }
+
         }
         stage('Pull and Run'){
-            steps {
                  echo "5. Login Docker Image Stage"
                  script{
                      remoteServer = GetRemoteServer('101.132.253.222')
@@ -71,6 +68,6 @@ node('slave'){
                  script{
                      sshCommand remote: remoteServer, command: "docker run --rm -it -p 40000:40000 --link mybatis-mysql:mysql -d 101.132.148.43/backend/irbl:${BUILD_ID}"
                  }
-            }
+
         }
 }
