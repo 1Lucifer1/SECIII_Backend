@@ -34,7 +34,11 @@ pipeline {
                    """
             }
         }
-        stage('change path'){
+    }
+}
+
+node{
+    stage('change path'){
             steps{
                 sh """
                    sed -i 's#ROOT_PATH = .*#ROOT_PATH = "~" + File.separator + "data" + File.separator;#g' ${WORKSPACE}/src/main/java/team/software/irbl/util/SavePath.java
@@ -81,6 +85,4 @@ pipeline {
                  }
             }
         }
-
-    }
 }
