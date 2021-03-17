@@ -23,7 +23,10 @@ pipeline {
         }
         stage('change yml file properties'){
             steps{
-                sh "sed -i 's/#password: fill it in application-dev.yml/password: chenganchun.0811/g' ${WORKSPACE}/src/main/resources/application.yml"
+                sh "sed -i 's/root/visitor/g' ${WORKSPACE}/src/main/resources/application.yml"
+                sh "sed -i 's/#password: fill it in application-dev.yml/password: mysql@irbl/g' ${WORKSPACE}/src/main/resources/application.yml"
+                sh "sed -i 's/com.mysql.cj.jdbc.Driver/com.mysql.jdbc.Driver/g' ${WORKSPACE}/src/main/resources/application.yml"
+                sh "sed -i 's/localhost:3306/101.132.253.222/g' ${WORKSPACE}/src/main/resources/application.yml"
             }
         }
         stage('Maven Build') {
@@ -64,7 +67,7 @@ pipeline {
                 sh "docker push 101.132.148.43/backend/irbl:${BUILD_ID}"
             }
         }
-        stage('Pull'){
+        stage('Pull and Run'){
             agent {
                 label 'master'
             }
