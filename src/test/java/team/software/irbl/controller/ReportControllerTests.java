@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 
-public class ReportControllerTest {
+public class ReportControllerTests {
 
     @Test
     public void getAllReportsByProjectIndexTest() throws Exception{
