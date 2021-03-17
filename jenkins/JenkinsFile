@@ -42,7 +42,6 @@ pipeline {
             }
         }
         stage('Maven Build') {
-
             steps {
                 echo "2. Maven Build Stage"
                 sh 'mvn clean package -Dmaven.test.skip=true'
@@ -50,31 +49,21 @@ pipeline {
         }
 
         stage('Image Build') {
-            agent {
-                label 'master'
-            }
             steps {
                 echo "3. Image Build Stage"
-                sh 'docker build -f Dockerfile --build-arg jar_name=target/IRBL-0.0.1-SNAPSHOT.jar -t irbl:${BUILD_ID} . '
-                sh 'docker tag irbl:${BUILD_ID} 101.132.148.43/backend/irbl:${BUILD_ID}'
-
+                docker.build('-f Dockerfile', '--build-arg jar_name=target/IRBL-0.0.1-SNAPSHOT.jar','-t irbl:${BUILD_ID} .')
+                docker.tad('irbl:${BUILD_ID}', '101.132.148.43/backend/irbl:${BUILD_ID}')
             }
 
         }
         stage('Push') {
-            agent {
-                label 'master'
-            }
             steps {
                 echo "4. Push Docker Image Stage"
-                sh "docker login -u admin -p Harbor12345@irbl 101.132.148.43"
-                sh "docker push 101.132.148.43/backend/irbl:${BUILD_ID}"
+                docker.login("-u admin -p Harbor12345@irbl 101.132.148.43")
+                docker.push("101.132.148.43/backend/irbl:${BUILD_ID}")
             }
         }
         stage('Pull and Run'){
-            agent {
-                label 'master'
-            }
             steps {
                  echo "5. Login Docker Image Stage"
                  script{
