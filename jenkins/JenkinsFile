@@ -10,15 +10,17 @@ def GetRemoteServer(ip){
 }
 
 pipeline {
-    agent none
+    agent {
+        docker {
+            image 'maven:latest'
+            args '-v /root/.m2:/root/.m2'
+        }
+    }
     stages {
         stage('Clone to master') {
-            agent {
-                label 'master'
-            }
             steps {
                 echo "1. Git Clone Stage"
-                git credentialsId: '79d2c1e6-d63c-4284-bd1f-6b4f1dfe7f56', url: "http://212.129.149.40/181250010_irbl/backend.git"
+                git credentialsId: '79d2c1e6-d63c-4284-bd1f-6b4f1dfe7f56', url: "http://212.129.149.40/181250010_irbl/backend.git", branch: 'docker-test'
             }
         }
         stage('change yml file properties'){
@@ -35,20 +37,12 @@ pipeline {
         stage('change path'){
             steps{
                 sh """
-                   sed -i 's#ROOT_PATH.*#ROOT_PATH = "~/data/";#g' ${WORKSPACE}/src/main/java/team/software/irbl/util/SavePath.java
+                   sed -i "s#ROOT_PATH = .*#ROOT_PATH = '"~" + File.separator + "data" + File.separator';#g" ${WORKSPACE}/src/main/java/team/software/irbl/util/SavePath.java
                    """
             }
         }
         stage('Maven Build') {
-            agent {
-                docker {
-                    image 'maven:latest'
-                    args '-v /root/.m2:/root/.m2'
-                }
-            }
-            agent {
-                label 'master'
-            }
+
             steps {
                 echo "2. Maven Build Stage"
                 sh 'mvn clean package -Dmaven.test.skip=true'
