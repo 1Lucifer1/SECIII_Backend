@@ -23,15 +23,19 @@ pipeline {
         }
         stage('change yml file properties'){
             steps{
-                sh "sed -i 's/root/visitor/g' ${WORKSPACE}/src/main/resources/application.yml"
-                sh "sed -i 's/#password: fill it in application-dev.yml/password: mysql@irbl/g' ${WORKSPACE}/src/main/resources/application.yml"
-                sh "sed -i 's/com.mysql.cj.jdbc.Driver/com.mysql.jdbc.Driver/g' ${WORKSPACE}/src/main/resources/application.yml"
-                sh "sed -i 's/localhost:3306/101.132.253.222/g' ${WORKSPACE}/src/main/resources/application.yml"
+                sh """
+                   sed -i 's/root/visitor/g' ${WORKSPACE}/src/main/resources/application.yml
+                   sed -i 's/#password: fill it in application-dev.yml/password: mysql@irbl/g' ${WORKSPACE}/src/main/resources/application.yml
+                   sed -i 's/com.mysql.cj.jdbc.Driver/com.mysql.jdbc.Driver/g' ${WORKSPACE}/src/main/resources/application.yml
+                   sed -i 's/localhost:3306/101.132.253.222/g' ${WORKSPACE}/src/main/resources/application.yml
+                   """
             }
         }
         stage('change path'){
                     steps{
-                        sh "sed -i 's#ROOT_PATH = *#ROOT_PATH = "~/data/";#g' ${WORKSPACE}/src/main/java/team/software/irbl/util/SavePath.java"
+                        sh """
+                           sed -i 's#ROOT_PATH.*#ROOT_PATH = "~/data/";#g' ${WORKSPACE}/src/main/java/team/software/irbl/util/SavePath.java
+                           """
                     }
                 }
         stage('Maven Build') {
