@@ -8,7 +8,7 @@ def GetRemoteServer(ip){
     remote.allowAnyHosts = true
     return remote
 }
-node('slave'){
+node{
         stage('Clone to master') {
 
                 echo "1. Git Clone Stage"
