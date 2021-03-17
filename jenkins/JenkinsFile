@@ -46,9 +46,6 @@ pipeline {
                     args '-v /root/.m2:/root/.m2'
                 }
             }
-            agent {
-                label 'master'
-            }
             steps {
                 echo "2. Maven Build Stage"
                 sh 'mvn clean package -Dmaven.test.skip=true'
