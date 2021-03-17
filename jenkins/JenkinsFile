@@ -8,15 +8,7 @@ def GetRemoteServer(ip){
     remote.allowAnyHosts = true
     return remote
 }
-
-pipeline {
-    agent {
-        docker {
-            image 'maven:latest'
-            args '-v /root/.m2:/root/.m2'
-        }
-    }
-    stages {
+node('slave'){
         stage('Clone to master') {
             steps {
                 echo "1. Git Clone Stage"
@@ -34,14 +26,10 @@ pipeline {
                    """
             }
         }
-    }
-}
-
-node{
-    stage('change path'){
+        stage('change path'){
             steps{
                 sh """
-                   sed -i 's#ROOT_PATH = .*#ROOT_PATH = "~" + File.separator + "data" + File.separator;#g' ${WORKSPACE}/src/main/java/team/software/irbl/util/SavePath.java
+                   sed -i 's#ROOT_PATH.*#ROOT_PATH = "~/data/";#g' ${WORKSPACE}/src/main/java/team/software/irbl/util/SavePath.java
                    """
             }
         }
