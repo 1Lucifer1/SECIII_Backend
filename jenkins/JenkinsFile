@@ -10,7 +10,7 @@ def GetRemoteServer(ip){
 }
 
 pipeline {
-    agent none
+    agent any
     stages {
         stage('Clone to master') {
             agent {
@@ -21,6 +21,24 @@ pipeline {
                 git credentialsId: '79d2c1e6-d63c-4284-bd1f-6b4f1dfe7f56', url: "http://212.129.149.40/181250010_irbl/backend.git", branch: "release"
             }
         }
+        /*stage('change yml file properties'){
+            steps{
+                sh """
+                   rm -f src/target/IRBL-0.0.1-SNAPSHOT.jar
+                   sed -i 's/root/visitor/g' ${WORKSPACE}/src/main/resources/application.yml
+                   sed -i 's/#password: fill it in application-dev.yml/password: mysql@irbl/g' ${WORKSPACE}/src/main/resources/application.yml
+                   sed -i 's/com.mysql.cj.jdbc.Driver/com.mysql.jdbc.Driver/g' ${WORKSPACE}/src/main/resources/application.yml
+                   sed -i 's/localhost:3306/101.132.253.222/g' ${WORKSPACE}/src/main/resources/application.yml
+                   """
+            }
+        }
+        stage('change path'){
+            steps{
+                sh """
+                   sed -i 's#ROOT_PATH.*#ROOT_PATH = "~/data/";#g' ${WORKSPACE}/src/main/java/team/software/irbl/util/SavePath.java
+                   """
+            }
+        }*/
         stage('Maven Build') {
             agent {
                 docker {
