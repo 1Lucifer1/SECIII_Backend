@@ -52,6 +52,22 @@ pipeline {
             }
         }
 
+        stage('Unit Test') {
+            agent {
+                docker {
+                    image 'maven:latest'
+                    args '-v /root/.m2:/root/.m2'
+                }
+            }
+            steps {
+                echo "starting unitTest......"
+                //clean test. All tests should pass.
+                sh "mvn test jacoco:report"
+                sh "jacoco:report"
+                //code coverage.LineCoverage>70%.
+            }
+
+        }
         stage('Image Build') {
             agent {
                 label 'master'
