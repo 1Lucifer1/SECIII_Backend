@@ -15,15 +15,17 @@ public class CROSConfig {
             "localhost",
 
             "172.19.144.143",
-            "172.19.144.143:8081"
+            "172.19.144.143:8081",
+            "101.132.253.222",
+            "101.132.253.222:8081"
     };
 
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-//        addAllowedOrigins(corsConfiguration); // 1
-        corsConfiguration.addAllowedOrigin("*");
+        addAllowedOrigins(corsConfiguration); // 1
+//        corsConfiguration.addAllowedOrigin("*");
         corsConfiguration.addAllowedHeader("*"); // 2
         corsConfiguration.addAllowedMethod("*"); // 3
         corsConfiguration.setAllowCredentials(true); // 跨域session共享
