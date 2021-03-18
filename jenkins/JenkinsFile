@@ -52,7 +52,7 @@ pipeline {
             }
         }
 
-        stage('Unit Test') {
+        /*stage('Unit Test') {
             agent {
                 docker {
                     image 'maven:latest'
@@ -67,7 +67,7 @@ pipeline {
                 //code coverage.LineCoverage>70%.
             }
 
-        }
+        }*/
         stage('Image Build') {
             agent {
                 label 'master'
@@ -106,7 +106,7 @@ pipeline {
                  }
                  echo "7. Run Docker Image Stage"
                  script{
-                     sshCommand remote: remoteServer, command: "docker run --rm -it -p 40000:40000 --link mybatis-mysql:mysql -d 101.132.148.43/backend/irbl:${BUILD_ID}"
+                     sshCommand remote: remoteServer, command: "docker run --rm -it -p 40000:40000 --link mybatis-mysql:mysql --name irbl-backend -d 101.132.148.43/backend/irbl:${BUILD_ID}"
                  }
             }
         }

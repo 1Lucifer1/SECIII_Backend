@@ -22,8 +22,8 @@ public class CROSConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        addAllowedOrigins(corsConfiguration); // 1
-//        corsConfiguration.addAllowedOrigin("*");
+//        addAllowedOrigins(corsConfiguration); // 1
+        corsConfiguration.addAllowedOrigin("*");
         corsConfiguration.addAllowedHeader("*"); // 2
         corsConfiguration.addAllowedMethod("*"); // 3
         corsConfiguration.setAllowCredentials(true); // 跨域session共享
