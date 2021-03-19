@@ -1,0 +1,1 @@
+copyright corpor reserv program accompani materi avail term eclips public licens accompani distribut avail http www eclips org legal epl html contributor corpor initi implement packag org eclips swt intern win public class extend public int start lvfi public int flag public int psz public int param public int public int public int direct public static final int sizeof 
