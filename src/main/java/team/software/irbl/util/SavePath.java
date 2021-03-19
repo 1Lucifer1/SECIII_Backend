@@ -12,7 +12,7 @@ public class SavePath {
     }
 
     public static String getPathFromPackage(String pack){
-        if(File.separator.equals("\\")) return pack.replace(".", "\\\\").replaceFirst("\\\\java$", ".java");
+        if(System.getProperty("os.name").toLowerCase().contains("windows")) return pack.replace(".", "\\\\").replaceFirst("\\\\java$", ".java");
         return pack.replace(".", File.separator).replaceFirst(File.separator + "java$", ".java");
     }
 }
