@@ -3,16 +3,13 @@ package team.software.irbl.util;
 import java.io.File;
 
 public class SavePath {
-    private static final String ROOT_PATH = System.getProperty("user.dir") + File.separator + File.separator +
-            "src" + File.separator + File.separator + "main" + File.separator + File.separator +
-            "resources" + File.separator + File.separator + "data" + File.separator + File.separator;
+    private static final String ROOT_PATH = "src/main/resources/data/";
 
     public static String getAbsolutePath(String source){
         return ROOT_PATH + source;
     }
 
     public static String getPathFromPackage(String pack){
-        if(System.getProperty("os.name").toLowerCase().contains("windows")) return pack.replace(".", "\\\\").replaceFirst("\\\\java$", ".java");
-        return pack.replace(".", File.separator).replaceFirst(File.separator + "java$", ".java");
+        return pack.replace(".", "/").replaceFirst("/" + "java$", ".java");
     }
 }

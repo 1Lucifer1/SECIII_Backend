@@ -67,7 +67,7 @@ public class ProjectProcess {
             LinkedList<File> dirs = new LinkedList<>();
             dirs.add(root);
 
-            String suffix = ".+\\.java$";
+            String suffix = ".+/.java$";
             while (!dirs.isEmpty()) {
                 File dir = dirs.removeFirst();
                 File[] files = dir.listFiles();
