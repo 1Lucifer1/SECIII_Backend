@@ -1,0 +1,1 @@
+spinner settooltiptext doesn work tooltip spinner widget spinner settooltiptext 

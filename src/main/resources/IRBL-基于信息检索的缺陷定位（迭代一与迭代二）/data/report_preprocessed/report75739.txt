@@ -1,0 +1,1 @@
+variant tostr variant class tostr call getstr case sinc throw type empti suggest alway return string param variant return string public static string tostr gettyp empti return quot quot return getstr version 
