@@ -1,0 +1,1 @@
+copyright corpor reserv program accompani materi avail term eclips public licens accompani distribut avail http www eclips org legal epl html contributor corpor initi implement packag org eclips swt ole win import org eclips swt widget widget public class ole event public int type public widget widget public int detail public boolean doit true public variant argument 
