@@ -1,5 +1,7 @@
 package team.software.irbl.util;
 
+import java.io.File;
+
 public class SavePath {
     private static final String ROOT_PATH = "src/main/resources/IRBL-基于信息检索的缺陷定位（迭代一与迭代二）/data/";
     private static final String CLASS_PREPROCESS_PATH = "src/main/resources/IRBL-基于信息检索的缺陷定位（迭代一与迭代二）/data/class_preprocessed/";
