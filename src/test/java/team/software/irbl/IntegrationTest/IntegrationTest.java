@@ -30,6 +30,6 @@ public class IntegrationTest {
 
     @Test
     public void readFileTest() throws Exception{
-//        codeFileController.readFile(1);
+        codeFileController.readFile(3);
     }
 }
