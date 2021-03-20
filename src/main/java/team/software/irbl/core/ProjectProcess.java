@@ -77,7 +77,7 @@ public class ProjectProcess {
                             dirs.add(file);
                         } else if (Pattern.matches(suffix, file.getName())) {
                             codeFileCount++;
-                            codeFiles.add(new CodeFile(file.getName(), file.getAbsolutePath().replaceFirst(projectPath, projectName), projectIndex));
+                            codeFiles.add(new CodeFile(file.getName(), SavePath.pathTransformFromWinToLinux(file.getPath()).replaceFirst(projectPath, projectName), projectIndex));
                         }
                     }
                 }

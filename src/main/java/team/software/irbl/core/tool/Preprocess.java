@@ -12,11 +12,11 @@ import java.io.IOException;
 public class Preprocess {
 
      public static File preprocessCodeFile(CodeFile codeFile){
-          return new File(SavePath.getAbsolutePath("class_preprocessed\\\\"+codeFile.getFileName().replace(".java",".txt")));
+          return new File(SavePath.getPreProcessClassPath(codeFile.getFileName().replace(".java",".txt")));
      }
 
      public static String preprocessBugReport(BugReport bugReport){
-          File file = new File(SavePath.getAbsolutePath("report_preprocessed\\\\report"+Integer.toString(bugReport.getBugId())+".txt"));
+          File file = new File(SavePath.getPreProcessReportPath("report"+ bugReport.getBugId() +".txt"));
           StringBuilder builder = new StringBuilder();
           try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                String line = reader.readLine();
