@@ -1,0 +1,1 @@
+spinner widget provid setvalu method slider especi sinc spinner picki order set valu set individu pain realli nice method setvalu int select int minimum int maximum int digit int increment int pageincr 
