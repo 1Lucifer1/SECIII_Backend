@@ -100,6 +100,9 @@ public class ProjectProcess {
             ConcurrentHashMap<String, FileWord> fileWordMap = new ConcurrentHashMap<>();
             int wordCount = 0;
             File file = Preprocess.preprocessCodeFile(codeFile);
+            if(!file.exists()){
+                return;
+            }
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 String line = reader.readLine();
                 while (line != null) {
