@@ -10,9 +10,18 @@ import org.springframework.test.context.junit4.SpringRunner;
 import team.software.irbl.controller.CodeFileController;
 import team.software.irbl.controller.ProjectController;
 import team.software.irbl.controller.ReportController;
+import team.software.irbl.dto.file.File;
 import team.software.irbl.dto.file.FileContent;
+import team.software.irbl.dto.project.Indicator;
+import team.software.irbl.dto.report.Report;
+import team.software.irbl.util.Err;
+import team.software.irbl.util.Res;
 
-import static org.junit.Assert.assertEquals;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -33,7 +42,9 @@ public class IntegrationTest {
 
     @Test
     public void readFileTest() throws Exception{
-        FileContent fileContent = (FileContent) codeFileController.readFile(3).data;
+        Res res = codeFileController.readFile(3);
+        assertTrue(res.success);
+        FileContent fileContent = (FileContent) res.data;
         String content = "/*******************************************************************************\n" +
                 " * Copyright (c) 2000, 2004 IBM Corporation and others.\n" +
                 " * All rights reserved. This program and the accompanying materials\n" +
@@ -119,5 +130,53 @@ public class IntegrationTest {
         assertEquals(0,fileContent.getSimilarity(),0);
     }
 
+    @Test
+    public void getSortedFilesTest() throws Exception{
+        Res res =codeFileController.localizationOfBugReport(1);
+        assertTrue(res.success);
+        List<File> files = (List<File>) res.data;
+//        files.forEach(item->System.out.println(item.getFileRank()));
+        List<File> expected = new ArrayList<>();
+        File file1 = new File();
+        file1.setFileIndex(1);
+        file1.setFileName("test1.java");
+        file1.setFileRank(2);
+        file1.setCosineSimilarity(2.1);
+        File file2 = new File();
+        file2.setFileIndex(2);
+        file2.setFileName("test2.java");
+        file2.setFileRank(1);
+        file2.setCosineSimilarity(1.2);
 
+        expected.add(file2);
+        expected.add(file1);
+
+        assertEquals(expected,files);
+    }
+
+    @Test
+    public void getIndicatorEvaluationTest() throws Err{
+        Res res = projectController.getIndicatorEvaluation(2);
+        assertTrue(res.success);
+        Indicator indicator = (Indicator) res.data;
+        assertThat(indicator.getTop1(), greaterThanOrEqualTo(0.071));
+        assertThat(indicator.getTop5(), greaterThanOrEqualTo(0.316));
+        assertThat(indicator.getTop10(), greaterThanOrEqualTo(0.49));
+        assertThat(indicator.getMRR(), greaterThanOrEqualTo(0.20438985978353597));
+        assertThat(indicator.getMAP(), greaterThanOrEqualTo(0.18109653077639296));
+    }
+
+    @Test
+    public void getAllReportsByProjectIndexTest() throws Err {
+        Res res = reportController.getAllReportsByProjectIndex(1);
+        assertTrue(res.success);
+        List<Report> reports = (List<Report>) res.data;
+        Report report = reports.get(0);
+
+        assertEquals(1, report.getReportIndex());
+        assertEquals(1000,report.getBugId());
+        assertEquals("2020-11-12 08:40:00",report.getOpenDate());
+        assertEquals("2020-12-12 08:40:00",report.getFixDate());
+        assertEquals("test bug report",report.getSummary());
+    }
 }
