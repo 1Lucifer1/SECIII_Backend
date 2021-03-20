@@ -43,13 +43,17 @@ pipeline {
             agent {
                 docker {
                     image 'maven:latest'
-                    args '-v /root/.m2:/root/.m2'
+                    args '-v /root/.m2:/root/.m2 -v /report:/report'
                 }
             }
             steps {
                 echo "2. Maven Build Stage and Unit Test"
                 sh 'mvn clean package -Dmaven.test.skip=true'
                 sh 'mvn test jacoco:report'
+                //sh 'apt-get install sshpass'
+                //sh 'sshpass -p chenganchun.0811 scp -r target/site/jacoco root@101.132.253.222:~'
+                sh 'mkdir -p /report'
+                sh 'cp -r target/site /report/ && rm -rf target/site'
             }
         }
         stage('Image Build') {
@@ -79,19 +83,19 @@ pipeline {
                 label 'master'
             }
             steps {
-                 echo "5. Login Docker Image Stage"
-                 script{
-                     remoteServer = GetRemoteServer('101.132.253.222')
-                     sshCommand remote: remoteServer, command: "docker login -u admin -p Harbor12345@irbl 101.132.148.43"
-                 }
-                 echo "6. Push Docker Image Stage"
-                 script{
-                     sshCommand remote: remoteServer, command: "docker pull 101.132.148.43/backend/irbl:${BUILD_ID}"
-                 }
-                 echo "7. Run Docker Image Stage"
-                 script{
-                     sshCommand remote: remoteServer, command: "docker run --rm -it -p 40000:40000 --link mybatis-mysql:mysql --name irbl-backend -d 101.132.148.43/backend/irbl:${BUILD_ID}"
-                 }
+                echo "5. Login Docker Image Stage"
+                script{
+                    remoteServer = GetRemoteServer('101.132.253.222')
+                    sshCommand remote: remoteServer, command: "docker login -u admin -p Harbor12345@irbl 101.132.148.43"
+                }
+                echo "6. Push Docker Image Stage"
+                script{
+                    sshCommand remote: remoteServer, command: "docker pull 101.132.148.43/backend/irbl:${BUILD_ID}"
+                }
+                echo "7. Run Docker Image Stage"
+                script{
+                    sshCommand remote: remoteServer, command: "docker run --rm -it -p 40000:40000 --link mybatis-mysql:mysql --name irbl-backend -d 101.132.148.43/backend/irbl:${BUILD_ID}"
+                }
             }
         }
 
