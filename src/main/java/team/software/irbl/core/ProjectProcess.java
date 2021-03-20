@@ -101,6 +101,8 @@ public class ProjectProcess {
             int wordCount = 0;
             File file = Preprocess.preprocessCodeFile(codeFile);
             if(!file.exists()){
+                codeFile.setWordCount(0);
+                codeFile.setWordMap(fileWordMap);
                 return;
             }
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {

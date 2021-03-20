@@ -20,7 +20,7 @@ public class VSM {
     @Autowired
     private ProjectProcess projectProcess;
 
-    @PostConstruct
+
     public void startLocalRank(){
         Project project = projectProcess.getProject("swt-3.1");
         List<BugReport> reports = reportProcess.getBugReportsFromDB(project.getProjectIndex());
