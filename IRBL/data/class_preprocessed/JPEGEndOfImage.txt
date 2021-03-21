@@ -1,0 +1,1 @@
+copyright corpor reserv program accompani materi avail term eclips public licens accompani distribut avail http www eclips org legal epl html contributor corpor initi implement packag org eclips swt intern imag final class imag extend fix size segment public imag super public imag byte refer super refer public int signatur return file format public int fix size return 

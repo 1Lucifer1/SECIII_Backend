@@ -1,0 +1,1 @@
+link display enabl settext call seten run manifest creat visual bean swt drop link composit set enabl properti link disabl note link disabl preview close editor open editor observ link show enabl run applic link show enabl actual disabl chang order initi enabl status set text set display correct swt bug 

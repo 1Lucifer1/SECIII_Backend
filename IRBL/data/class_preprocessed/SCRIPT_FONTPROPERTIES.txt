@@ -1,0 +1,1 @@
+copyright corpor reserv program accompani materi avail term eclips public licens accompani distribut avail http www eclips org legal epl html contributor corpor initi implement packag org eclips swt intern win public class public int byte public short blank public short default public short invalid public short kashida public int kashida width public static final int sizeof 
