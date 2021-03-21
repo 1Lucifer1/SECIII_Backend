@@ -3,9 +3,9 @@ package team.software.irbl.util;
 import java.io.File;
 
 public class SavePath {
-    private static final String ROOT_PATH = "src/main/resources/IRBL/data/";
-    private static final String CLASS_PREPROCESS_PATH = "src/main/resources/IRBL/data/class_preprocessed/";
-    private static final String REPORT_PREPROCESS_PATH = "src/main/resources/IRBL/data/report_preprocessed/";
+    private static final String ROOT_PATH = System.getProperty("user.dir") + "/IRBL/data/";
+    private static final String CLASS_PREPROCESS_PATH = System.getProperty("user.dir") + "/IRBL/data/class_preprocessed/";
+    private static final String REPORT_PREPROCESS_PATH = System.getProperty("user.dir") + "/IRBL/data/report_preprocessed/";
 
     public static String getAbsolutePath(String source){
         return ROOT_PATH + source;
