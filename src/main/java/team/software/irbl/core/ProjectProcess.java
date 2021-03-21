@@ -60,7 +60,7 @@ public class ProjectProcess {
             // insert方法会自动修改project.projectIndex
             projectMapper.insert(project);
             int projectIndex = project.getProjectIndex();
-            System.out.println(projectIndex);
+            // System.out.println(projectIndex);
             List<CodeFile> codeFiles = new ArrayList<>();
             int codeFileCount = 0;
 
