@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<bugrepository name="SWT">
+  <bug id="78548" opendate="2004-11-12 16:15:00" fixdate="2004-11-24 14:30:00">
+    <buginformation>
+      <summary>[consistency] Button Selection fires before MouseUp</summary>
+      <description>- run the ControlExample, Button tab - turn on listeners MouseUp and Selection - click on an example Button -&amp;gt; on OSX you'll get Selection - MouseUp -&amp;gt; everywhere else you'll get MouseUp - Selection</description>
+    </buginformation>
+    <fixedFiles>
+      <file>org.eclipse.swt.widgets.Button.java</file>
+      <file>org.eclipse.swt.widgets.ToolItem.java</file>
+    </fixedFiles>
+  </bug>
+</bugrepository>

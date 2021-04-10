@@ -11,9 +11,17 @@ import java.util.regex.Pattern;
 import org.eclipse.jdt.core.dom.*;
 import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.domain.CodeFile;
+import team.software.irbl.util.Logger;
 import team.software.irbl.util.SavePath;
 
 public class JavaParser {
+
+    /**
+     * 将源代码的结构化信息以及纯文本填入传入的codeFile对象
+     * @param str
+     * @param codeFile
+     * @return
+     */
     public static StructuredCodeFile parse(String str, StructuredCodeFile codeFile) {
 
         ASTParser parser = ASTParser.newParser(AST.JLS15);
@@ -26,38 +34,22 @@ public class JavaParser {
 
         PackageDeclaration packageName = cu.getPackage();
         codeFile.setPackageName(packageName.getName().getFullyQualifiedName()+"."+ codeFile.getFileName());
-        // System.out.println(packageName.getName());
-        MyASTVisitor myASTVisitor = new MyASTVisitor();
+
+        MyASTVisitor myASTVisitor = new MyASTVisitor(cu);
         cu.accept(myASTVisitor);
-        //return codeFile;
+        codeFile.addField(myASTVisitor.getFields());
+        codeFile.addMethod(myASTVisitor.getMethods());
+        codeFile.addType(myASTVisitor.getTypes());
 
-        /*
+        MyCommentVisitor commentVisitor = new MyCommentVisitor(cu, str.split("\n"));
         List comments = cu.getCommentList();
-        List typeList = cu.types();
-        for(Object ele: typeList){
-            TypeDeclaration type = (TypeDeclaration)ele;
-            System.out.println(type.getName());
-            TypeDeclaration[] types = type.getTypes();
-            for(FieldDeclaration field: type.getFields()){
-                for(Object fra: field.fragments()){
-                    VariableDeclarationFragment fragment = (VariableDeclarationFragment)fra;
-                    System.out.println(fragment.getName());
-                }
-                System.out.println(field.getType());
-                System.out.println(field.getJavadoc());
-            }
-            //System.out.println();
-            for(MethodDeclaration method:type.getMethods()){
-                System.out.println(method.getName());
-                System.out.println(method.getJavadoc());
-                Block block = method.getBody();
-                List params = method.parameters();
-
-                //method.getBody().getAST().
-                System.out.println(method.getBody());
-            }
+        // 第一个注释为版权声明，直接舍去
+        for(int i=1; i<comments.size(); ++i){
+            Comment comment = (Comment)comments.get(i);
+            comment.accept(commentVisitor);
         }
-        */
+        codeFile.addComment(commentVisitor.getComments());
+
         return codeFile;
     }
 
@@ -72,11 +64,12 @@ public class JavaParser {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filePath));
             char[] buf = new char[1024];
+            int numRead;
 
-            while (reader.read(buf) != -1) {
-                fileData.append(buf);
-                //String readData = String.valueOf(buf, 0, numRead);
-                //fileData.append(readData);
+            while ((numRead = reader.read(buf)) != -1) {
+                //fileData.append(buf);
+                String readData = String.valueOf(buf, 0, numRead);
+                fileData.append(readData);
                 buf = new char[1024];
             }
 
@@ -86,7 +79,6 @@ public class JavaParser {
             e.printStackTrace();
         }
 
-        //System.out.println(fileData.toString());
         return fileData.toString();
     }
 
@@ -95,14 +87,14 @@ public class JavaParser {
      * @param dirPath
      */
     public static List<StructuredCodeFile> parseCodeFilesInDir(String dirPath, int projectIndex){
+        List<StructuredCodeFile> codeFiles = new ArrayList<>();
 
         File root = new File(dirPath);
         if(!root.exists()){
-            System.out.println("Error: 目录不存在或路径错误。");
-            return null;
+            Logger.log("Error: 目录不存在或路径错误。");
+            return codeFiles;
         }
 
-        List<StructuredCodeFile> codeFiles = new ArrayList<>();
         LinkedList<File> dirs = new LinkedList<>();
         dirs.add(root);
 
@@ -114,7 +106,7 @@ public class JavaParser {
                     if (file.isDirectory()) {
                         dirs.add(file);
                     } else if (file.getName().contains(".java")) {
-                        StructuredCodeFile codeFile = new StructuredCodeFile(file.getName(), )
+                        StructuredCodeFile codeFile = new StructuredCodeFile(file.getName(), SavePath.pathTransformFromWinToLinux(file.getPath()).replaceFirst(dirPath, ""), projectIndex);
                         codeFiles.add(parse(readFileToString(file.getAbsolutePath()), codeFile));
                     }
                 }
@@ -125,7 +117,7 @@ public class JavaParser {
 
     public static void main(String[] args) {
         //String dirPath = "./IRBL/data/test";
-        String dirPath = SavePath.getAbsolutePath("swt-3.1")+File.separatorChar+"src"+File.separatorChar;
+        String dirPath = SavePath.getAbsolutePath("swt-3.1")+"/";
         parseCodeFilesInDir(dirPath, 1);
 
     }

@@ -59,14 +59,6 @@ public class StructuredCodeFile extends CodeFile {
         this.packageName = packageName;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
     public List<String> getTypes() {
         return types;
     }

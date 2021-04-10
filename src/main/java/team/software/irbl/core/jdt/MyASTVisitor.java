@@ -1,7 +1,7 @@
 package team.software.irbl.core.jdt;
 
 import org.eclipse.jdt.core.dom.*;
-import team.software.irbl.core.domain.StructuredCodeFile;
+import team.software.irbl.util.Logger;
 
 
 public class MyASTVisitor extends ASTVisitor {
@@ -9,7 +9,12 @@ public class MyASTVisitor extends ASTVisitor {
     private StringBuilder types;
     private StringBuilder methods;
     private StringBuilder fields;
-    private StringBuilder comments;
+
+    CompilationUnit compilationUnit;
+
+    public MyASTVisitor(CompilationUnit compilationUnit){
+        this.compilationUnit = compilationUnit;
+    }
 
     /**
      * 获得局部变量名与成员变量名
@@ -25,7 +30,7 @@ public class MyASTVisitor extends ASTVisitor {
         SimpleName name = node.getName();
         fields.append(name.getIdentifier());
         fields.append(' ');
-        System.out.println("Field in line " + node.getStartPosition() +": " + name);
+        Logger.devLog("Field in line " + compilationUnit.getLineNumber(node.getStartPosition()) +": " + name);
         return true;
     }
 
@@ -43,25 +48,8 @@ public class MyASTVisitor extends ASTVisitor {
         SimpleName name = node.getName();
         fields.append(name.getIdentifier());
         fields.append(' ');
-        System.out.println("Field in line " + node.getStartPosition() +": " + name);
+        Logger.devLog("Field in line " + compilationUnit.getLineNumber(node.getStartPosition()) +": " + name);
         return true;
-    }
-
-    /**
-     * 获得符合javadoc的注释
-     * @param node
-     * @return
-     */
-    @Override
-    public boolean visit(Javadoc node) {
-        if(comments == null){
-            comments = new StringBuilder();
-        }
-
-        comments.append(node.toString());
-        comments.append(' ');
-        System.out.println("Doc in line " + node.getStartPosition() + ": " + node);
-        return false;
     }
 
 
@@ -79,7 +67,7 @@ public class MyASTVisitor extends ASTVisitor {
         if(!node.getName().getIdentifier().equals("run")) {
             methods.append(node.getName().getIdentifier());
             methods.append(' ');
-            System.out.println("Method in line " + node.getStartPosition() + ": " + node.getName());
+            Logger.devLog("Method in line " + compilationUnit.getLineNumber(node.getStartPosition()) + ": " + node.getName());
         }
         return true;
     }
@@ -97,7 +85,7 @@ public class MyASTVisitor extends ASTVisitor {
 
         types.append(node.getName().toString());
         types.append(' ');
-        System.out.println("Class in line " + node.getStartPosition() + ": " + node.getName());
+        Logger.devLog("Class in line " + compilationUnit.getLineNumber(node.getStartPosition()) + ": " + node.getName());
         return true;
     }
 
@@ -117,8 +105,4 @@ public class MyASTVisitor extends ASTVisitor {
         else return methods.toString();
     }
 
-    public String getComments(){
-        if(comments == null) return "";
-        else return comments.toString();
-    }
 }

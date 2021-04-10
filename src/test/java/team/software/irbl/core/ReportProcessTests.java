@@ -22,7 +22,7 @@ public class ReportProcessTests {
     @Transactional
     @Rollback
     public void testGetBugReportsFromXML(){
-        List<BugReport> res = process.getBugReportsFromXML("SWTBugRepository.xml", 2);
+        List<BugReport> res = process.getBugReportsFromXML("Test.xml", 2);
         assertNotNull(res);
         assertNotEquals(0, res.size());
     }

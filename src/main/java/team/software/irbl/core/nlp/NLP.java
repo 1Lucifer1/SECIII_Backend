@@ -17,6 +17,18 @@ public class NLP {
 
     private static final int wordLengthLimit = 3;
 
+    public static List<String> standfordNLP(List<String> texts){
+        if(texts == null || texts.size() == 0) return texts;
+
+        if(texts.size() == 1) return standfordNLP(texts.get(0));
+
+        StringBuilder sb = new StringBuilder();
+        for(String s : texts){
+            sb.append(s);
+        }
+        return standfordNLP(sb.toString());
+    }
+
     // 注意：有两处决定是否最终都转换成小写的地方
     public static List<String> standfordNLP(String text){
         Properties props = new Properties();

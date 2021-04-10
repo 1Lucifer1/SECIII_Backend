@@ -76,13 +76,14 @@ public class ReportProcess {
                     }else if(insideNode.getNodeName().equals("fixedFiles")){
                         for(Node node=insideNode.getFirstChild(); node!=null; node=node.getNextSibling()){
                             if(node.getNodeType() == Node.ELEMENT_NODE ){
-                                String filePath =SavePath.getPathFromPackage(node.getFirstChild().getNodeValue());
-                                CodeFile fixedFile = codeFileMapper.selectOne(new QueryWrapper<CodeFile>()
-                                        .eq("project_index", projectIndex)
-                                        .like("file_path", "%"+filePath));
-                                if(fixedFile != null){
-                                    files.add(new FixedFile(-1, fixedFile.getFileIndex()));
-                                }
+                                //String filePath =SavePath.getPathFromPackage(node.getFirstChild().getNodeValue());
+                                //CodeFile fixedFile = codeFileMapper.selectOne(new QueryWrapper<CodeFile>()
+                                //        .eq("project_index", projectIndex)
+                                //        .like("file_path", "%"+filePath));
+                                //if(fixedFile != null){
+                                    //files.add(new FixedFile(-1, fixedFile.getFileIndex()));
+                                //}
+                                files.add(new FixedFile(-1, node.getFirstChild().getNodeValue()));
                             }
                         }
                     }
@@ -126,8 +127,8 @@ public class ReportProcess {
             });
             List<FileWord> words = new ArrayList<>(wordMap.values());
             fileWordMapper.insertBatchSomeColumn(words);
-            bugReport.setWordCount(wordCount);
-            bugReport.setWordMap(wordMap);
+            //bugReport.setWordCount(wordCount);
+            //bugReport.setWordMap(wordMap);
         });
         bugReportMapper.insertOrUpdateBatch(bugReports);
     }
@@ -144,7 +145,7 @@ public class ReportProcess {
             words.forEach(word -> {
                 wordMap.put(word.getWord(), word);
             });
-            bugReport.setWordMap(wordMap);
+            //bugReport.setWordMap(wordMap);
         });
         return bugReports;
     }
