@@ -13,30 +13,44 @@ import java.util.Properties;
 public class NLP {
 
     // 在标准lucene列表中添加几个额外的术语
-    private static final String customStopWordList = "int,java,integer,string,public,class,import,void,a,an,and,are,as,at,be,but,by,for,if,in,into,is,it,no,not,of,on,or,such,that,the,their,then,there,these,they,this,to,was,will,with";
+    // 暂不考虑中文标点和术语
+    private static final String customStopWordList = "int,java,integer,string,public,class,import,void,**,-lrb-,-rrb-,-lsb-,-rsb-,-lcb-,-rcb-,a,an,and,are,as,at,be,but,by,for,if,in,into,is,it,no,not,of,on,or,such,that,the,their,then,there,these,they,this,to,was,will,with";
 
-    private static final int wordLengthLimit = 3;
+    private static final String stopWordList = "**,-lrb-,-rrb-,-lsb-,-rsb-,-lcb-,-rcb-,a,an,and,are,as,at,be,but,by,for,if,in,into,is,it,no,not,of,on,or,such,that,the,their,then,there,these,they,this,to,was,will,with";
 
-    public static List<String> standfordNLP(List<String> texts){
+    private static final int wordLengthLimit = 2;
+
+    // isFormatted导致的区别主要在于使用不同的停用词列表
+    public static List<String> standfordNLP(List<String> texts, boolean isFormatted){
         if(texts == null || texts.size() == 0) return texts;
 
-        if(texts.size() == 1) return standfordNLP(texts.get(0));
+        if(texts.size() == 1) return standfordNLP(texts.get(0), isFormatted);
 
+        // 其他情况实际上应该报错
         StringBuilder sb = new StringBuilder();
         for(String s : texts){
             sb.append(s);
+            sb.append(" ");
         }
-        return standfordNLP(sb.toString());
+        return standfordNLP(sb.toString(), isFormatted);
     }
 
     // 注意：有两处决定是否最终都转换成小写的地方
-    public static List<String> standfordNLP(String text){
+    public static List<String> standfordNLP(String text, boolean isFormatted){
         Properties props = new Properties();
         props.setProperty("customAnnotatorClass.stopword", "team.software.irbl.core.nlp.StopwordAnnotator");
 
         // 设置停用词的CoreNLP属性。注意自定义停用词列表属性
-        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, stopword");
-        props.setProperty(StopwordAnnotator.STOPWORDS_LIST, customStopWordList);
+        props.setProperty("annotators", "tokenize, cleanxml, ssplit, pos, lemma, stopword");
+
+        // 设置不同的停用词列表
+        if (isFormatted){
+            props.setProperty(StopwordAnnotator.STOPWORDS_LIST, stopWordList);
+        }
+        else {
+            props.setProperty(StopwordAnnotator.STOPWORDS_LIST, customStopWordList);
+        }
+
         props.setProperty(StopwordAnnotator.CHECK_LEMMA, "true");
         props.setProperty(StopwordAnnotator.IGNORE_STOPWORD_CASE, String.valueOf(true));
 
@@ -64,6 +78,9 @@ public class NLP {
                     // wordList.add(originalWord);
                 }
                 else {
+                    // 将原复合词也单独考虑在内
+                    wordList.add(word);
+
                     int begin = 0;
                     String splitWord = "";
                     for (int i = 1; i < word.length() - 1; i++) {

@@ -20,11 +20,11 @@ public class Driver {
 
         // 对codeFile的结构化信息与原生文本分别进行nlp处理
         for(StructuredCodeFile codeFile : codeFiles){
-            codeFile.setTypes(NLP.standfordNLP(codeFile.getTypes()));
-            codeFile.setComments(NLP.standfordNLP(codeFile.getComments()));
-            codeFile.setFields(NLP.standfordNLP(codeFile.getFields()));
-            codeFile.setMethods(NLP.standfordNLP(codeFile.getMethods()));
-            codeFile.setContexts(NLP.standfordNLP(codeFile.getContexts()));
+            codeFile.setTypes(NLP.standfordNLP(codeFile.getTypes(),true));
+            codeFile.setComments(NLP.standfordNLP(codeFile.getComments(),true));
+            codeFile.setFields(NLP.standfordNLP(codeFile.getFields(),true));
+            codeFile.setMethods(NLP.standfordNLP(codeFile.getMethods(),true));
+            codeFile.setContexts(NLP.standfordNLP(codeFile.getContexts(),false));
         }
 
         return codeFiles;
@@ -41,8 +41,9 @@ public class Driver {
 
         for(BugReport rawReport : rawReports){
             StructuredBugReport report = new StructuredBugReport(rawReport);
-            report.setDescriptionWords(NLP.standfordNLP(rawReport.getDescription()));
-            report.setSummaryWords(NLP.standfordNLP(rawReport.getSummary()));
+            // 虽然没有格式化，但是由于专有名词出现频率不高，和格式化过的一起使用没有专有名词的停用词列表
+            report.setDescriptionWords(NLP.standfordNLP(rawReport.getDescription(),true));
+            report.setSummaryWords(NLP.standfordNLP(rawReport.getSummary(),true));
             reports.add(report);
         }
         return reports;
