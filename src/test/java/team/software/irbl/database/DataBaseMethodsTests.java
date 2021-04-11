@@ -53,7 +53,7 @@ public class DataBaseMethodsTests {
         fileWordMapper.insert(fileWord);
         BugReport bugReport = new BugReport(project.getProjectIndex(), 10001, "2020-11-12 08:08:08", "", "test insert report", "", null);
         bugReportMapper.insert(bugReport);
-        FixedFile fixedFile = new FixedFile(bugReport.getReportIndex(), codeFile.getFileIndex());
+        FixedFile fixedFile = new FixedFile(bugReport.getReportIndex(), codeFile.getPackageName());
         fixedFileMapper.insert(fixedFile);
     }
 
@@ -81,7 +81,7 @@ public class DataBaseMethodsTests {
         List<CodeFile> codeFileList = codeFileMapper.selectList(new QueryWrapper<CodeFile>().eq("project_index", 1));
         //System.out.println(codeFileList);
         for(CodeFile codeFile: codeFileList){
-            codeFile.setWordCount(50);
+            //codeFile.setWordCount(50);
         }
         int res = codeFileMapper.insertOrUpdateBatch(codeFileList);
         System.out.println(res);

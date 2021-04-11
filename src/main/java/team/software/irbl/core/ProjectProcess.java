@@ -3,8 +3,8 @@ package team.software.irbl.core;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import team.software.irbl.core.tool.Calculate;
-import team.software.irbl.core.tool.Preprocess;
+import team.software.irbl.core.utils.Calculate;
+import team.software.irbl.core.utils.Preprocess;
 import team.software.irbl.domain.CodeFile;
 import team.software.irbl.domain.FileWord;
 import team.software.irbl.domain.Project;
@@ -101,8 +101,8 @@ public class ProjectProcess {
             int wordCount = 0;
             File file = Preprocess.preprocessCodeFile(codeFile);
             if(!file.exists()){
-                codeFile.setWordCount(0);
-                codeFile.setWordMap(fileWordMap);
+                //codeFile.setWordCount(0);
+                //codeFile.setWordMap(fileWordMap);
                 return;
             }
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
@@ -134,8 +134,8 @@ public class ProjectProcess {
                 });
                 List<FileWord> fileWords = new ArrayList<>(fileWordMap.values());
                 fileWordMapper.insertBatchSomeColumn(fileWords);
-                codeFile.setWordCount(wordCount);
-                codeFile.setWordMap(fileWordMap);
+                //codeFile.setWordCount(wordCount);
+                //codeFile.setWordMap(fileWordMap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -166,7 +166,7 @@ public class ProjectProcess {
                 fileWords.forEach(fileWord -> {
                     fileWordMap.put(fileWord.getWord(), fileWord);
                 });
-                codeFile.setWordMap(fileWordMap);
+                //codeFile.setWordMap(fileWordMap);
             });
             project.setCodeFiles(codeFiles);
 

@@ -25,7 +25,7 @@ public class VSM {
         Project project = projectProcess.getProject("swt-3.1");
         List<BugReport> reports = reportProcess.getBugReportsFromDB(project.getProjectIndex());
         if(reports.size() == 0){
-            reports = reportProcess.getBugReportsFromXML("SWTBugRepository.xml", project.getProjectIndex());
+            reports = reportProcess.getBugReportsFromXML("Test.xml", project.getProjectIndex());
         }
         reports.forEach(bugReport -> {
             reportProcess.saveRanks(rank(bugReport, project.getCodeFiles(), project.getWordMap()));
@@ -47,8 +47,10 @@ public class VSM {
 
 
     public double getCosineSimilarity(BugReport bugReport, CodeFile codeFile, ConcurrentHashMap<String, ProjectWord> lexicon){
-        List<FileWord> reportWords = new ArrayList<>(bugReport.getWordMap().values());
-        ConcurrentHashMap<String, FileWord> fileWordMap = codeFile.getWordMap();
+        //List<FileWord> reportWords = new ArrayList<>(bugReport.getWordMap().values());
+        //ConcurrentHashMap<String, FileWord> fileWordMap = codeFile.getWordMap();
+        List<FileWord> reportWords = new ArrayList<>();
+        ConcurrentHashMap<String, FileWord> fileWordMap = new ConcurrentHashMap<>();
         double innerProduct = 0;
         double lengthOfVectorX = 0;
         double lengthOfVectorY = 0;

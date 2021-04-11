@@ -9,18 +9,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CodeFile {
     @TableId(value = "file_index", type = IdType.AUTO)
-    private int fileIndex;
+    protected int fileIndex;
     @TableField(value = "project_index")
-    private int projectIndex;
+    protected int projectIndex;
     @TableField(value = "file_name")
-    private String fileName;
+    protected String fileName;
     @TableField(value = "file_path")
-    private String filePath;
-    @TableField(value = "word_count")
-    private int wordCount;
-    @TableField(exist = false)
-    private ConcurrentHashMap<String, FileWord> wordMap;
-
+    protected String filePath;
+    @TableField(value = "package_name")
+    protected String packageName;
 
 
     public CodeFile(String fileName, String filePath, int projectIndex){
@@ -34,12 +31,12 @@ public class CodeFile {
      *
      * @param 所有表中字段对应属性
      */
-    public CodeFile(int fileIndex, int projectIndex, String fileName, String filePath, int wordCount) {
+    public CodeFile(int fileIndex, int projectIndex, String fileName, String filePath, String packageName) {
         this.fileIndex = fileIndex;
         this.projectIndex = projectIndex;
         this.fileName = fileName;
         this.filePath = filePath;
-        this.wordCount = wordCount;
+        this.packageName = packageName;
     }
 
     public int getFileIndex() {
@@ -74,20 +71,12 @@ public class CodeFile {
         this.filePath = filePath;
     }
 
-    public int getWordCount() {
-        return wordCount;
+    public String getPackageName() {
+        return packageName;
     }
 
-    public void setWordCount(int wordCount) {
-        this.wordCount = wordCount;
-    }
-
-    public ConcurrentHashMap<String, FileWord> getWordMap() {
-        return wordMap;
-    }
-
-    public void setWordMap(ConcurrentHashMap<String, FileWord> wordMap) {
-        this.wordMap = wordMap;
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 }
 
