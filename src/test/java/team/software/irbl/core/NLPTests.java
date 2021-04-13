@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 public class NLPTests {
 
     //sample text for tests
-    private static final String example = "/**The China_history of <p>coreOfNLPMethods</p> generally starts in the [1950s], although ChineseHistories() can be found from earlier {periods}.*/";
+    private static final String example = "/**The China_history \"\" of <p>coreOfNLPMethods</p> generally starts in the [1950s], although ChineseHistories() can be found from my.earlier(Date new Date()) {periods}.*/";
 
     @Test
     public void standfordNLPTest(){

@@ -14,9 +14,9 @@ public class NLP {
 
     // 在标准lucene列表中添加几个额外的术语
     // 暂不考虑中文标点和术语
-    private static final String customStopWordList = "int,java,integer,string,public,class,import,void,**,-lrb-,-rrb-,-lsb-,-rsb-,-lcb-,-rcb-,a,an,and,are,as,at,be,but,by,for,if,in,into,is,it,no,not,of,on,or,such,that,the,their,then,there,these,they,this,to,was,will,with";
+    private static final String customStopWordList = "int,java,integer,string,public,class,import,void,**,'',``,==,-lrb-,-rrb-,-lsb-,-rsb-,-lcb-,-rcb-,a,an,and,are,as,at,be,but,by,for,if,in,into,is,it,no,not,of,on,or,such,that,the,their,then,there,these,they,this,to,was,will,with";
 
-    private static final String stopWordList = "**,-lrb-,-rrb-,-lsb-,-rsb-,-lcb-,-rcb-,a,an,and,are,as,at,be,but,by,for,if,in,into,is,it,no,not,of,on,or,such,that,the,their,then,there,these,they,this,to,was,will,with";
+    private static final String stopWordList = "**,'',``,==,-lrb-,-rrb-,-lsb-,-rsb-,-lcb-,-rcb-,a,an,and,are,as,at,be,but,by,for,if,in,into,is,it,no,not,of,on,or,such,that,the,their,then,there,these,they,this,to,was,will,with";
 
     private static final int wordLengthLimit = 2;
 
@@ -37,6 +37,9 @@ public class NLP {
 
     // 注意：有两处决定是否最终都转换成小写的地方
     public static List<String> standfordNLP(String text, boolean isFormatted){
+        // 发现this.a() 之类的处理不了，直接replace
+        text = text.replace(".", " ");
+
         Properties props = new Properties();
         props.setProperty("customAnnotatorClass.stopword", "team.software.irbl.core.nlp.StopwordAnnotator");
 
