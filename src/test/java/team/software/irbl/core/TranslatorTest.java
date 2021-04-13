@@ -34,9 +34,9 @@ public class TranslatorTest {
     }
     @Test
     public void reTranslator() throws IOException {
-        StructuredBugReport[] res = FileTranslator.readBugReport();
-        for(int i=0;i<res.length;i++){
-            System.out.println(res[i]);
+        List<StructuredBugReport> res = FileTranslator.readBugReport();
+        for(int i=0;i<res.size();i++){
+            System.out.println(res.get(i).getDescriptionWords());
         }
     }
 }

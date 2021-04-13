@@ -12,6 +12,7 @@ public class StructuredCodeFile extends CodeFile {
     private List<String> comments;
     private List<String> contexts;
 
+    public StructuredCodeFile(){};
     public StructuredCodeFile(String fileName, String filePath, int projectIndex){
         super(fileName, filePath, projectIndex);
     }

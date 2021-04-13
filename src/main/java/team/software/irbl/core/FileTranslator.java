@@ -12,6 +12,8 @@ import team.software.irbl.util.SavePath;
 import java.io.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileTranslator {
     public static void writeBugReport(StructuredBugReport obj) throws IOException {
@@ -54,7 +56,7 @@ public class FileTranslator {
         writer.write(content+json+" ");
         writer.close();
     }
-    public static StructuredBugReport[] readBugReport() throws IOException {
+    public static List<StructuredBugReport> readBugReport() throws IOException {
         String path = SavePath.getFilePath()+"bugReportFile.txt";
         File file =new File(path);
         String content="";
@@ -64,25 +66,26 @@ public class FileTranslator {
             int len=input.read(data);
             //System.out.println(data);
             content = new String(data,0,len);
-            //System.out.println(content);
+            System.out.println(content);
         }
         String[] jsons = content.split(" ");
         int l = jsons.length;
-        StructuredBugReport[] res = new StructuredBugReport[l];
+        List<StructuredBugReport> res = new ArrayList<>();
+        //StructuredBugReport[] res = new StructuredBugReport[l];
         for(int i=0;i<l;i++){
             ObjectMapper mapper = new ObjectMapper();
             StructuredBugReport br = mapper.readValue(jsons[i], StructuredBugReport.class);
-            res[i] = br;
+            res.add(br);
         }
         return res;
     }
-    public StructuredCodeFile[] readCodeFile() throws IOException {
+    public List<StructuredCodeFile> readCodeFile() throws IOException {
         String path = SavePath.getFilePath()+"codeFile.txt";
         File file =new File(path);
         String content="";
         if(file.exists()&&file.length()!=0){
             InputStream input=new FileInputStream(file);
-            byte[] data=new byte[1024];
+            byte[] data=new byte[2048];
             int len=input.read(data);
             //System.out.println(data);
             content = new String(data,0,len);
@@ -90,11 +93,11 @@ public class FileTranslator {
         }
         String[] jsons = content.split(" ");
         int l = jsons.length;
-        StructuredCodeFile[] res = new StructuredCodeFile[l];
+        List<StructuredCodeFile> res = new ArrayList<>();
         for(int i=0;i<l;i++){
             ObjectMapper mapper = new ObjectMapper();
             StructuredCodeFile cf = mapper.readValue(jsons[i], StructuredCodeFile.class);
-            res[i] = cf;
+            res.add(cf);
         }
         return res;
     }
