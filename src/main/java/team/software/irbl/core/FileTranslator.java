@@ -14,22 +14,22 @@ import java.io.File;
 import java.io.IOException;
 
 public class FileTranslator {
-    public  void writeBugReport(StructuredBugReport obj) throws IOException {
+    public static void writeBugReport(StructuredBugReport obj) throws IOException {
         String path = SavePath.getFilePath()+"bugReportFile.txt";
         File file =new File(path);
         String content="";
-        if(file.exists()){
+        if(file.exists()&&file.length()!=0){
             InputStream input=new FileInputStream(file);
             byte[] data=new byte[1024];
             int len=input.read(data);
-            //System.out.println(data);
+            //System.out.println(len);
             content = new String(data,0,len);
             //System.out.println(content);
         }
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(obj);
         //mapper.writeValue(new File("/Users/fengxinze/Desktop/IRBL/json/src/main/java/a.txt"),json);
-        //System.out.println(json);
+        System.out.println(json);
         FileWriter writer = new FileWriter(path);
         writer.write(content+json+" ");
         writer.close();
@@ -38,7 +38,7 @@ public class FileTranslator {
         String path = SavePath.getFilePath()+"codeFile.txt";
         File file =new File(path);
         String content="";
-        if(file.exists()){
+        if(file.exists()&&file.length()!=0){
             InputStream input=new FileInputStream(file);
             byte[] data=new byte[1024];
             int len=input.read(data);
@@ -54,11 +54,11 @@ public class FileTranslator {
         writer.write(content+json+" ");
         writer.close();
     }
-    public StructuredBugReport[] readBugReport() throws IOException {
+    public static StructuredBugReport[] readBugReport() throws IOException {
         String path = SavePath.getFilePath()+"bugReportFile.txt";
         File file =new File(path);
         String content="";
-        if(file.exists()){
+        if(file.exists()&&file.length()!=0){
             InputStream input=new FileInputStream(file);
             byte[] data=new byte[1024];
             int len=input.read(data);
@@ -80,7 +80,7 @@ public class FileTranslator {
         String path = SavePath.getFilePath()+"codeFile.txt";
         File file =new File(path);
         String content="";
-        if(file.exists()){
+        if(file.exists()&&file.length()!=0){
             InputStream input=new FileInputStream(file);
             byte[] data=new byte[1024];
             int len=input.read(data);
