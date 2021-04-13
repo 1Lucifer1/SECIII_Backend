@@ -6,6 +6,7 @@ public class SavePath {
     private static final String ROOT_PATH = pathTransformFromWinToLinux(System.getProperty("user.dir")) + "/IRBL/data/";
     private static final String CLASS_PREPROCESS_PATH = pathTransformFromWinToLinux(System.getProperty("user.dir")) + "/IRBL/data/class_preprocessed/";
     private static final String REPORT_PREPROCESS_PATH = pathTransformFromWinToLinux(System.getProperty("user.dir")) + "/IRBL/data/report_preprocessed/";
+    private static final String File_PATH = pathTransformFromWinToLinux(System.getProperty("user.dir")) + "/IRBL/data/file/";
 
     public static String getAbsolutePath(String source){
         return ROOT_PATH + source;
@@ -31,5 +32,9 @@ public class SavePath {
 
     public static String getPreProcessClassPath(String source){
         return CLASS_PREPROCESS_PATH + source;
+    }
+
+    public static String getFilePath(){
+        return File_PATH ;
     }
 }
