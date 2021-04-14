@@ -19,6 +19,7 @@ public class CodeFile {
     @TableField(value = "package_name")
     protected String packageName;
 
+    public CodeFile(){}
 
     public CodeFile(String fileName, String filePath, int projectIndex){
         this.fileName = fileName;
