@@ -4,7 +4,7 @@ public class Calculate {
     // private static final int IDF_BASE = 10;
 
 
-    public static double calculateTf(int appearTimes, int wordTotal){
+    public static double calculateTf(int appearTimes){
         return 1 + Math.log(appearTimes) ;
     }
 

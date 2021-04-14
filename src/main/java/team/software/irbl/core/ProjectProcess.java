@@ -122,7 +122,7 @@ public class ProjectProcess {
                 // 避免lambda表达式报错
                 final int finalCount = wordCount;
                 fileWordMap.values().forEach(fileWord -> {
-                    double tf = Calculate.calculateTf(fileWord.getAppearTimes(), finalCount);
+                    double tf = Calculate.calculateTf(fileWord.getAppearTimes());
                     fileWord.setTf(tf);
                     String word = fileWord.getWord();
                     // 可能会出现线程并发不安全，改为使用ConcurrentHashMap
