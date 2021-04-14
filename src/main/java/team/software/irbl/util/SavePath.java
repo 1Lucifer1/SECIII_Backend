@@ -33,4 +33,8 @@ public class SavePath {
     public static String getPreProcessClassPath(String source){
         return CLASS_PREPROCESS_PATH + source;
     }
+
+    public static String getFilePath(){
+        return File_PATH ;
+    }
 }
