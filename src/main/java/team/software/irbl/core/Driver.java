@@ -6,6 +6,7 @@ import team.software.irbl.core.jdt.JavaParser;
 import team.software.irbl.core.nlp.NLP;
 import team.software.irbl.core.xml.XMLParser;
 import team.software.irbl.domain.BugReport;
+import team.software.irbl.domain.RankRecord;
 import team.software.irbl.util.Logger;
 import team.software.irbl.util.SavePath;
 
@@ -51,7 +52,14 @@ public class Driver {
 
     public static void main(String[] args) {
         Driver driver = new Driver();
-        //List<StructuredCodeFile> codeFiles = driver.preProcessProject("swt-3.1", 1);
+        List<StructuredCodeFile> codeFiles = driver.preProcessProject("swt-3.1", 1);
         List<StructuredBugReport> bugReports = driver.preProcessBugReports("SWTBugRepository.xml", 1);
+        VSM vsm = new VSM();
+        List<List<RankRecord>> ranks  = vsm.startRank(bugReports, codeFiles);
+        ranks.forEach(rankRecords -> {
+            rankRecords.forEach(rank -> {
+                System.out.println(rank.getFileRank() + ": " + rank.getCosineSimilarity());
+            });
+        });
     }
 }

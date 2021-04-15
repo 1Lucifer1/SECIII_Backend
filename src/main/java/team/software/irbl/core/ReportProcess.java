@@ -122,7 +122,7 @@ public class ReportProcess {
             // 避免lambda表达式报错
             final int finalCount = wordCount;
             wordMap.values().forEach(word -> {
-                double tf = Calculate.calculateTf(word.getAppearTimes(), finalCount);
+                double tf = Calculate.calculateTf(word.getAppearTimes());
                 word.setTf(tf);
             });
             List<FileWord> words = new ArrayList<>(wordMap.values());
