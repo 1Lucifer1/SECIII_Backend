@@ -11,6 +11,7 @@ public class StructuredBugReport extends BugReport{
     private List<String> summaryWords;
     private List<String> descriptionWords;
 
+    public StructuredBugReport(){}
     public StructuredBugReport(BugReport bugReport){
         super(bugReport);
     }

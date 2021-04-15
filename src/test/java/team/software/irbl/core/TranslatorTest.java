@@ -32,7 +32,7 @@ public class TranslatorTest {
     public void reTranslator() throws IOException {
         List<StructuredBugReport> res = FileTranslator.readBugReport();
         for(int i=0;i<res.size();i++){
-            System.out.println(res.get(i).getDescriptionWords());
+            System.out.println(res.get(i).getReportIndex());
         }
         //System.out.println(0);
     }

@@ -54,20 +54,40 @@ public class Driver {
 
     public static void main(String[] args) {
         Driver driver = new Driver();
-        List<StructuredCodeFile> codeFiles = driver.preProcessProject("swt-3.1", 1);
-        List<StructuredBugReport> bugReports = driver.preProcessBugReports("SWTBugRepository.xml", 1);
-        DBProcessor dbProcessor = new DBProcessor();
-        dbProcessor.saveCodeFiles(codeFiles);
-        dbProcessor.saveBugReports(bugReports);
-        try{
-            FileTranslator.writeBugReport(bugReports);
-            FileTranslator.writeCodeFile(codeFiles);
-        }catch (IOException e){
-
+        boolean hasPreprocess = true;
+        List<StructuredCodeFile> codeFiles = null;
+        List<StructuredBugReport> bugReports = null;
+        if(!hasPreprocess) {
+            codeFiles = driver.preProcessProject("swt-3.1", 1);
+            bugReports = driver.preProcessBugReports("SWTBugRepository.xml", 1);
+            DBProcessor dbProcessor = new DBProcessor();
+            dbProcessor.saveCodeFiles(codeFiles);
+            dbProcessor.saveBugReports(bugReports);
+            try {
+                FileTranslator.writeBugReport(bugReports);
+                FileTranslator.writeCodeFile(codeFiles);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Logger.errorLog("Saving json file failed.");
+            }
+        }else {
+            try {
+                bugReports = FileTranslator.readBugReport();
+                codeFiles = FileTranslator.readCodeFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Logger.errorLog("Reading json file failed.");
+            }
         }
 
         VSM vsm = new VSM();
         vsm.startRank(bugReports, codeFiles);
+        for(BugReport bugReport: bugReports){
+            Logger.devLog("" + bugReport.getReportIndex());
+            for(RankRecord record: bugReport.getRanks()){
+                Logger.devLog("  " + record.getFileIndex() + " : " + record.getFileRank() + " , " +record.getCosineSimilarity());
+            }
+        }
 //        ranks.forEach(rankRecords -> {
 //            rankRecords.forEach(rank -> {
 //                System.out.println(rank.getFileRank() + ": " + rank.getCosineSimilarity());
