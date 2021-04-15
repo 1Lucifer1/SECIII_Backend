@@ -10,6 +10,15 @@ public class StructuredBugReport{
 
     private List<String> summaryWords;
     private List<String> descriptionWords;
+    private int reportIndex;
+    private int projectIndex;
+    private int bugId;
+    private String openDate;
+    private String fixDate;
+    private String summary;
+    private String description;
+    List<FixedFile> fixedFiles;
+    List<RankRecord> ranks;
 
     /**
      * 采用装饰模式而非继承，目的在于解耦从xml中读取bugReport的操作
@@ -19,6 +28,10 @@ public class StructuredBugReport{
 
     public StructuredBugReport(BugReport bugReport){
         this.bugReport = bugReport;
+    }
+
+    public BugReport getBugReport(){
+        return bugReport;
     }
 
     public List<String> getSummaryWords() {
