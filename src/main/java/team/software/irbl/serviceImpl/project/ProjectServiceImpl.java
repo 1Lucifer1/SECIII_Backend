@@ -16,11 +16,11 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Indicator getIndicatorEvaluation(Integer projectIndex) throws Err {
         Indicator indicator = new Indicator();
-        indicator.setTop1(indicatorEvaluation.Top(projectIndex,1));
-        indicator.setTop5(indicatorEvaluation.Top(projectIndex,5));
-        indicator.setTop10(indicatorEvaluation.Top(projectIndex,10));
-        indicator.setMRR(indicatorEvaluation.MRR(projectIndex));
-        indicator.setMAP(indicatorEvaluation.MAP(projectIndex));
+//        indicator.setTop1(indicatorEvaluation.Top(projectIndex,1));
+//        indicator.setTop5(indicatorEvaluation.Top(projectIndex,5));
+//        indicator.setTop10(indicatorEvaluation.Top(projectIndex,10));
+//        indicator.setMRR(indicatorEvaluation.MRR(projectIndex));
+//        indicator.setMAP(indicatorEvaluation.MAP(projectIndex));
         return indicator;
     }
 }
