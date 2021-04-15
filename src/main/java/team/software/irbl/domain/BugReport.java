@@ -26,6 +26,17 @@ public class BugReport {
     protected List<RankRecord> ranks;
 
     public BugReport(){}
+    public BugReport(BugReport bugReport){
+        this.reportIndex = bugReport.reportIndex;
+        this.projectIndex = bugReport.projectIndex;
+        this.bugId = bugReport.bugId;
+        this.openDate = bugReport.openDate;
+        this.fixDate = bugReport.fixDate;
+        this.summary = bugReport.summary;
+        this.description = bugReport.description;
+        this.fixedFiles = bugReport.fixedFiles;
+        this.ranks = bugReport.ranks;
+    }
     public BugReport(int projectIndex, int bugId, String openDate, String fixDate, String summary, String description, List<FixedFile> fixedFiles) {
         this.projectIndex = projectIndex;
         this.bugId = bugId;

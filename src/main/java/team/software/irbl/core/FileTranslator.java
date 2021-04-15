@@ -20,21 +20,24 @@ import java.util.List;
 
 public class FileTranslator {
     public static void writeBugReport(List<StructuredBugReport> obj) throws IOException {
-        String path = SavePath.getFilePath()+"bugReportFile.txt";
-        String content="";
-        for(int i=0;i<obj.size();i++){
-            ObjectMapper mapper = new ObjectMapper();
-            String json = mapper.writeValueAsString(obj.get(i));
-            //System.out.println(json);
-            //content = content+json+"\r\n";
-            content = content+json+"\r\n";
-        }
+        String path = SavePath.getFilePath()+"bugReportFile.json";
+        //String content="[";
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(obj);
+//        for(int i=0;i<obj.size();i++){
+//            ObjectMapper mapper = new ObjectMapper();
+//            String json = mapper.writeValueAsString(obj.get(i));
+//            //System.out.println(json);
+//            //content = content+json+"\r\n";
+//            content = content+json+",";
+//        }
+//        content += ']';
         FileWriter writer = new FileWriter(path);
-        writer.write(content);
+        writer.write(json);
         writer.close();
     }
     public static void writeCodeFile(List<StructuredCodeFile> obj) throws IOException {
-        String path = SavePath.getFilePath()+"codeFile.txt";
+        String path = SavePath.getFilePath()+"codeFile.json";
         String content="";
         for(int i=0;i<obj.size();i++){
             ObjectMapper mapper = new ObjectMapper();

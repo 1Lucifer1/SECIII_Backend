@@ -10,6 +10,7 @@ import team.software.irbl.domain.RankRecord;
 import team.software.irbl.util.Logger;
 import team.software.irbl.util.SavePath;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +55,13 @@ public class Driver {
         Driver driver = new Driver();
         List<StructuredCodeFile> codeFiles = driver.preProcessProject("swt-3.1", 1);
         List<StructuredBugReport> bugReports = driver.preProcessBugReports("SWTBugRepository.xml", 1);
+        try{
+            FileTranslator.writeBugReport(bugReports);
+//            FileTranslator.writeCodeFile(codeFiles);
+        }catch (IOException e){
+
+        }
+
         VSM vsm = new VSM();
         List<List<RankRecord>> ranks  = vsm.startRank(bugReports, codeFiles);
         ranks.forEach(rankRecords -> {
