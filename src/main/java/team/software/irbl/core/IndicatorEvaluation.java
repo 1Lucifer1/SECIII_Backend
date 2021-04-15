@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.FixedFile;
 import team.software.irbl.domain.RankRecord;
+import team.software.irbl.dto.project.Indicator;
 import team.software.irbl.mapper.*;
 import team.software.irbl.util.Err;
 
@@ -18,24 +19,29 @@ public class IndicatorEvaluation {
     private final static String NO_REPORT = "该项目下没有缺陷报告";
     private final static String OTHER_ERROR = "其他问题";
 
-    public double Top(Integer K, int reportNum, List<List<Integer>> expectedList,
-                      List<List<RankRecord>> rankRecordLists) throws Err {
-//        int reportNum = projectMapper.selectById(projectIndex).getReportCount();
+    public Indicator getEvaluationIndicator(List<BugReport> bugReportList) {
+        int reportNum = bugReportList.size();
+
+        Indicator indicator = new Indicator();
+        indicator.setTop1(Top(1,reportNum, bugReportList));
+        indicator.setTop5(Top(5,reportNum, bugReportList));
+        indicator.setTop10(Top(10,reportNum, bugReportList));
+        indicator.setMRR(MRR(reportNum,bugReportList));
+        indicator.setMAP(MAP(reportNum,bugReportList));
+
+        return indicator;
+    }
+
+    public double Top(Integer K, int reportNum, List<BugReport> bugReportList) {
         if (reportNum == 0){
 //            throw new Err(NO_REPORT);
             return 0.0;
         }
         int countOfSuccessLocalization = 0;
-//        Map<String, Object> conditions = new HashMap<>();
-//        conditions.put("project_index", projectIndex);
-//        List<BugReport> bugReportList = bugReportMapper.selectByMap(conditions);
 
-        for(int i=0; i<reportNum; i++){
-//        for(BugReport bugReport: bugReportList){
-//            int reportIndex = bugReport.getReportIndex();
+        for(BugReport bugReport: bugReportList){
             // 得到正确的文件号列表
-//            List<Integer> expected = getExpectedFileIndexes(reportIndex);
-            List<Integer> expected = expectedList.get(i);
+            List<Integer> expected = getExpectedFileIndexes(bugReport);
 
 //            List list = new ArrayList(K);
 //            for (int i=1;i<=K;i++){
@@ -45,12 +51,12 @@ public class IndicatorEvaluation {
 //            queryWrapper.in("file_rank", list)
 //                    .eq("report_index", reportIndex);
 //            List<RankRecord> rankRecordList = rankRecordMapper.selectList(queryWrapper);
-            List<RankRecord> rankRecordList = rankRecordLists.get(i);
 //            for (RankRecord record : rankRecordList) {
 //                if(expected.contains(record.getFileIndex())){
 //                    countOfSuccessLocalization++;
 //                    break;
 //                }
+            List<RankRecord> rankRecordList = bugReport.getRanks();
             for (int j=0; j<K; j++) {
                 if(expected.contains(rankRecordList.get(j).getFileIndex())){
                     countOfSuccessLocalization++;
@@ -67,9 +73,7 @@ public class IndicatorEvaluation {
     }
 
 
-    public double MRR(int reportNum, List<List<Integer>> expectedList,
-                      List<List<RankRecord>> rankRecordLists) throws Err {
-//        int reportNum = projectMapper.selectById(projectIndex).getReportCount();
+    public double MRR(int reportNum, List<BugReport> bugReportList) {
         if (reportNum == 0){
 //            throw new Err(NO_REPORT);
             return 0.0;
@@ -79,13 +83,11 @@ public class IndicatorEvaluation {
 //        conditions.put("project_index", projectIndex);
 //        List<BugReport> bugReportList = bugReportMapper.selectByMap(conditions);
 
-        for(int i=0; i<reportNum; i++){
-//        for (BugReport bugReport : bugReportList){
-//            int reportIndex = bugReport.getReportIndex();
+        for (BugReport bugReport : bugReportList){
             // 得到正确的文件号列表
-            List<Integer> expected = expectedList.get(i);
+            List<Integer> expected = getExpectedFileIndexes(bugReport);
             // 得到排序好的指定报告对应的所有文件列表
-            List<RankRecord> rankRecordList = rankRecordLists.get(i);
+            List<RankRecord> rankRecordList = bugReport.getRanks();
 
             for(RankRecord rankRecord : rankRecordList){
                 if(expected.contains(rankRecord.getFileIndex())){
@@ -99,9 +101,7 @@ public class IndicatorEvaluation {
     }
 
 
-    public double MAP(int reportNum, List<List<Integer>> expectedList,
-                      List<List<RankRecord>> rankRecordLists) throws Err {
-//        int reportNum = projectMapper.selectById(projectIndex).getReportCount();
+    public double MAP(int reportNum, List<BugReport> bugReportList)  {
         if (reportNum == 0){
 //            throw new Err(NO_REPORT);
             return 0.0;
@@ -111,14 +111,13 @@ public class IndicatorEvaluation {
 //        conditions.put("project_index", projectIndex);
 //        List<BugReport> bugReportList = bugReportMapper.selectByMap(conditions);
 
-        for(int i=0; i<reportNum; i++){
-//        for (BugReport bugReport : bugReportList) {
+        for (BugReport bugReport : bugReportList) {
             double AvgP = 0;
 //            int reportIndex = bugReport.getReportIndex();
             // 得到正确的文件号列表
-            List<Integer> expected = expectedList.get(i);
+            List<Integer> expected = getExpectedFileIndexes(bugReport);
             // 得到排序好的指定报告对应的所有文件列表
-            List<RankRecord> rankRecordList = rankRecordLists.get(i);
+            List<RankRecord> rankRecordList = bugReport.getRanks();
             // 得到排序好的指定报告对应的所有文件id列表
             List<Integer> actual = rankRecordList.stream().map(RankRecord::getFileIndex).collect(Collectors.toList());
             // target用于存放列表actual中所有与缺陷报告相关的源码文件位置集合
@@ -128,9 +127,9 @@ public class IndicatorEvaluation {
                 if (actual.contains(fileIndex)){
                     targetLocation.add(actual.indexOf(fileIndex));
                 }
-                else {
-                    throw new Err(OTHER_ERROR);
-                }
+//                else {
+//                    throw new Err(OTHER_ERROR);
+//                }
             }
             Collections.sort(targetLocation);
             int len = targetLocation.size();
@@ -145,23 +144,23 @@ public class IndicatorEvaluation {
     }
 
 
-//    /**
-//     * 得到正确的文件号列表
-//     * @param reportIndex
-//     * @return
-//     */
-//    private List<Integer> getExpectedFileIndexes(int reportIndex){
-//        List<FixedFile> fixedFileList = fixedFileMapper.selectList(new QueryWrapper<FixedFile>().eq("report_index", reportIndex));
-//        List<Integer> expected = fixedFileList.stream().map(FixedFile::getFileIndex).collect(Collectors.toList());
-//        return expected;
-//    }
-//
+    /**
+     * 得到正确的文件号列表
+     * @param bugReport
+     * @return
+     */
+    private List<Integer> getExpectedFileIndexes(BugReport bugReport){
+        List<FixedFile> fixedFileList = bugReport.getFixedFiles();
+        List<Integer> expected = fixedFileList.stream().map(FixedFile::getFileIndex).collect(Collectors.toList());
+        return expected;
+    }
+
 //    /**
 //     * 得到排序好的指定报告对应的所有文件列表
-//     * @param reportIndex
+//     * @param bugReport
 //     * @return
 //     */
-//    private List<RankRecord> getSortedRankRecordList(int reportIndex){
+//    private List<RankRecord> getSortedRankRecordList(BugReport bugReport){
 //        Map<String, Object> conditions2 = new HashMap<>();
 //        conditions2.put("report_index", reportIndex);
 //        List<RankRecord> rankRecordList = rankRecordMapper.selectByMap(conditions2);
