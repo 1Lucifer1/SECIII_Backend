@@ -14,6 +14,7 @@ public class RankRecord implements Comparable<RankRecord> {
     @TableField(value = "cosine_similarity")
     private double cosineSimilarity;
 
+    public RankRecord(){}
     public RankRecord(int reportIndex, int fileIndex, double cosineSimilarity) {
         this.reportIndex = reportIndex;
         this.fileIndex = fileIndex;

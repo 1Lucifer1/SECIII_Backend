@@ -18,7 +18,7 @@ public class TranslatorTest {
     public void Translator() throws IOException {
         Driver driver = new Driver();
         List<StructuredBugReport> bugReports = driver.preProcessBugReports("SWTBugRepository.xml", 1);
-        System.out.println(bugReports.get(0).getBugReport());
+        System.out.println(bugReports.get(0).getBugReport().getDescription());
         FileTranslator.writeBugReport(bugReports);
 
     }

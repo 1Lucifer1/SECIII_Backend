@@ -11,6 +11,7 @@ public class FixedFile {
     @TableField(value = "file_index")
     private int fileIndex;
 
+    public FixedFile(){}
     public FixedFile(int reportIndex, String filePackageName) {
         this.reportIndex = reportIndex;
         this.filePackageName = filePackageName;
