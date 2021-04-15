@@ -18,7 +18,7 @@ public class IndicatorEvaluation {
     private final static String NO_REPORT = "该项目下没有缺陷报告";
     private final static String OTHER_ERROR = "其他问题";
 
-    public double Top(int reportNum, List<List<Integer>> expectedList,
+    public double Top(Integer K, int reportNum, List<List<Integer>> expectedList,
                       List<List<RankRecord>> rankRecordLists) throws Err {
 //        int reportNum = projectMapper.selectById(projectIndex).getReportCount();
         if (reportNum == 0){
@@ -46,8 +46,13 @@ public class IndicatorEvaluation {
 //                    .eq("report_index", reportIndex);
 //            List<RankRecord> rankRecordList = rankRecordMapper.selectList(queryWrapper);
             List<RankRecord> rankRecordList = rankRecordLists.get(i);
-            for (RankRecord record : rankRecordList) {
-                if(expected.contains(record.getFileIndex())){
+//            for (RankRecord record : rankRecordList) {
+//                if(expected.contains(record.getFileIndex())){
+//                    countOfSuccessLocalization++;
+//                    break;
+//                }
+            for (int j=0; j<K; j++) {
+                if(expected.contains(rankRecordList.get(j).getFileIndex())){
                     countOfSuccessLocalization++;
                     break;
                 }
