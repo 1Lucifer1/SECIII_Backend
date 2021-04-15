@@ -25,7 +25,7 @@ public class BugReport {
     @TableField(exist = false)
     protected List<RankRecord> ranks;
 
-
+    public BugReport(){}
     public BugReport(int projectIndex, int bugId, String openDate, String fixDate, String summary, String description, List<FixedFile> fixedFiles) {
         this.projectIndex = projectIndex;
         this.bugId = bugId;
