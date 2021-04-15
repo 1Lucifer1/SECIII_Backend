@@ -14,7 +14,7 @@ public class StructuredBugReport{
      * 采用装饰模式而非继承，目的在于解耦从xml中读取bugReport的操作
      */
     private BugReport bugReport;
-    private int reportIndex;
+    /*private int reportIndex;
     private int projectIndex;
     private int bugId;
     private String openDate;
@@ -22,7 +22,7 @@ public class StructuredBugReport{
     private String summary;
     private String description;
     List<FixedFile> fixedFiles;
-    List<RankRecord> ranks;
+    List<RankRecord> ranks;*/
 
     public StructuredBugReport(){};
 
