@@ -6,6 +6,7 @@ import team.software.irbl.core.jdt.JavaParser;
 import team.software.irbl.core.nlp.NLP;
 import team.software.irbl.core.xml.XMLParser;
 import team.software.irbl.domain.BugReport;
+import team.software.irbl.domain.CodeFile;
 import team.software.irbl.domain.RankRecord;
 import team.software.irbl.util.Logger;
 import team.software.irbl.util.SavePath;
@@ -55,9 +56,12 @@ public class Driver {
         Driver driver = new Driver();
         List<StructuredCodeFile> codeFiles = driver.preProcessProject("swt-3.1", 1);
         List<StructuredBugReport> bugReports = driver.preProcessBugReports("SWTBugRepository.xml", 1);
+        DBProcessor dbProcessor = new DBProcessor();
+        dbProcessor.saveCodeFiles(codeFiles);
+        dbProcessor.saveBugReports(bugReports);
         try{
             FileTranslator.writeBugReport(bugReports);
-//            FileTranslator.writeCodeFile(codeFiles);
+            FileTranslator.writeCodeFile(codeFiles);
         }catch (IOException e){
 
         }

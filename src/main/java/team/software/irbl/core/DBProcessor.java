@@ -1,5 +1,7 @@
 package team.software.irbl.core;
 
+import team.software.irbl.core.domain.StructuredBugReport;
+import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.CodeFile;
 import team.software.irbl.domain.FixedFile;
@@ -11,7 +13,7 @@ public class DBProcessor {
 
     private ConcurrentHashMap<String, Integer> packageMap = new ConcurrentHashMap<>();
 
-    public void saveCodeFiles(List<CodeFile> codeFiles){
+    public void saveCodeFiles(List<StructuredCodeFile> codeFiles){
         for(int i=0; i<codeFiles.size(); ++i){
             CodeFile codeFile = codeFiles.get(i);
             codeFile.setFileIndex(i);
@@ -19,7 +21,7 @@ public class DBProcessor {
         }
     }
 
-    public void saveBugReports(List<BugReport> bugReports){
+    public void saveBugReports(List<StructuredBugReport> bugReports){
         for(int i=0; i<bugReports.size(); ++i){
             BugReport bugReport = bugReports.get(i);
             bugReport.setReportIndex(i);

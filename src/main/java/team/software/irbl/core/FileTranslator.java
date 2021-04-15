@@ -38,15 +38,17 @@ public class FileTranslator {
     }
     public static void writeCodeFile(List<StructuredCodeFile> obj) throws IOException {
         String path = SavePath.getFilePath()+"codeFile.json";
-        String content="";
-        for(int i=0;i<obj.size();i++){
-            ObjectMapper mapper = new ObjectMapper();
-            String json = mapper.writeValueAsString(obj.get(i));
-            //System.out.println(json);
-            content = content+json+"\r\n";
-        }
+//        String content="";
+//        for(int i=0;i<obj.size();i++){
+//            ObjectMapper mapper = new ObjectMapper();
+//            String json = mapper.writeValueAsString(obj.get(i));
+//            //System.out.println(json);
+//            content = content+json+"\r\n";
+//        }
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(obj);
         FileWriter writer = new FileWriter(path);
-        writer.write(content);
+        writer.write(json);
         writer.close();
     }
     public static List<StructuredBugReport> readBugReport() throws IOException {
