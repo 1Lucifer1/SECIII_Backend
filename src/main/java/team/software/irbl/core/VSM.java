@@ -26,17 +26,16 @@ public class VSM {
 
     private ArrayList<CodeLexicon> codeMaps;
 
-    public List<List<RankRecord>> startRank(List<StructuredBugReport> reportList, List<StructuredCodeFile> codeFileList){
+    public void startRank(List<StructuredBugReport> reportList, List<StructuredCodeFile> codeFileList){
         structuredBugReports = reportList;
         structuredCodeFiles = codeFileList;
         reportMaps = MapTools.getReportWordMap(structuredBugReports);
         codeMaps = MapTools.getCodeWordMap(structuredCodeFiles);
         System.out.println();
-        List<List<RankRecord>> ranks = new ArrayList<>();
+//        List<List<RankRecord>> ranks = new ArrayList<>();
         for(int i = 0; i < structuredBugReports.size();++i){
-            ranks.add(rank(structuredBugReports.get(i), i));
+            structuredBugReports.get(i).setRanks(rank(structuredBugReports.get(i), i));
         }
-        return ranks;
     }
 
     private List<RankRecord> rank(StructuredBugReport structuredBugReport, int reportIndex){

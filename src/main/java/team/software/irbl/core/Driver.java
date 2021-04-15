@@ -63,11 +63,11 @@ public class Driver {
         }
 
         VSM vsm = new VSM();
-        List<List<RankRecord>> ranks  = vsm.startRank(bugReports, codeFiles);
-        ranks.forEach(rankRecords -> {
-            rankRecords.forEach(rank -> {
-                System.out.println(rank.getFileRank() + ": " + rank.getCosineSimilarity());
-            });
-        });
+        vsm.startRank(bugReports, codeFiles);
+//        ranks.forEach(rankRecords -> {
+//            rankRecords.forEach(rank -> {
+//                System.out.println(rank.getFileRank() + ": " + rank.getCosineSimilarity());
+//            });
+//        });
     }
 }
