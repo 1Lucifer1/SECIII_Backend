@@ -104,7 +104,7 @@ public class FileTranslator {
                 br = new BufferedReader(new FileReader(path));
                 String contentLine;
                 while ((contentLine = br.readLine()) != null) {
-                    System.out.println(contentLine);
+                    //System.out.println(contentLine);
                     content = content+contentLine;
                 }
                 //输出数组
@@ -123,10 +123,12 @@ public class FileTranslator {
                 }
             }
         }
-        String[] jsons = content.split("$");
+        System.out.println(content);
+        String[] jsons = content.split("\\$");
         int l = jsons.length;
         List<StructuredBugReport> res = new ArrayList<>();
         //StructuredBugReport[] res = new StructuredBugReport[l];
+        System.out.println(jsons.length);
         for(int i=0;i<l;i++){
             System.out.println(jsons[i]);
             ObjectMapper mapper = new ObjectMapper();
@@ -164,7 +166,7 @@ public class FileTranslator {
                 }
             }
         }
-        String[] jsons = content.split("$");
+        String[] jsons = content.split("\\$");
         int l = jsons.length;
         List<StructuredCodeFile> res = new ArrayList<>();
         for(int i=0;i<l;i++){
