@@ -57,19 +57,46 @@ public class VSM {
         List<String> descriptionWords = structuredBugReport.getDescriptionWords();
         List<String> summaryWords = structuredBugReport.getSummaryWords();
 
+
+        double[][] weight = new double[ReportWordsType.values().length][CodeWordsType.values().length];
+        for(int i = 0; i < weight.length;++i){
+            for (int j = 0; j < weight[0].length;++j){
+                weight[i][j] = 1;
+            }
+        }
+
         ArrayList<Double> summarySimilarity = new ArrayList<>();
-        summarySimilarity.add(getSimilarityInList(summaryWords, ReportWordsType.SUMMARY_WORDS, CodeWordsType.TYPES, reportIndex, codeIndex));
-        summarySimilarity.add(getSimilarityInList(summaryWords, ReportWordsType.SUMMARY_WORDS, CodeWordsType.METHODS, reportIndex, codeIndex));
-        summarySimilarity.add(getSimilarityInList(summaryWords, ReportWordsType.SUMMARY_WORDS, CodeWordsType.FIELDS, reportIndex, codeIndex));
-        summarySimilarity.add(getSimilarityInList(summaryWords, ReportWordsType.SUMMARY_WORDS, CodeWordsType.COMMENTS, reportIndex, codeIndex));
-        summarySimilarity.add(getSimilarityInList(summaryWords, ReportWordsType.SUMMARY_WORDS, CodeWordsType.CONTEXTS, reportIndex, codeIndex));
+        summarySimilarity.add(weight[ReportWordsType.SUMMARY_WORDS.value()][CodeWordsType.TYPES.value()] *
+                getSimilarityInList(summaryWords, ReportWordsType.SUMMARY_WORDS,
+                        CodeWordsType.TYPES, reportIndex, codeIndex));
+
+        summarySimilarity.add(weight[ReportWordsType.SUMMARY_WORDS.value()][CodeWordsType.METHODS.value()] *
+                getSimilarityInList(summaryWords, ReportWordsType.SUMMARY_WORDS, CodeWordsType.METHODS, reportIndex, codeIndex));
+
+        summarySimilarity.add(weight[ReportWordsType.SUMMARY_WORDS.value()][CodeWordsType.FIELDS.value()] *
+                getSimilarityInList(summaryWords, ReportWordsType.SUMMARY_WORDS, CodeWordsType.FIELDS, reportIndex, codeIndex));
+
+        summarySimilarity.add(weight[ReportWordsType.SUMMARY_WORDS.value()][CodeWordsType.COMMENTS.value()] *
+                getSimilarityInList(summaryWords, ReportWordsType.SUMMARY_WORDS, CodeWordsType.COMMENTS, reportIndex, codeIndex));
+
+        summarySimilarity.add(weight[ReportWordsType.SUMMARY_WORDS.value()][CodeWordsType.CONTEXTS.value()] *
+                getSimilarityInList(summaryWords, ReportWordsType.SUMMARY_WORDS, CodeWordsType.CONTEXTS, reportIndex, codeIndex));
 
         ArrayList<Double> descriptionSimilarity = new ArrayList<>();
-        descriptionSimilarity.add(getSimilarityInList(descriptionWords, ReportWordsType.DESCRIPTION_WORDS, CodeWordsType.TYPES, reportIndex, codeIndex));
-        descriptionSimilarity.add(getSimilarityInList(descriptionWords, ReportWordsType.DESCRIPTION_WORDS, CodeWordsType.METHODS, reportIndex, codeIndex));
-        descriptionSimilarity.add(getSimilarityInList(descriptionWords, ReportWordsType.DESCRIPTION_WORDS, CodeWordsType.FIELDS, reportIndex, codeIndex));
-        descriptionSimilarity.add(getSimilarityInList(descriptionWords, ReportWordsType.DESCRIPTION_WORDS, CodeWordsType.COMMENTS, reportIndex, codeIndex));
-        descriptionSimilarity.add(getSimilarityInList(descriptionWords, ReportWordsType.DESCRIPTION_WORDS, CodeWordsType.CONTEXTS, reportIndex, codeIndex));
+        descriptionSimilarity.add(weight[ReportWordsType.DESCRIPTION_WORDS.value()][CodeWordsType.TYPES.value()] *
+                getSimilarityInList(descriptionWords, ReportWordsType.DESCRIPTION_WORDS, CodeWordsType.TYPES, reportIndex, codeIndex));
+
+        descriptionSimilarity.add(weight[ReportWordsType.DESCRIPTION_WORDS.value()][CodeWordsType.METHODS.value()] *
+                getSimilarityInList(descriptionWords, ReportWordsType.DESCRIPTION_WORDS, CodeWordsType.METHODS, reportIndex, codeIndex));
+
+        descriptionSimilarity.add(weight[ReportWordsType.DESCRIPTION_WORDS.value()][CodeWordsType.FIELDS.value()] *
+                getSimilarityInList(descriptionWords, ReportWordsType.DESCRIPTION_WORDS, CodeWordsType.FIELDS, reportIndex, codeIndex));
+
+        descriptionSimilarity.add(weight[ReportWordsType.DESCRIPTION_WORDS.value()][CodeWordsType.COMMENTS.value()] *
+                getSimilarityInList(descriptionWords, ReportWordsType.DESCRIPTION_WORDS, CodeWordsType.COMMENTS, reportIndex, codeIndex));
+
+        descriptionSimilarity.add(weight[ReportWordsType.DESCRIPTION_WORDS.value()][CodeWordsType.CONTEXTS.value()] *
+                getSimilarityInList(descriptionWords, ReportWordsType.DESCRIPTION_WORDS, CodeWordsType.CONTEXTS, reportIndex, codeIndex));
 
         double res = 0;
         for (Double num : summarySimilarity) {
