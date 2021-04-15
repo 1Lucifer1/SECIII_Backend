@@ -34,6 +34,7 @@ public class TranslatorTest {
         for(int i=0;i<res.size();i++){
             System.out.println(res.get(i).getDescriptionWords());
         }
+        //System.out.println(0);
     }
     @Test
     public void reCFTranslator() throws IOException {
