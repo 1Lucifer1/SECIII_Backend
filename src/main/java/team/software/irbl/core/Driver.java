@@ -8,6 +8,7 @@ import team.software.irbl.core.xml.XMLParser;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.CodeFile;
 import team.software.irbl.domain.RankRecord;
+import team.software.irbl.dto.project.Indicator;
 import team.software.irbl.util.Logger;
 import team.software.irbl.util.SavePath;
 
@@ -88,6 +89,10 @@ public class Driver {
                 Logger.devLog("  " + record.getFileIndex() + " : " + record.getFileRank() + " , " +record.getCosineSimilarity());
             }
         }
+
+        IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();
+        Indicator indicator = indicatorEvaluation.getEvaluationIndicator(bugReports);
+        System.out.println(indicator.getTop1());
 //        ranks.forEach(rankRecords -> {
 //            rankRecords.forEach(rank -> {
 //                System.out.println(rank.getFileRank() + ": " + rank.getCosineSimilarity());
