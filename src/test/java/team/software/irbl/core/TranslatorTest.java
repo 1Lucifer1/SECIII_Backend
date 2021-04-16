@@ -13,7 +13,7 @@ import java.util.List;
 
 public class TranslatorTest {
     @Test
-    public void Translator() throws IOException {
+    public void writeBugReportTest() throws IOException {
         List<FixedFile> fixedFiles = new ArrayList<>();
         fixedFiles.add(new FixedFile(-1, "org.eclipse.swt.widgets.Button.java"));
         fixedFiles.add(new FixedFile(-1, "org.eclipse.swt.widgets.ToolItem.java"));
@@ -42,7 +42,7 @@ public class TranslatorTest {
 
     }
     @Test
-    public void codeFileTranslator() throws IOException {
+    public void writeCodeFileTest() throws IOException {
         String content;
         List<StructuredCodeFile> codeFiles;
         content = "package team.software.irbl.core.test;\r\n" +
@@ -106,7 +106,7 @@ public class TranslatorTest {
         FileTranslator.writeCodeFile(codeFiles,"/test/codeFile.json");
     }
     @Test
-    public void reTranslator() throws IOException {
+    public void readBugReportTest() throws IOException {
         List<StructuredBugReport> res = FileTranslator.readBugReport("/test/bugReportFile.json");
         if(res!=null){
             for(int i=0;i<res.size();i++){
@@ -116,7 +116,7 @@ public class TranslatorTest {
         //System.out.println(0);
     }
     @Test
-    public void reCFTranslator() throws IOException {
+    public void readCodeFileTest() throws IOException {
         List<StructuredCodeFile> res = FileTranslator.readCodeFile("/test/codeFile.json");
         if(res!=null){
             for(int i=0;i<res.size();i++){
