@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Comparator;
 
-@Component
+
 public class VSM {
 
     private List<StructuredBugReport> structuredBugReports;

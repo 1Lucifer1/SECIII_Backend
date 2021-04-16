@@ -1,10 +1,13 @@
 package team.software.irbl.core;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import team.software.irbl.core.domain.StructuredBugReport;
 import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.core.jdt.JavaParser;
 import team.software.irbl.core.nlp.NLP;
 import team.software.irbl.core.store.DBProcessor;
+import team.software.irbl.core.store.DBProcessorFake;
 import team.software.irbl.core.store.FileTranslator;
 import team.software.irbl.core.vsm.VSM;
 import team.software.irbl.core.store.XMLParser;
@@ -19,16 +22,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class Driver {
 
     private boolean hasPreprocess;
+
+    private  DBProcessor dbProcessor;
+
+    @Autowired
+    public Driver(DBProcessor dbProcessor){
+        this.dbProcessor = dbProcessor;
+    }
 
     public void setHasPreprocess(boolean hasPreprocess) {
         this.hasPreprocess = hasPreprocess;
     }
 
     public void startLocalRank(){
-        DBProcessor dbProcessor = new DBProcessor();
         Project project = new Project("swt-3.1");
         dbProcessor.saveProject(project);
         List<StructuredCodeFile> codeFiles = null;
@@ -58,12 +68,15 @@ public class Driver {
 
         VSM vsm = new VSM();
         vsm.startRank(bugReports, codeFiles);
+        List<RankRecord> records = new ArrayList<>();
         for(BugReport bugReport: bugReports){
             Logger.devLog("" + bugReport.getReportIndex());
             for(RankRecord record: bugReport.getRanks()){
+                records.add(record);
                 Logger.devLog("  " + record.getFileIndex() + " : " + record.getFileRank() + " , " +record.getCosineSimilarity());
             }
         }
+        dbProcessor.saveRankRecord(records);
     }
 
     private List<StructuredCodeFile> preProcessProject(String projectName, int projectIndex){
@@ -102,14 +115,14 @@ public class Driver {
     }
 
     public static void main(String[] args) {
-        Driver driver = new Driver();
+        Driver driver = new Driver(new DBProcessorFake());
         boolean hasPreprocess = true;
         List<StructuredCodeFile> codeFiles = null;
         List<StructuredBugReport> bugReports = null;
         if(!hasPreprocess) {
             codeFiles = driver.preProcessProject("swt-3.1", 1);
             bugReports = driver.preProcessBugReports("SWTBugRepository.xml", 1);
-            DBProcessor dbProcessor = new DBProcessor();
+            DBProcessorFake dbProcessor = new DBProcessorFake();
             dbProcessor.saveCodeFiles(codeFiles);
             dbProcessor.saveBugReports(bugReports);
             try {
