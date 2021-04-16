@@ -16,8 +16,8 @@ public class DBProcessorFake implements DBProcessor {
     public int saveCodeFiles(List<CodeFile> codeFiles){
         for(int i=0; i<codeFiles.size(); ++i){
             CodeFile codeFile = codeFiles.get(i);
-            codeFile.setFileIndex(i);
-            packageMap.put(codeFile.getPackageName(), i);
+            codeFile.setFileIndex(i+1);
+            packageMap.put(codeFile.getPackageName(), i+1);
         }
         return codeFiles.size();
     }
@@ -27,9 +27,9 @@ public class DBProcessorFake implements DBProcessor {
         List<FixedFile> fixedFiles = new ArrayList<>();
         for(int i=0; i<bugReports.size(); ++i){
             BugReport bugReport = bugReports.get(i);
-            bugReport.setReportIndex(i);
+            bugReport.setReportIndex(i+1);
             for(FixedFile fixedFile: bugReport.getFixedFiles()){
-                fixedFile.setReportIndex(i);
+                fixedFile.setReportIndex(bugReport.getReportIndex());
                 fixedFile.setFileIndex(packageMap.get(fixedFile.getFilePackageName()));
                 fixedFiles.add(fixedFile);
             }
@@ -41,14 +41,14 @@ public class DBProcessorFake implements DBProcessor {
     @Override
     public int saveFixedFiles(List<FixedFile> fixedFiles){
         for(int i=0; i<fixedFiles.size(); ++i){
-            fixedFiles.get(i).setId(i);
+            fixedFiles.get(i).setId(i+1);
         }
         return fixedFiles.size();
     }
 
     @Override
     public int saveProject(Project project){
-        project.setProjectIndex(1);
+        project.setProjectIndex(2);
         return 1;
     }
 

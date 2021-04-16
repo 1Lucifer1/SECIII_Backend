@@ -39,18 +39,15 @@ public class Driver {
     }
 
     public void startLocalRank(){
+        Project project = new Project("swt-3.1");
+        dbProcessor.saveProject(project);
         List<StructuredCodeFile> codeFiles = null;
         List<StructuredBugReport> bugReports = null;
         if(!hasPreprocess) {
-            Project project = new Project("swt-3.1");
-            dbProcessor.saveProject(project);
             codeFiles = preProcessProject("swt-3.1", project.getProjectIndex());
             bugReports = preProcessBugReports("SWTBugRepository.xml", project.getProjectIndex());
             dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
             dbProcessor.saveBugReports(new ArrayList<>(bugReports));
-            project.setCodeFileCount(codeFiles.size());
-            project.setReportCount(bugReports.size());
-            dbProcessor.updateProject(project);
             try {
                 FileTranslator.writeBugReport(bugReports,"bugReportFile.json");
                 FileTranslator.writeCodeFile(codeFiles,"codeFile.json");
@@ -63,11 +60,16 @@ public class Driver {
             try {
                 bugReports = FileTranslator.readBugReport("bugReportFile.json");
                 codeFiles = FileTranslator.readCodeFile("codeFile.json");
+                dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
+                dbProcessor.saveBugReports(new ArrayList<>(bugReports));
             } catch (IOException e) {
                 e.printStackTrace();
                 Logger.errorLog("Reading json file failed.");
             }
         }
+        project.setCodeFileCount(codeFiles.size());
+        project.setReportCount(bugReports.size());
+        dbProcessor.updateProject(project);
 
         VSM vsm = new VSM();
         vsm.startRank(bugReports, codeFiles);
@@ -123,8 +125,8 @@ public class Driver {
         List<StructuredCodeFile> codeFiles = null;
         List<StructuredBugReport> bugReports = null;
         if(!hasPreprocess) {
-            codeFiles = driver.preProcessProject("swt-3.1", 1);
-            bugReports = driver.preProcessBugReports("SWTBugRepository.xml", 1);
+            codeFiles = driver.preProcessProject("swt-3.1", 2);
+            bugReports = driver.preProcessBugReports("SWTBugRepository.xml", 2);
             DBProcessorFake dbProcessor = new DBProcessorFake();
             dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
             dbProcessor.saveBugReports(new ArrayList<>(bugReports));
