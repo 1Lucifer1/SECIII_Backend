@@ -37,6 +37,9 @@ public class NLP {
 
     // 注意：有两处决定是否最终都转换成小写的地方
     public static List<String> standfordNLP(String text, boolean isFormatted){
+//        if(text == null){
+//            return null;
+//        }
         // 发现this.a() 之类的处理不了，直接replace
         text = text.replace(".", " ");
 
@@ -66,6 +69,10 @@ public class NLP {
         List<CoreLabel> tokens = document.get(CoreAnnotations.TokensAnnotation.class);
         for (CoreLabel token: tokens) {
             String originalWord = token.get(CoreAnnotations.LemmaAnnotation.class);  // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
+
+//            if (originalWord == null){
+//                continue;
+//            }
 
             //get the stopword annotation
             Pair<Boolean, Boolean> stopword = token.get(StopwordAnnotator.class);
