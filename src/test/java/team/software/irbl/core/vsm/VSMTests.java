@@ -1,4 +1,4 @@
-package team.software.irbl.core;
+package team.software.irbl.core.vsm;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;

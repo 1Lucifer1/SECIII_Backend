@@ -39,15 +39,18 @@ public class Driver {
     }
 
     public void startLocalRank(){
-        Project project = new Project("swt-3.1");
-        dbProcessor.saveProject(project);
         List<StructuredCodeFile> codeFiles = null;
         List<StructuredBugReport> bugReports = null;
         if(!hasPreprocess) {
+            Project project = new Project("swt-3.1");
+            dbProcessor.saveProject(project);
             codeFiles = preProcessProject("swt-3.1", project.getProjectIndex());
             bugReports = preProcessBugReports("SWTBugRepository.xml", project.getProjectIndex());
-            dbProcessor.saveCodeFiles(codeFiles);
-            dbProcessor.saveBugReports(bugReports);
+            dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
+            dbProcessor.saveBugReports(new ArrayList<>(bugReports));
+            project.setCodeFileCount(codeFiles.size());
+            project.setReportCount(bugReports.size());
+            dbProcessor.updateProject(project);
             try {
                 FileTranslator.writeBugReport(bugReports,"bugReportFile.json");
                 FileTranslator.writeCodeFile(codeFiles,"codeFile.json");
@@ -116,15 +119,15 @@ public class Driver {
 
     public static void main(String[] args) {
         Driver driver = new Driver(new DBProcessorFake());
-        boolean hasPreprocess = true;
+        boolean hasPreprocess = false;
         List<StructuredCodeFile> codeFiles = null;
         List<StructuredBugReport> bugReports = null;
         if(!hasPreprocess) {
             codeFiles = driver.preProcessProject("swt-3.1", 1);
             bugReports = driver.preProcessBugReports("SWTBugRepository.xml", 1);
             DBProcessorFake dbProcessor = new DBProcessorFake();
-            dbProcessor.saveCodeFiles(codeFiles);
-            dbProcessor.saveBugReports(bugReports);
+            dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
+            dbProcessor.saveBugReports(new ArrayList<>(bugReports));
             try {
                 FileTranslator.writeBugReport(bugReports,"bugReportFile.json");
                 FileTranslator.writeCodeFile(codeFiles,"codeFile.json");
@@ -152,7 +155,7 @@ public class Driver {
         }
 
         IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();
-        Indicator indicator = indicatorEvaluation.getEvaluationIndicator(bugReports);
+        Indicator indicator = indicatorEvaluation.getEvaluationIndicator(new ArrayList<>(bugReports));
         System.out.println(indicator.getTop1());
         System.out.println(indicator.getTop5());
         System.out.println(indicator.getTop10());

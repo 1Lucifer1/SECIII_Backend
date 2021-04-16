@@ -1,4 +1,4 @@
-package team.software.irbl.core.xml;
+package team.software.irbl.core.store;
 
 import org.junit.Before;
 import org.junit.Test;
