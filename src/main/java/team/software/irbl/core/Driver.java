@@ -93,6 +93,10 @@ public class Driver {
         IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();
         Indicator indicator = indicatorEvaluation.getEvaluationIndicator(bugReports);
         System.out.println(indicator.getTop1());
+        System.out.println(indicator.getTop5());
+        System.out.println(indicator.getTop10());
+        System.out.println(indicator.getMRR());
+        System.out.println(indicator.getMAP());
 //        ranks.forEach(rankRecords -> {
 //            rankRecords.forEach(rank -> {
 //                System.out.println(rank.getFileRank() + ": " + rank.getCosineSimilarity());
