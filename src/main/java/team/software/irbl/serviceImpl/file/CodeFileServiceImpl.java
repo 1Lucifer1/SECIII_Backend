@@ -8,6 +8,7 @@ import team.software.irbl.domain.RankRecord;
 import team.software.irbl.dto.file.File;
 import team.software.irbl.dto.file.FileContent;
 import team.software.irbl.mapper.CodeFileMapper;
+import team.software.irbl.mapper.ProjectMapper;
 import team.software.irbl.mapper.RankRecordMapper;
 import team.software.irbl.service.file.CodeFileService;
 import team.software.irbl.util.Err;
@@ -23,6 +24,8 @@ public class CodeFileServiceImpl implements CodeFileService {
     private CodeFileMapper codeFileMapper;
     @Autowired
     private RankRecordMapper rankRecordMapper;
+    @Autowired
+    private ProjectMapper projectMapper;
 
     private final static String FILE_NOTFOUND = "文件不存在";
     private final static String OTHER_ERROR = "其他问题";
@@ -30,7 +33,7 @@ public class CodeFileServiceImpl implements CodeFileService {
     @Override
     public FileContent readFile(Integer fileIndex) throws Err {
         CodeFile codeFile = codeFileMapper.selectById(fileIndex);
-        String path = SavePath.getAbsolutePath(codeFile.getFilePath());
+        String path = SavePath.getAbsolutePath(projectMapper.selectById(codeFile.getProjectIndex()).getProjectName()+"/"+codeFile.getFilePath());
         FileContent content = new FileContent();
         BeanUtils.copyProperties(codeFile,content);
         try {
