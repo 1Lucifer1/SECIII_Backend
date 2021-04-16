@@ -20,7 +20,7 @@ public class IndicatorEvaluation {
     private final static String NO_REPORT = "该项目下没有缺陷报告";
     private final static String OTHER_ERROR = "其他问题";
 
-    public Indicator getEvaluationIndicator(List<StructuredBugReport> bugReportList) {
+    public Indicator getEvaluationIndicator(List<BugReport> bugReportList) {
         int reportNum = bugReportList.size();
 
         Indicator indicator = new Indicator();
@@ -33,7 +33,7 @@ public class IndicatorEvaluation {
         return indicator;
     }
 
-    public double Top(Integer K, int reportNum, List<StructuredBugReport> bugReportList) {
+    public double Top(Integer K, int reportNum, List<BugReport> bugReportList) {
         if (reportNum == 0){
 //            throw new Err(NO_REPORT);
             return 0.0;
@@ -74,7 +74,7 @@ public class IndicatorEvaluation {
     }
 
 
-    public double MRR(int reportNum, List<StructuredBugReport> bugReportList) {
+    public double MRR(int reportNum, List<BugReport> bugReportList) {
         if (reportNum == 0){
 //            throw new Err(NO_REPORT);
             return 0.0;
@@ -102,7 +102,7 @@ public class IndicatorEvaluation {
     }
 
 
-    public double MAP(int reportNum, List<StructuredBugReport> bugReportList)  {
+    public double MAP(int reportNum, List<BugReport> bugReportList)  {
         if (reportNum == 0){
 //            throw new Err(NO_REPORT);
             return 0.0;
