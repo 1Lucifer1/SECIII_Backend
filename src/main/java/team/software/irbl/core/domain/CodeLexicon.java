@@ -1,6 +1,6 @@
 package team.software.irbl.core.domain;
 
-import team.software.irbl.core.utils.Calculate;
+import team.software.irbl.core.vsm.Calculate;
 import team.software.irbl.domain.ProjectWord;
 
 import java.util.concurrent.ConcurrentHashMap;

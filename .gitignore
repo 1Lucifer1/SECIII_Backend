@@ -33,3 +33,6 @@ build/
 .vscode/
 
 application-dev.yml
+
+### output file
+IRBL/data/file/

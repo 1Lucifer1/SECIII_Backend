@@ -7,9 +7,7 @@ public class Logger {
     }
 
     public static void devLog(String info){
-        if(info.contains("Doc") || info.contains("comment")) {
-            System.out.println("DevLog: " + info);
-        }
+        System.out.println("DevLog: " + info);
     }
 
     public static void debugLog(String info){

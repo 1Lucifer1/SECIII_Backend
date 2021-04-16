@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import team.software.irbl.core.VSM;
+import team.software.irbl.core.vsm.VSM;
 
 @MapperScan("team.software.irbl.mapper")
 @SpringBootApplication

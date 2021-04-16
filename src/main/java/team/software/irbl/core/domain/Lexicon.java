@@ -1,8 +1,7 @@
 package team.software.irbl.core.domain;
 
-import team.software.irbl.core.utils.Calculate;
+import team.software.irbl.core.vsm.Calculate;
 import team.software.irbl.domain.FileWord;
-import team.software.irbl.domain.ProjectWord;
 import team.software.irbl.enums.WordType;
 
 import java.util.ArrayList;
