@@ -1,4 +1,4 @@
-package team.software.irbl.core.utils;
+package team.software.irbl.core.vsm;
 
 import team.software.irbl.core.domain.CodeLexicon;
 import team.software.irbl.core.domain.Lexicon;

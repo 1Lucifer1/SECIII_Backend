@@ -2,15 +2,10 @@ package team.software.irbl.core;
 import org.junit.Test;
 import team.software.irbl.core.domain.StructuredBugReport;
 //import team.software.irbl.core.domain.Driver;
-import team.software.irbl.core.FileTranslator;
+import team.software.irbl.core.store.FileTranslator;
 import team.software.irbl.core.domain.StructuredCodeFile;
-import team.software.irbl.core.nlp.NLP;
-import team.software.irbl.core.xml.XMLParser;
-import team.software.irbl.domain.BugReport;
-import team.software.irbl.util.SavePath;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TranslatorTest {

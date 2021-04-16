@@ -2,6 +2,7 @@ package team.software.irbl.core.xml;
 
 import org.junit.Before;
 import org.junit.Test;
+import team.software.irbl.core.store.XMLParser;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.FixedFile;
 

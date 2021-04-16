@@ -1,4 +1,4 @@
-package team.software.irbl.core;
+package team.software.irbl.core.store;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;

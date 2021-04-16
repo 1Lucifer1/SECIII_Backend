@@ -4,9 +4,12 @@ import team.software.irbl.core.domain.StructuredBugReport;
 import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.core.jdt.JavaParser;
 import team.software.irbl.core.nlp.NLP;
-import team.software.irbl.core.xml.XMLParser;
+import team.software.irbl.core.store.DBProcessor;
+import team.software.irbl.core.store.FileTranslator;
+import team.software.irbl.core.vsm.VSM;
+import team.software.irbl.core.store.XMLParser;
 import team.software.irbl.domain.BugReport;
-import team.software.irbl.domain.CodeFile;
+import team.software.irbl.domain.Project;
 import team.software.irbl.domain.RankRecord;
 import team.software.irbl.util.Logger;
 import team.software.irbl.util.SavePath;
@@ -17,7 +20,52 @@ import java.util.List;
 
 public class Driver {
 
-    public List<StructuredCodeFile> preProcessProject(String projectName, int projectIndex){
+    private boolean hasPreprocess;
+
+    public void setHasPreprocess(boolean hasPreprocess) {
+        this.hasPreprocess = hasPreprocess;
+    }
+
+    public void startLocalRank(){
+        DBProcessor dbProcessor = new DBProcessor();
+        Project project = new Project("swt-3.1");
+        dbProcessor.saveProject(project);
+        List<StructuredCodeFile> codeFiles = null;
+        List<StructuredBugReport> bugReports = null;
+        if(!hasPreprocess) {
+            codeFiles = preProcessProject("swt-3.1", project.getProjectIndex());
+            bugReports = preProcessBugReports("SWTBugRepository.xml", project.getProjectIndex());
+            dbProcessor.saveCodeFiles(codeFiles);
+            dbProcessor.saveBugReports(bugReports);
+            try {
+                FileTranslator.writeBugReport(bugReports);
+                FileTranslator.writeCodeFile(codeFiles);
+                hasPreprocess = true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                Logger.errorLog("Saving json file failed.");
+            }
+        }else {
+            try {
+                bugReports = FileTranslator.readBugReport();
+                codeFiles = FileTranslator.readCodeFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Logger.errorLog("Reading json file failed.");
+            }
+        }
+
+        VSM vsm = new VSM();
+        vsm.startRank(bugReports, codeFiles);
+        for(BugReport bugReport: bugReports){
+            Logger.devLog("" + bugReport.getReportIndex());
+            for(RankRecord record: bugReport.getRanks()){
+                Logger.devLog("  " + record.getFileIndex() + " : " + record.getFileRank() + " , " +record.getCosineSimilarity());
+            }
+        }
+    }
+
+    private List<StructuredCodeFile> preProcessProject(String projectName, int projectIndex){
         String dirPath = SavePath.getAbsolutePath(projectName) + "/";
         List<StructuredCodeFile> codeFiles = JavaParser.parseCodeFilesInDir(dirPath, projectIndex);
 
@@ -33,7 +81,7 @@ public class Driver {
         return codeFiles;
     }
 
-    public List<StructuredBugReport> preProcessBugReports(String bugReportFile, int projectIndex){
+    private List<StructuredBugReport> preProcessBugReports(String bugReportFile, int projectIndex){
         String filePath = SavePath.getAbsolutePath(bugReportFile);
         List<BugReport> rawReports =XMLParser.getBugReportsFromXML(filePath, projectIndex);
         if(rawReports == null){
