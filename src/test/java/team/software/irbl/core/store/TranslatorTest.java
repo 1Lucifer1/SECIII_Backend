@@ -1,4 +1,4 @@
-package team.software.irbl.core;
+package team.software.irbl.core.store;
 import org.junit.Test;
 import team.software.irbl.core.domain.StructuredBugReport;
 //import team.software.irbl.core.domain.Driver;
