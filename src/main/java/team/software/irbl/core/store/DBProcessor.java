@@ -13,5 +13,7 @@ public interface DBProcessor {
 
     public int saveProject(Project project);
 
+    public int updateProject(Project project);
+
     public int saveRankRecord(List<RankRecord> records);
 }

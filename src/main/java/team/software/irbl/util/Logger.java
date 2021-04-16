@@ -7,7 +7,7 @@ public class Logger {
     }
 
     public static void devLog(String info){
-        System.out.println("DevLog: " + info);
+        //System.out.println("DevLog: " + info);
     }
 
     public static void debugLog(String info){

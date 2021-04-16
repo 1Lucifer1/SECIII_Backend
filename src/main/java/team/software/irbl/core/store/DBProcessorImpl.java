@@ -9,6 +9,7 @@ import team.software.irbl.mapper.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class DBProcessorImpl implements DBProcessor {
@@ -35,12 +36,26 @@ public class DBProcessorImpl implements DBProcessor {
 
     @Override
     public int saveBugReports(List<BugReport> bugReports) {
-        int res = saveBugReports(bugReports);
-        List<CodeFile> codeFiles = codeFileMapper.selectList(new QueryWrapper<>());
+        int res = bugReportMapper.insertOrUpdateBatch(bugReports);
+        List<CodeFile> codeFiles = codeFileMapper.selectList(new QueryWrapper<CodeFile>().eq("project_index", bugReports.get(0).getProjectIndex()));
+        ConcurrentHashMap<String, Integer> packageNameMap = new ConcurrentHashMap<>();
+        for(CodeFile codeFile : codeFiles){
+            packageNameMap.put(codeFile.getPackageName(), codeFile.getFileIndex());
+        }
         List<FixedFile> fixedFiles = new ArrayList<>();
         for(BugReport bugReport : bugReports){
-
+            for(FixedFile fixedFile: bugReport.getFixedFiles()){
+                fixedFile.setReportIndex(bugReport.getReportIndex());
+                if(packageNameMap.containsKey(fixedFile.getFilePackageName())) {
+                    fixedFile.setFileIndex(packageNameMap.get(fixedFile.getFilePackageName()));
+                }else {
+                    System.out.println(fixedFile.getId());
+                    System.out.println(fixedFile.getFilePackageName());
+                }
+                fixedFiles.add(fixedFile);
+            }
         }
+        saveFixedFiles(fixedFiles);
         return res;
     }
 
@@ -52,6 +67,11 @@ public class DBProcessorImpl implements DBProcessor {
     @Override
     public int saveProject(Project project) {
         return projectMapper.insert(project);
+    }
+
+    @Override
+    public int updateProject(Project project) {
+        return projectMapper.updateById(project);
     }
 
     @Override

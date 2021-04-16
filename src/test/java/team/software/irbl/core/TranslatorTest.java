@@ -11,17 +11,17 @@ import java.util.List;
 public class TranslatorTest {
     @Test
     public void Translator() throws IOException {
-        Driver driver = new Driver();
-        List<StructuredBugReport> bugReports = driver.preProcessBugReports("SWTBugRepository.xml", 1);
-        System.out.println(bugReports.get(0).getDescription());
-        FileTranslator.writeBugReport(bugReports);
+//        Driver driver = new Driver();
+//        List<StructuredBugReport> bugReports = driver.preProcessBugReports("SWTBugRepository.xml", 1);
+//        System.out.println(bugReports.get(0).getDescription());
+//        FileTranslator.writeBugReport(bugReports);
 
     }
     @Test
     public void codeFileTranslator() throws IOException {
-        Driver driver = new Driver();
-        List<StructuredCodeFile> codeFiles = driver.preProcessProject("swt-3.1", 1);
-        FileTranslator.writeCodeFile(codeFiles);
+//        Driver driver = new Driver();
+//        List<StructuredCodeFile> codeFiles = driver.preProcessProject("swt-3.1", 1);
+//        FileTranslator.writeCodeFile(codeFiles);
     }
     @Test
     public void reTranslator() throws IOException {

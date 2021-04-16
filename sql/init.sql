@@ -21,13 +21,13 @@ CREATE TABLE `code_file` (
                              file_name           varchar(255) NOT NULL ,
                              project_index       int(11) unsigned NOT NULL ,
                              file_path           varchar(1023) NOT NULL ,
-                             word_count          int(32) unsigned DEFAULT 0
+                             package_name       varchar(1023) NOT NULL
 )ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 BEGIN;
-INSERT INTO `code_file` VALUES (1, 'test1.java', 1, 'test/test1.java', 10),
-                               (2, 'test2.java', 1, 'test/test2.java', 10),
-                               (3, 'ACC.java', 1, 'swt-3.1/src/org/eclipse/swt/accessibility/ACC.java', 247);
+INSERT INTO `code_file` VALUES (1, 'test1.java', 1, 'test/test1.java', 'test.test1.java'),
+                               (2, 'test2.java', 1, 'test/test2.java', 'test.test2.java'),
+                               (3, 'ACC.java', 1, 'swt-3.1/src/org/eclipse/swt/accessibility/ACC.java', 'ACC.java');
 
 DROP TABLE IF EXISTS `project_word`;
 CREATE TABLE `project_word` (
@@ -62,21 +62,21 @@ CREATE TABLE `bug_report`(
     bug_id              int(32) unsigned NOT NULL ,
     open_date           varchar(32) NOT NULL ,
     fix_date            varchar(32),
-    summary             varchar(255),
-    word_count          int(32) unsigned DEFAULT 0
+    summary             varchar(255)
 )ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 BEGIN;
-INSERT INTO `bug_report` VALUES (1, 1, 1000, '2020-11-12 08:40:00', '2020-12-12 08:40:00', 'test bug report', 10);
+INSERT INTO `bug_report` VALUES (1, 1, 1000, '2020-11-12 08:40:00', '2020-12-12 08:40:00', 'test bug report');
 COMMIT;
 
 DROP TABLE IF EXISTS `fixed_file`;
 CREATE TABLE `fixed_file`(
     id                  int(32) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY ,
     report_index        int(32) unsigned NOT NULL ,
-    file_index          int(32) unsigned NOT NULL
+    file_index          int(32) unsigned NOT NULL ,
+    file_package_name   varchar(1023) NOT NULL
 )ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 BEGIN;
-INSERT INTO `fixed_file` VALUES (1, 1, 1);
+INSERT INTO `fixed_file` VALUES (1, 1, 1, 'test.test1.java');
 COMMIT;
 
 DROP TABLE  IF EXISTS `rank_record`;

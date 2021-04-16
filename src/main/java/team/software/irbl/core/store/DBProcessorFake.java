@@ -53,6 +53,11 @@ public class DBProcessorFake implements DBProcessor {
     }
 
     @Override
+    public int updateProject(Project project) {
+        return 1;
+    }
+
+    @Override
     public int saveRankRecord(List<RankRecord> records) {
         return records.size();
     }

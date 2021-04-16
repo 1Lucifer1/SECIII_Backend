@@ -1,4 +1,4 @@
-package team.software.irbl.core;
+package team.software.irbl.core.nlp;
 
 import org.junit.Test;
 import team.software.irbl.core.nlp.NLP;
