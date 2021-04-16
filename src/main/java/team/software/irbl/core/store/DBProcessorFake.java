@@ -13,7 +13,7 @@ public class DBProcessorFake implements DBProcessor {
     private ConcurrentHashMap<String, Integer> packageMap = new ConcurrentHashMap<>();
 
     @Override
-    public int saveCodeFiles(List<StructuredCodeFile> codeFiles){
+    public int saveCodeFiles(List<CodeFile> codeFiles){
         for(int i=0; i<codeFiles.size(); ++i){
             CodeFile codeFile = codeFiles.get(i);
             codeFile.setFileIndex(i);
@@ -23,7 +23,7 @@ public class DBProcessorFake implements DBProcessor {
     }
 
     @Override
-    public int saveBugReports(List<StructuredBugReport> bugReports){
+    public int saveBugReports(List<BugReport> bugReports){
         List<FixedFile> fixedFiles = new ArrayList<>();
         for(int i=0; i<bugReports.size(); ++i){
             BugReport bugReport = bugReports.get(i);

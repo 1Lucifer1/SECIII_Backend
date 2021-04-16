@@ -46,8 +46,8 @@ public class Driver {
         if(!hasPreprocess) {
             codeFiles = preProcessProject("swt-3.1", project.getProjectIndex());
             bugReports = preProcessBugReports("SWTBugRepository.xml", project.getProjectIndex());
-            dbProcessor.saveCodeFiles(codeFiles);
-            dbProcessor.saveBugReports(bugReports);
+            dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
+            dbProcessor.saveBugReports(new ArrayList<>(bugReports));
             try {
                 FileTranslator.writeBugReport(bugReports);
                 FileTranslator.writeCodeFile(codeFiles);
@@ -123,8 +123,8 @@ public class Driver {
             codeFiles = driver.preProcessProject("swt-3.1", 1);
             bugReports = driver.preProcessBugReports("SWTBugRepository.xml", 1);
             DBProcessorFake dbProcessor = new DBProcessorFake();
-            dbProcessor.saveCodeFiles(codeFiles);
-            dbProcessor.saveBugReports(bugReports);
+            dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
+            dbProcessor.saveBugReports(new ArrayList<>(bugReports));
             try {
                 FileTranslator.writeBugReport(bugReports);
                 FileTranslator.writeCodeFile(codeFiles);
