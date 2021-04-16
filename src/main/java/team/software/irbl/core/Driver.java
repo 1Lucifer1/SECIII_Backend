@@ -152,7 +152,7 @@ public class Driver {
         }
 
         IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();
-        Indicator indicator = indicatorEvaluation.getEvaluationIndicator(bugReports);
+        Indicator indicator = indicatorEvaluation.getEvaluationIndicator(new ArrayList<>(bugReports));
         System.out.println(indicator.getTop1());
         System.out.println(indicator.getTop5());
         System.out.println(indicator.getTop10());
