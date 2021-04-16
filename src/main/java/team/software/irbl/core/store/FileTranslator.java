@@ -33,6 +33,7 @@ public class FileTranslator {
     public static List<StructuredBugReport> readBugReport(String lastPath) throws IOException {
         String path = SavePath.getFilePath()+lastPath;
         File file =new File(path);
+        if(!file.exists()||file.length()==0) return null;
         ObjectMapper mapper = new ObjectMapper();
         JavaType javaType = mapper.getTypeFactory().constructParametricType(ArrayList.class,StructuredBugReport.class);
         return mapper.readValue(file,javaType);
@@ -40,6 +41,8 @@ public class FileTranslator {
     public static List<StructuredCodeFile> readCodeFile(String latsPath) throws IOException {
         String path = SavePath.getFilePath()+latsPath;
         File file =new File(path);
+        //System.out.println(file.length());
+        if(!file.exists()||file.length()==0) return null;
         ObjectMapper mapper = new ObjectMapper();
         JavaType javaType = mapper.getTypeFactory().constructParametricType(ArrayList.class,StructuredCodeFile.class);
         return mapper.readValue(file, javaType);

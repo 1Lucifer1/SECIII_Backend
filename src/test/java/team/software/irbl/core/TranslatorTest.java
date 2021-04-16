@@ -108,16 +108,20 @@ public class TranslatorTest {
     @Test
     public void reTranslator() throws IOException {
         List<StructuredBugReport> res = FileTranslator.readBugReport("/test/bugReportFile.json");
-        for(int i=0;i<res.size();i++){
-            System.out.println(res.get(i).getReportIndex());
+        if(res!=null){
+            for(int i=0;i<res.size();i++){
+                System.out.println(res.get(i).getReportIndex());
+            }
         }
         //System.out.println(0);
     }
     @Test
     public void reCFTranslator() throws IOException {
         List<StructuredCodeFile> res = FileTranslator.readCodeFile("/test/codeFile.json");
-        for(int i=0;i<res.size();i++){
-            System.out.println(res.get(i).getFileIndex());
+        if(res!=null){
+            for(int i=0;i<res.size();i++){
+                System.out.println(res.get(i).getFileIndex());
+            }
         }
     }
 }
