@@ -8,6 +8,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import team.software.irbl.core.domain.StructuredBugReport;
 import team.software.irbl.core.domain.StructuredCodeFile;
+import team.software.irbl.core.vsm.VSM;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.FixedFile;
 
@@ -16,8 +17,6 @@ import java.util.List;
 
 @SpringBootTest
 public class VSMTests {
-    @Autowired
-    private VSM vsm;
 
     @Test
     @Transactional
