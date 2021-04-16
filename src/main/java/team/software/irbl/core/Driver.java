@@ -11,6 +11,7 @@ import team.software.irbl.core.store.XMLParser;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.Project;
 import team.software.irbl.domain.RankRecord;
+import team.software.irbl.dto.project.Indicator;
 import team.software.irbl.util.Logger;
 import team.software.irbl.util.SavePath;
 
@@ -136,6 +137,14 @@ public class Driver {
                 Logger.devLog("  " + record.getFileIndex() + " : " + record.getFileRank() + " , " +record.getCosineSimilarity());
             }
         }
+
+        IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();
+        Indicator indicator = indicatorEvaluation.getEvaluationIndicator(bugReports);
+        System.out.println(indicator.getTop1());
+        System.out.println(indicator.getTop5());
+        System.out.println(indicator.getTop10());
+        System.out.println(indicator.getMRR());
+        System.out.println(indicator.getMAP());
 //        ranks.forEach(rankRecords -> {
 //            rankRecords.forEach(rank -> {
 //                System.out.println(rank.getFileRank() + ": " + rank.getCosineSimilarity());
