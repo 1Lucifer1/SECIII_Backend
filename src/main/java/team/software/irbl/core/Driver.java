@@ -49,8 +49,8 @@ public class Driver {
             dbProcessor.saveCodeFiles(codeFiles);
             dbProcessor.saveBugReports(bugReports);
             try {
-                FileTranslator.writeBugReport(bugReports);
-                FileTranslator.writeCodeFile(codeFiles);
+                FileTranslator.writeBugReport(bugReports,"bugReportFile.json");
+                FileTranslator.writeCodeFile(codeFiles,"codeFile.json");
                 hasPreprocess = true;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -58,8 +58,8 @@ public class Driver {
             }
         }else {
             try {
-                bugReports = FileTranslator.readBugReport();
-                codeFiles = FileTranslator.readCodeFile();
+                bugReports = FileTranslator.readBugReport("bugReportFile.json");
+                codeFiles = FileTranslator.readCodeFile("codeFile.json");
             } catch (IOException e) {
                 e.printStackTrace();
                 Logger.errorLog("Reading json file failed.");
@@ -126,16 +126,16 @@ public class Driver {
             dbProcessor.saveCodeFiles(codeFiles);
             dbProcessor.saveBugReports(bugReports);
             try {
-                FileTranslator.writeBugReport(bugReports);
-                FileTranslator.writeCodeFile(codeFiles);
+                FileTranslator.writeBugReport(bugReports,"bugReportFile.json");
+                FileTranslator.writeCodeFile(codeFiles,"codeFile.json");
             } catch (IOException e) {
                 e.printStackTrace();
                 Logger.errorLog("Saving json file failed.");
             }
         }else {
             try {
-                bugReports = FileTranslator.readBugReport();
-                codeFiles = FileTranslator.readCodeFile();
+                bugReports = FileTranslator.readBugReport("bugReportFile.json");
+                codeFiles = FileTranslator.readCodeFile("codeFile.json");
             } catch (IOException e) {
                 e.printStackTrace();
                 Logger.errorLog("Reading json file failed.");
