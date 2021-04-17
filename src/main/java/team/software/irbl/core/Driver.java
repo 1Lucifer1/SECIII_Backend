@@ -143,7 +143,7 @@ public class Driver {
 
     public static void main(String[] args) {
         Driver driver = new Driver(new DBProcessorFake());
-        boolean hasPreprocess = false;
+        boolean hasPreprocess = true;
         List<StructuredCodeFile> codeFiles = null;
         List<StructuredBugReport> bugReports = null;
         if(!hasPreprocess) {
@@ -180,11 +180,11 @@ public class Driver {
 
         IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();
         Indicator indicator = indicatorEvaluation.getEvaluationIndicator(new ArrayList<>(bugReports));
-        System.out.println(indicator.getTop1());
-        System.out.println(indicator.getTop5());
-        System.out.println(indicator.getTop10());
-        System.out.println(indicator.getMRR());
-        System.out.println(indicator.getMAP());
+        System.out.println("Top@1:  "+indicator.getTop1());
+        System.out.println("Top@5:  "+indicator.getTop5());
+        System.out.println("Top@10: "+indicator.getTop10());
+        System.out.println("MRR:    "+indicator.getMRR());
+        System.out.println("MAP:    "+indicator.getMAP());
 //        ranks.forEach(rankRecords -> {
 //            rankRecords.forEach(rank -> {
 //                System.out.println(rank.getFileRank() + ": " + rank.getCosineSimilarity());
