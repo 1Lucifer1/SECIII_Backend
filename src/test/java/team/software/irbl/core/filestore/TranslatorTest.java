@@ -1,8 +1,7 @@
-package team.software.irbl.core.store;
+package team.software.irbl.core.filestore;
 import org.junit.Test;
 import team.software.irbl.core.domain.StructuredBugReport;
 //import team.software.irbl.core.domain.Driver;
-import team.software.irbl.core.store.FileTranslator;
 import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.FixedFile;

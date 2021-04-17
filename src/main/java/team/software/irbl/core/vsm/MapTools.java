@@ -4,15 +4,12 @@ import team.software.irbl.core.domain.CodeLexicon;
 import team.software.irbl.core.domain.Lexicon;
 import team.software.irbl.core.domain.StructuredBugReport;
 import team.software.irbl.core.domain.StructuredCodeFile;
-import team.software.irbl.domain.FileWord;
-import team.software.irbl.domain.ProjectWord;
-import team.software.irbl.enums.CodeWordsType;
-import team.software.irbl.enums.ReportWordsType;
+import team.software.irbl.core.enums.CodeWordsType;
+import team.software.irbl.core.enums.ReportWordsType;
 import team.software.irbl.enums.WordType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class MapTools {
     public static ArrayList<Lexicon> getReportWordMap(List<StructuredBugReport> structuredBugReports){

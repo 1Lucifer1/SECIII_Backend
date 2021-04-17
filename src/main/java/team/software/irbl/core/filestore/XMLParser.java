@@ -1,4 +1,4 @@
-package team.software.irbl.core.store;
+package team.software.irbl.core.filestore;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;

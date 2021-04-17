@@ -6,11 +6,11 @@ import team.software.irbl.core.domain.StructuredBugReport;
 import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.core.jdt.JavaParser;
 import team.software.irbl.core.nlp.NLP;
-import team.software.irbl.core.store.DBProcessor;
-import team.software.irbl.core.store.DBProcessorFake;
-import team.software.irbl.core.store.FileTranslator;
+import team.software.irbl.core.dbstore.DBProcessor;
+import team.software.irbl.core.dbstore.DBProcessorFake;
+import team.software.irbl.core.filestore.FileTranslator;
 import team.software.irbl.core.vsm.VSM;
-import team.software.irbl.core.store.XMLParser;
+import team.software.irbl.core.filestore.XMLParser;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.Project;
 import team.software.irbl.domain.RankRecord;
@@ -39,15 +39,18 @@ public class Driver {
     }
 
     public void startLocalRank(){
-        Project project = new Project("swt-3.1");
-        dbProcessor.saveProject(project);
+        long startTime = System.currentTimeMillis();
         List<StructuredCodeFile> codeFiles = null;
         List<StructuredBugReport> bugReports = null;
         if(!hasPreprocess) {
+            Project project = new Project("swt-3.1");
+            dbProcessor.saveProject(project);
             codeFiles = preProcessProject("swt-3.1", project.getProjectIndex());
             bugReports = preProcessBugReports("SWTBugRepository.xml", project.getProjectIndex());
-            dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
-            dbProcessor.saveBugReports(new ArrayList<>(bugReports));
+            if(bugReports==null || bugReports.size()==0 || codeFiles.size() == 0){
+                Logger.errorLog("File preprocess failed.");
+                return;
+            }
             try {
                 FileTranslator.writeBugReport(bugReports,"bugReportFile.json");
                 FileTranslator.writeCodeFile(codeFiles,"codeFile.json");
@@ -56,10 +59,26 @@ public class Driver {
                 e.printStackTrace();
                 Logger.errorLog("Saving json file failed.");
             }
+            dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
+            dbProcessor.saveBugReports(new ArrayList<>(bugReports));
+            project.setCodeFileCount(codeFiles.size());
+            project.setReportCount(bugReports.size());
+            dbProcessor.updateProject(project);
         }else {
             try {
                 bugReports = FileTranslator.readBugReport("bugReportFile.json");
                 codeFiles = FileTranslator.readCodeFile("codeFile.json");
+                if(bugReports==null || codeFiles == null || bugReports.size()==0 || codeFiles.size() == 0){
+                    Logger.errorLog("Reading preprocessed files failed.");
+                    return;
+                }
+                if(dbProcessor.getProjectByIndex(bugReports.get(0).getProjectIndex()) == null){
+                    Project project = new Project("swt-3.1");
+                    project.setProjectIndex(bugReports.get(0).getProjectIndex());
+                    project.setReportCount(bugReports.size());
+                    project.setCodeFileCount(codeFiles.size());
+                    dbProcessor.saveProject(project);
+                }
                 dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
                 dbProcessor.saveBugReports(new ArrayList<>(bugReports));
             } catch (IOException e) {
@@ -67,9 +86,9 @@ public class Driver {
                 Logger.errorLog("Reading json file failed.");
             }
         }
-        project.setCodeFileCount(codeFiles.size());
-        project.setReportCount(bugReports.size());
-        dbProcessor.updateProject(project);
+        long preprocessEndTime = System.currentTimeMillis();
+        Logger.log("Getting preprocessed files successes in " + (preprocessEndTime-startTime)/1000.0
+                + " seconds and results in " + bugReports.size() + " bug reports and " + codeFiles.size() + " code files.");
 
         VSM vsm = new VSM();
         vsm.startRank(bugReports, codeFiles);
@@ -82,6 +101,9 @@ public class Driver {
             }
         }
         dbProcessor.saveRankRecord(records);
+        long endTime = System.currentTimeMillis();
+        Logger.log("Rank for " + bugReports.size() + " bug reports among " + codeFiles.size() + " code files success in " +
+                (endTime - preprocessEndTime)/1000.0 + " seconds and result in " + records.size() + " rank records.");
     }
 
     private List<StructuredCodeFile> preProcessProject(String projectName, int projectIndex){

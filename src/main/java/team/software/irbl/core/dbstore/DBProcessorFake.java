@@ -1,7 +1,5 @@
-package team.software.irbl.core.store;
+package team.software.irbl.core.dbstore;
 
-import team.software.irbl.core.domain.StructuredBugReport;
-import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.domain.*;
 
 import java.util.ArrayList;
@@ -60,5 +58,10 @@ public class DBProcessorFake implements DBProcessor {
     @Override
     public int saveRankRecord(List<RankRecord> records) {
         return records.size();
+    }
+
+    @Override
+    public Project getProjectByIndex(int projectIndex) {
+        return null;
     }
 }

@@ -1,4 +1,4 @@
-package team.software.irbl.core.store;
+package team.software.irbl.core.dbstore;
 
 import team.software.irbl.domain.*;
 
@@ -16,4 +16,6 @@ public interface DBProcessor {
     public int updateProject(Project project);
 
     public int saveRankRecord(List<RankRecord> records);
+
+    public Project getProjectByIndex(int projectIndex);
 }
