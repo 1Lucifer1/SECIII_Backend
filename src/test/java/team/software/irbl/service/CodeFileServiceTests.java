@@ -23,7 +23,7 @@ public class CodeFileServiceTests {
 
     @Test
     public void readFileTest() throws Err {
-        FileContent fileContent = codeFileService.readFile(3);
+        FileContent fileContent = codeFileService.readFile(4);
         String content = "/*******************************************************************************\n" +
                 " * Copyright (c) 2000, 2004 IBM Corporation and others.\n" +
                 " * All rights reserved. This program and the accompanying materials\n" +
@@ -101,9 +101,9 @@ public class CodeFileServiceTests {
                 "\tpublic static final int TEXT_INSERT = 0;\n" +
                 "\tpublic static final int TEXT_DELETE = 1;\n" +
                 "}\n";
-        assertEquals(3, fileContent.getFileIndex());
+        assertEquals(4, fileContent.getFileIndex());
         assertEquals("ACC.java",fileContent.getFileName());
-        assertEquals("swt-3.1/src/org/eclipse/swt/accessibility/ACC.java",fileContent.getFilePath());
+        assertEquals("src/org/eclipse/swt/accessibility/ACC.java",fileContent.getFilePath());
         assertEquals(content,fileContent.getContent());
         // ==TODO==
         assertEquals(0,fileContent.getSimilarity(),0);
