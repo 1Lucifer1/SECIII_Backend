@@ -2,8 +2,8 @@ spring:
   profiles:
     active: dev
   datasource:
-    username: visitor
-    password: mysql@irbl
+    username: mysql.sys
+    password: 1524517op1902
     url: jdbc:mysql://101.132.253.222:3306/irbl?serverTimezone=CTT&characterEncoding=UTF-8
     driver-class-name: com.mysql.jdbc.Driver
   redis:

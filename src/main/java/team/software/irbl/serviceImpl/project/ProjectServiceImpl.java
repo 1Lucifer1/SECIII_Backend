@@ -41,7 +41,7 @@ public class ProjectServiceImpl implements ProjectService {
             int reportIndex = bugReport.getReportIndex();
             bugReport.setFixedFiles(fixedFileMapper.selectList(new QueryWrapper<FixedFile>().eq("report_index", reportIndex)));
 
-            List<RankRecord> rankRecordList = rankRecordMapper.selectList(new QueryWrapper<RankRecord>().eq("report_index", reportIndex)));
+            List<RankRecord> rankRecordList = rankRecordMapper.selectList(new QueryWrapper<RankRecord>().eq("report_index", reportIndex));
             rankRecordList.sort(Comparator.comparing(RankRecord::getFileRank));
             bugReport.setRanks(rankRecordList);
         }
