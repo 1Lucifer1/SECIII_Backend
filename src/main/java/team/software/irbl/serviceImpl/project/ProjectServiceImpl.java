@@ -47,6 +47,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         Indicator indicator = indicatorEvaluation.getEvaluationIndicator(bugReportList);
+        indicator.setProjectIndex(projectIndex);
         return indicator;
     }
 }
