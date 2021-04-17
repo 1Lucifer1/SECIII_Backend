@@ -1,30 +1,47 @@
 package team.software.irbl.service;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import team.software.irbl.core.IndicatorEvaluation;
 import team.software.irbl.dto.project.Indicator;
+import team.software.irbl.mapper.BugReportMapper;
+import team.software.irbl.mapper.FixedFileMapper;
+import team.software.irbl.mapper.RankRecordMapper;
 import team.software.irbl.service.project.ProjectService;
+import team.software.irbl.serviceImpl.project.ProjectServiceImpl;
 import team.software.irbl.util.Err;
+import static org.mockito.Mockito.*;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
 public class ProjectServiceTests {
-    @Autowired
+
     private ProjectService projectService;
+
+    @Before
+    public void before() throws Err {
+        ProjectService projectService = mock(ProjectService.class);
+        Indicator indicator = new Indicator();
+        indicator.setProjectIndex(2);
+        indicator.setTop1(0.5306);
+        indicator.setTop5(0.7449);
+        indicator.setTop10(0.8469);
+        indicator.setMRR(0.6358);
+        indicator.setMAP(0.5398);
+        when(projectService.getIndicatorEvaluation(2)).thenReturn(indicator);
+
+        this.projectService = projectService;
+    }
 
     @Test
     public void getIndicatorEvaluationTest() throws Err {
         Indicator indicator = projectService.getIndicatorEvaluation(2);
-        assertThat(indicator.getTop1(), greaterThanOrEqualTo(0.071));
-        assertThat(indicator.getTop5(), greaterThanOrEqualTo(0.316));
-        assertThat(indicator.getTop10(), greaterThanOrEqualTo(0.49));
-        assertThat(indicator.getMRR(), greaterThanOrEqualTo(0.20438985978353597));
-        assertThat(indicator.getMAP(), greaterThanOrEqualTo(0.18109653077639296));
+        assertEquals(indicator.getProjectIndex(),(Integer) 2);
+        assertThat(indicator.getTop1(), greaterThanOrEqualTo(0.398));
+        assertThat(indicator.getTop5(), greaterThanOrEqualTo(0.673));
+        assertThat(indicator.getTop10(), greaterThanOrEqualTo(0.826));
+        assertThat(indicator.getMRR(), greaterThanOrEqualTo(0.53));
+        assertThat(indicator.getMAP(), greaterThanOrEqualTo(0.45));
     }
 }
