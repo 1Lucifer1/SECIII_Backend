@@ -149,7 +149,7 @@ public class IntegrationTest {
         Res res = projectController.getIndicatorEvaluation(2);
         assertTrue(res.success);
         Indicator indicator = (Indicator) res.data;
-        assertEquals(Integer.valueOf(1), indicator.getProjectIndex());
+        assertEquals(Integer.valueOf(2), indicator.getProjectIndex());
         assertTrue(indicator.getTop1() >= 0 && indicator.getTop1() <= 1);
         assertTrue(indicator.getTop5() >= 0 && indicator.getTop5() <= 1);
         assertTrue(indicator.getTop10() >= 0 && indicator.getTop10() <= 1);
