@@ -15,12 +15,9 @@ import team.software.irbl.domain.FixedFile;
 import java.util.ArrayList;
 import java.util.List;
 
-@SpringBootTest
 public class VSMTests {
 
     @Test
-    @Transactional
-    @Rollback
     public void testRank(){
         VSM vsm = new VSM();
         java.util.List<StructuredBugReport> reportList = new ArrayList<>();
