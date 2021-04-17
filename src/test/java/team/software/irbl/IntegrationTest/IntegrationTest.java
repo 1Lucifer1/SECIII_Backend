@@ -42,7 +42,7 @@ public class IntegrationTest {
 
     @Test
     public void readFileTest() throws Exception{
-        Res res = codeFileController.readFile(3);
+        Res res = codeFileController.readFile(1);
         assertTrue(res.success);
         FileContent fileContent = (FileContent) res.data;
         String content = "/*******************************************************************************\n" +
