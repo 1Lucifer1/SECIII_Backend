@@ -5,6 +5,7 @@ import java.util.Objects;
 public class File {
     private int fileIndex;
     private String fileName;
+    private String packageName;
     private double cosineSimilarity;
     private int fileRank;
 
@@ -22,6 +23,14 @@ public class File {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 
     public double getCosineSimilarity() {
