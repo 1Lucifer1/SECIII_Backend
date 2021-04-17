@@ -49,7 +49,7 @@ public class CodeFileServiceImpl implements CodeFileService {
             content.setContent(FileUtils.readFile(path));
         }
         catch (IOException e){
-            throw new Err(FILE_NOTFOUND);
+            throw new Err(FILE_NOTFOUND + " " + path);
         }
 //        content.setSimilarity();
         return content;
