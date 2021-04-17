@@ -1,15 +1,13 @@
 package team.software.irbl.core.vsm;
 
 
-import org.springframework.stereotype.Component;
 import team.software.irbl.core.domain.CodeLexicon;
 import team.software.irbl.core.domain.Lexicon;
 import team.software.irbl.core.domain.StructuredBugReport;
 import team.software.irbl.core.domain.StructuredCodeFile;
-import team.software.irbl.core.vsm.MapTools;
 import team.software.irbl.domain.*;
-import team.software.irbl.enums.CodeWordsType;
-import team.software.irbl.enums.ReportWordsType;
+import team.software.irbl.core.enums.CodeWordsType;
+import team.software.irbl.core.enums.ReportWordsType;
 
 import java.util.ArrayList;
 import java.util.List;

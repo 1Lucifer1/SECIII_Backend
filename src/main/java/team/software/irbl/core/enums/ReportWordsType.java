@@ -1,4 +1,4 @@
-package team.software.irbl.enums;
+package team.software.irbl.core.enums;
 
 public enum ReportWordsType {
     SUMMARY_WORDS(0), DESCRIPTION_WORDS(1);

@@ -1,8 +1,7 @@
-package team.software.irbl.core.store;
+package team.software.irbl.core.filestore;
 
 import org.junit.Before;
 import org.junit.Test;
-import team.software.irbl.core.store.XMLParser;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.FixedFile;
 

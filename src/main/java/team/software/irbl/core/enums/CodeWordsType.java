@@ -1,4 +1,4 @@
-package team.software.irbl.enums;
+package team.software.irbl.core.enums;
 
 public enum CodeWordsType {
     TYPES(0), METHODS(1), FIELDS(2), COMMENTS(3), CONTEXTS(4);

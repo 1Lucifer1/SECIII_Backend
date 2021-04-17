@@ -1,4 +1,4 @@
-package team.software.irbl.core.store;
+package team.software.irbl.core.dbstore;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,5 +77,10 @@ public class DBProcessorImpl implements DBProcessor {
     @Override
     public int saveRankRecord(List<RankRecord> records) {
         return rankRecordMapper.insertOrUpdateBatch(records);
+    }
+
+    @Override
+    public Project getProjectByIndex(int projectIndex) {
+        return projectMapper.selectById(projectIndex);
     }
 }

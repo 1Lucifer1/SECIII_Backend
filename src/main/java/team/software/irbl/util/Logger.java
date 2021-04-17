@@ -1,9 +1,12 @@
 package team.software.irbl.util;
 
+import java.util.Date;
+
 public class Logger {
 
     public static void log(String info){
-        //System.out.println("Log: " + info);
+        Date date = new Date();
+        System.out.println(date + "  Log: " + info);
     }
 
     public static void devLog(String info){
@@ -15,6 +18,7 @@ public class Logger {
     }
 
     public static void errorLog(String info){
-        System.out.println("Error: " + info);
+        Date date = new Date();
+        System.out.println(date + " Error: " + info);
     }
 }
