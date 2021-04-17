@@ -1,4 +1,3 @@
-  
 FROM openjdk:8-jre-alpine
 
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
