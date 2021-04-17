@@ -16,10 +16,15 @@ import java.util.Map;
 
 @Service
 public class ReportServiceImpl implements ReportService {
-    @Autowired
+
     private BugReportMapper bugReportMapper;
 
     private final static String PROJECT_NOTFOUND = "查找的项目不存在";
+
+    @Autowired
+    public ReportServiceImpl(BugReportMapper bugReportMapper){
+        this.bugReportMapper = bugReportMapper;
+    }
 
     @Override
     public List<Report> getAllReportsByProjectIndex(Integer projectIndex) throws Err {

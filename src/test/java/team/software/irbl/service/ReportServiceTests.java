@@ -1,23 +1,37 @@
 package team.software.irbl.service;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import team.software.irbl.dto.report.Report;
+import team.software.irbl.mapper.BugReportMapper;
 import team.software.irbl.service.report.ReportService;
+import team.software.irbl.serviceImpl.report.ReportServiceImpl;
 import team.software.irbl.util.Err;
+import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
 public class ReportServiceTests {
-    @Autowired
+
     private ReportService reportService;
+
+    @Before
+    public void before() throws Err {
+        ReportService reportService = mock(ReportService.class);
+        List<Report> reportList = new ArrayList<>();
+        Report report = new Report();
+        report.setReportIndex(1);
+        report.setBugId(1000);
+        report.setOpenDate("2020-11-12 08:40:00");
+        report.setFixDate("2020-12-12 08:40:00");
+        report.setSummary("test bug report");
+        reportList.add(report);
+        when(reportService.getAllReportsByProjectIndex(1)).thenReturn(reportList);
+        this.reportService = reportService;
+    }
 
     @Test
     public void getAllReportsByProjectIndexTest() throws Err {

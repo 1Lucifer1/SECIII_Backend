@@ -1,25 +1,75 @@
 package team.software.irbl.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import team.software.irbl.domain.CodeFile;
+import team.software.irbl.domain.Project;
+import team.software.irbl.domain.RankRecord;
 import team.software.irbl.dto.file.File;
 import team.software.irbl.dto.file.FileContent;
+import team.software.irbl.mapper.CodeFileMapper;
+import team.software.irbl.mapper.ProjectMapper;
+import team.software.irbl.mapper.RankRecordMapper;
 import team.software.irbl.service.file.CodeFileService;
+import team.software.irbl.serviceImpl.file.CodeFileServiceImpl;
 import team.software.irbl.util.Err;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
 public class CodeFileServiceTests {
-    @Autowired
+
     private CodeFileService codeFileService;
+
+    @Before
+    public void before(){
+        ProjectMapper projectMapper = mock(ProjectMapper.class);
+        CodeFileMapper codeFileMapper = mock(CodeFileMapper.class);
+        RankRecordMapper rankRecordMapper = mock(RankRecordMapper.class);
+
+        Project project = new Project(2,"swt-3.1",484,98);
+        when(projectMapper.selectById(2)).thenReturn(project);
+
+        CodeFile codeFile = new CodeFile();
+        codeFile.setFileIndex(4);
+        codeFile.setFileName("ACC.java");
+        codeFile.setFilePath("src/org/eclipse/swt/accessibility/ACC.java");
+        codeFile.setPackageName("org.eclipse.swt.accessibility.ACC.java");
+        codeFile.setProjectIndex(2);
+        when(codeFileMapper.selectById(4)).thenReturn(codeFile);
+
+        CodeFile codeFile1 = new CodeFile();
+        codeFile1.setProjectIndex(1);
+        codeFile1.setFileIndex(1);
+        codeFile1.setFileName("test1.java");
+        CodeFile codeFile2 = new CodeFile();
+        codeFile2.setProjectIndex(1);
+        codeFile2.setFileIndex(2);
+        codeFile2.setFileName("test2.java");
+        when(codeFileMapper.selectById(1)).thenReturn(codeFile1);
+        when(codeFileMapper.selectById(2)).thenReturn(codeFile2);
+
+        List<RankRecord> rankRecordList = new ArrayList<>();
+        RankRecord rankRecord1 = new RankRecord();
+        RankRecord rankRecord2 = new RankRecord();
+        rankRecord1.setFileIndex(1);
+        rankRecord1.setCosineSimilarity(1.2);
+        rankRecord1.setFileRank(2);
+        rankRecord1.setReportIndex(0);
+        rankRecord2.setFileIndex(2);
+        rankRecord2.setCosineSimilarity(2.1);
+        rankRecord2.setFileRank(1);
+        rankRecord2.setReportIndex(0);
+        rankRecordList.add(rankRecord2);
+        rankRecordList.add(rankRecord1);
+        when(rankRecordMapper.selectList(new QueryWrapper<RankRecord>().eq("report_index", 0))).thenReturn(rankRecordList);
+
+        this.codeFileService = new CodeFileServiceImpl(projectMapper,codeFileMapper,rankRecordMapper);
+    }
 
     @Test
     public void readFileTest() throws Err {
@@ -112,22 +162,19 @@ public class CodeFileServiceTests {
 
     @Test
     public void getSortedFilesTest() throws Err {
-        List<File> files = codeFileService.getSortedFiles(1);
+        List<File> files = codeFileService.getSortedFiles(0);
 //        files.forEach(item->System.out.println(item.getFileRank()));
         List<File> expected = new ArrayList<>();
         File file1 = new File();
         file1.setFileIndex(1);
         file1.setFileName("test1.java");
         file1.setFileRank(2);
-        file1.setCosineSimilarity(2.1);
+        file1.setCosineSimilarity(1.2);
         File file2 = new File();
         file2.setFileIndex(2);
         file2.setFileName("test2.java");
         file2.setFileRank(1);
-        file2.setCosineSimilarity(1.2);
-
-        expected.add(file2);
-        expected.add(file1);
+        file2.setCosineSimilarity(2.1);
 
         assertEquals(expected,files);
     }

@@ -33,7 +33,7 @@ public class IndicatorEvaluation {
         return indicator;
     }
 
-    public double Top(Integer K, int reportNum, List<BugReport> bugReportList) {
+    private double Top(Integer K, int reportNum, List<BugReport> bugReportList) {
         if (reportNum == 0){
 //            throw new Err(NO_REPORT);
             return 0.0;
@@ -74,7 +74,7 @@ public class IndicatorEvaluation {
     }
 
 
-    public double MRR(int reportNum, List<BugReport> bugReportList) {
+    private double MRR(int reportNum, List<BugReport> bugReportList) {
         if (reportNum == 0){
 //            throw new Err(NO_REPORT);
             return 0.0;
@@ -102,7 +102,7 @@ public class IndicatorEvaluation {
     }
 
 
-    public double MAP(int reportNum, List<BugReport> bugReportList)  {
+    private double MAP(int reportNum, List<BugReport> bugReportList)  {
         if (reportNum == 0){
 //            throw new Err(NO_REPORT);
             return 0.0;

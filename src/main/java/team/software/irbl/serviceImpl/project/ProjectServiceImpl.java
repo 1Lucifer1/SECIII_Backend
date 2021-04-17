@@ -23,14 +23,21 @@ import java.util.Map;
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
-    @Autowired
     private IndicatorEvaluation indicatorEvaluation;
-    @Autowired
+
     private RankRecordMapper rankRecordMapper;
-    @Autowired
+
     private BugReportMapper bugReportMapper;
-    @Autowired
+
     private FixedFileMapper fixedFileMapper;
+
+    @Autowired
+    public ProjectServiceImpl(IndicatorEvaluation indicatorEvaluation, RankRecordMapper rankRecordMapper, BugReportMapper bugReportMapper, FixedFileMapper fixedFileMapper) {
+        this.indicatorEvaluation = indicatorEvaluation;
+        this.rankRecordMapper = rankRecordMapper;
+        this.bugReportMapper = bugReportMapper;
+        this.fixedFileMapper = fixedFileMapper;
+    }
 
     @Override
     public Indicator getIndicatorEvaluation(Integer projectIndex) throws Err {
