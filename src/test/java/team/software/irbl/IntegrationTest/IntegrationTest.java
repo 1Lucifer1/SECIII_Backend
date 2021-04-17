@@ -42,7 +42,7 @@ public class IntegrationTest {
 
     @Test
     public void readFileTest() throws Exception{
-        Res res = codeFileController.readFile(3);
+        Res res = codeFileController.readFile(4);
         assertTrue(res.success);
         FileContent fileContent = (FileContent) res.data;
         String content = "/*******************************************************************************\n" +
@@ -122,9 +122,9 @@ public class IntegrationTest {
                 "\tpublic static final int TEXT_INSERT = 0;\n" +
                 "\tpublic static final int TEXT_DELETE = 1;\n" +
                 "}\n";
-        assertEquals(3, fileContent.getFileIndex());
+        assertEquals(4, fileContent.getFileIndex());
         assertEquals("ACC.java",fileContent.getFileName());
-        assertEquals("swt-3.1/src/org/eclipse/swt/accessibility/ACC.java",fileContent.getFilePath());
+        assertEquals("src/org/eclipse/swt/accessibility/ACC.java",fileContent.getFilePath());
         assertEquals(content,fileContent.getContent());
         // ==TODO==
         assertEquals(0,fileContent.getSimilarity(),0);
@@ -132,26 +132,16 @@ public class IntegrationTest {
 
     @Test
     public void getSortedFilesTest() throws Exception{
-        Res res =codeFileController.localizationOfBugReport(1);
+        Res res = codeFileController.localizationOfBugReport(1);
         assertTrue(res.success);
         List<File> files = (List<File>) res.data;
-//        files.forEach(item->System.out.println(item.getFileRank()));
-        List<File> expected = new ArrayList<>();
-        File file1 = new File();
-        file1.setFileIndex(1);
-        file1.setFileName("test1.java");
-        file1.setFileRank(2);
-        file1.setCosineSimilarity(2.1);
-        File file2 = new File();
-        file2.setFileIndex(2);
-        file2.setFileName("test2.java");
-        file2.setFileRank(1);
-        file2.setCosineSimilarity(1.2);
-
-        expected.add(file2);
-        expected.add(file1);
-
-        assertEquals(expected,files);
+        assertEquals(484, files.size());
+        int cnt = 0;
+        for (File file : files) {
+            ++cnt;
+            assertTrue(file.getCosineSimilarity() >= 0 && file.getCosineSimilarity() <= 1);
+            assertEquals(cnt, file.getFileRank());
+        }
     }
 
     @Test
@@ -159,24 +149,26 @@ public class IntegrationTest {
         Res res = projectController.getIndicatorEvaluation(2);
         assertTrue(res.success);
         Indicator indicator = (Indicator) res.data;
-        assertThat(indicator.getTop1(), greaterThanOrEqualTo(0.071));
-        assertThat(indicator.getTop5(), greaterThanOrEqualTo(0.316));
-        assertThat(indicator.getTop10(), greaterThanOrEqualTo(0.49));
-        assertThat(indicator.getMRR(), greaterThanOrEqualTo(0.20438985978353597));
-        assertThat(indicator.getMAP(), greaterThanOrEqualTo(0.18109653077639296));
+        assertEquals(Integer.valueOf(1), indicator.getProjectIndex());
+        assertTrue(indicator.getTop1() >= 0 && indicator.getTop1() <= 1);
+        assertTrue(indicator.getTop5() >= 0 && indicator.getTop5() <= 1);
+        assertTrue(indicator.getTop10() >= 0 && indicator.getTop10() <= 1);
+        assertTrue(indicator.getMAP() >= 0 && indicator.getMAP() <= 1);
+        assertTrue(indicator.getMRR() >= 0 && indicator.getMRR() <= 1);
+        assertTrue(indicator.getTop1() < indicator.getTop5());
+        assertTrue(indicator.getTop5() < indicator.getTop10());
     }
 
     @Test
     public void getAllReportsByProjectIndexTest() throws Err {
-        Res res = reportController.getAllReportsByProjectIndex(1);
+        Res res = reportController.getAllReportsByProjectIndex(2);
         assertTrue(res.success);
         List<Report> reports = (List<Report>) res.data;
-        Report report = reports.get(0);
-
-        assertEquals(1, report.getReportIndex());
-        assertEquals(1000,report.getBugId());
-        assertEquals("2020-11-12 08:40:00",report.getOpenDate());
-        assertEquals("2020-12-12 08:40:00",report.getFixDate());
-        assertEquals("test bug report",report.getSummary());
+        assertEquals(98, reports.size());
+        for (Report report : reports) {
+            assertNotNull(report.getFixDate());
+            assertNotNull(report.getOpenDate());
+            assertNotNull(report.getSummary());
+        }
     }
 }

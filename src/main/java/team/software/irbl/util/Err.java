@@ -6,6 +6,7 @@ public class Err extends Exception {
     public Err(String msg) {
         super();
         this.msg = "[Error] " + msg;
+        System.out.println(this.msg);
     }
 
 }

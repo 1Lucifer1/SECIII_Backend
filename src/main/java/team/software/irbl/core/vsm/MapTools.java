@@ -77,6 +77,6 @@ public class MapTools {
     }
 
     private static void insertFileWord(Lexicon lexicon, String s, int fileCount, int fileIndex, WordType wordType){
-        lexicon.addFileWord(fileCount - 1,s, fileIndex, wordType);
+        lexicon.addFileWord(fileCount - 1, s, fileIndex, wordType);
     }
 }

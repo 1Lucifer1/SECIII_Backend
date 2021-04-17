@@ -1,5 +1,6 @@
 package team.software.irbl.serviceImpl.file;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,15 +21,23 @@ import java.util.*;
 
 @Service
 public class CodeFileServiceImpl implements CodeFileService {
-    @Autowired
+
+
     private CodeFileMapper codeFileMapper;
-    @Autowired
+
     private RankRecordMapper rankRecordMapper;
-    @Autowired
+
     private ProjectMapper projectMapper;
 
     private final static String FILE_NOTFOUND = "文件不存在";
     private final static String OTHER_ERROR = "其他问题";
+
+    @Autowired
+    public CodeFileServiceImpl(ProjectMapper projectMapper, CodeFileMapper codeFileMapper, RankRecordMapper rankRecordMapper){
+        this.projectMapper = projectMapper;
+        this.codeFileMapper = codeFileMapper;
+        this.rankRecordMapper = rankRecordMapper;
+    }
 
     @Override
     public FileContent readFile(Integer fileIndex) throws Err {
@@ -49,9 +58,7 @@ public class CodeFileServiceImpl implements CodeFileService {
     @Override
     public List<File> getSortedFiles(Integer reportIndex) throws Err {
         try {
-            Map<String, Object> conditions = new HashMap<>();
-            conditions.put("report_index", reportIndex);
-            List<RankRecord> rankRecordList = rankRecordMapper.selectByMap(conditions);
+            List<RankRecord> rankRecordList = rankRecordMapper.selectList(new QueryWrapper<RankRecord>().eq("report_index", reportIndex));
             rankRecordList.sort(Comparator.comparing(RankRecord::getFileRank));
             List<File> files = new ArrayList<>();
             for (RankRecord record : rankRecordList) {
