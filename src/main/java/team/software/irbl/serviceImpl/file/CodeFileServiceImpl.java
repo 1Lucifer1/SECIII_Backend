@@ -66,6 +66,7 @@ public class CodeFileServiceImpl implements CodeFileService {
                 BeanUtils.copyProperties(record, file);
                 CodeFile codeFile = codeFileMapper.selectById(file.getFileIndex());
                 file.setFileName(codeFile.getFileName());
+                file.setPackageName(codeFile.getPackageName());
                 files.add(file);
             }
             return files;
