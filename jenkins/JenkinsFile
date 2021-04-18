@@ -94,6 +94,7 @@ pipeline {
                 }
                 echo "7. Run Docker Image Stage"
                 script{
+                    sshCommand remote: remoteServer, command: "docker stop irbl-backend", failOnError: false
                     sshCommand remote: remoteServer, command: "docker run --rm -it -p 40000:40000 --link db:mysql --name irbl-backend -d 101.132.148.43/backend/irbl:${BUILD_ID}"
                 }
             }
