@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TranslatorTest {
+public class TranslatorTests {
     @Test
     public void writeBugReportTest() throws IOException {
         List<FixedFile> fixedFiles = new ArrayList<>();

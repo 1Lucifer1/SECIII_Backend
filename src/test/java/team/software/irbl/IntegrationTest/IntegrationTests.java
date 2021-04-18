@@ -1,6 +1,5 @@
 package team.software.irbl.IntegrationTest;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,20 +15,14 @@ import team.software.irbl.dto.project.Indicator;
 import team.software.irbl.dto.report.Report;
 import team.software.irbl.util.Err;
 import team.software.irbl.util.Res;
-
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class IntegrationTest {
+public class IntegrationTests {
 
     @Autowired
     CodeFileController codeFileController;
