@@ -17,38 +17,38 @@ public class JavaParserTests {
 
     @Before
     public void prepare(){
-        content = "package team.software.irbl.core.test;\r\n" +
-                "/**\r\n" +
-                " *\r\n" +
-                " */\r\n" +
-                "\r\n" +
-                "/**\r\n" +
-                " * type doc\r\n" +
-                " */\r\n" +
-                "public class Test1 {\r\n" +
-                "    /**\r\n" +
-                "     * field doc\r\n" +
-                "     */\r\n" +
-                "    private int field1;\r\n" +
-                "\r\n" +
-                "    /**\r\n" +
-                "     * method doc\r\n" +
-                "     */\r\n" +
-                "    public void methodJava(int arg1){\r\n" +
-                "        /*\r\n" +
-                "        * block comment\r\n" +
-                "         */\r\n" +
-                "        int arg2 = arg1 * 2; // line comment\r\n" +
-                "        System.out.println(arg2);\r\n" +
-                "    }\r\n" +
-                "\r\n" +
-                "    class innerTest{\r\n" +
-                "\r\n" +
-                "    }\r\n" +
-                "}\r\n" +
-                "\r\n" +
-                "class outerTest{\r\n" +
-                "\r\n" +
+        content = "package team.software.irbl.core.test;" + System.getProperty("line.separator")+
+                "/**" + System.getProperty("line.separator")+
+                " *" + System.getProperty("line.separator")+
+                " */" + System.getProperty("line.separator")+
+                "" + System.getProperty("line.separator")+
+                "/**" + System.getProperty("line.separator")+
+                " * type doc" + System.getProperty("line.separator")+
+                " */" + System.getProperty("line.separator")+
+                "public class Test1 {" + System.getProperty("line.separator")+
+                "    /**" + System.getProperty("line.separator")+
+                "     * field doc" + System.getProperty("line.separator")+
+                "     */" + System.getProperty("line.separator")+
+                "    private int field1;" + System.getProperty("line.separator")+
+                "" + System.getProperty("line.separator")+
+                "    /**" + System.getProperty("line.separator")+
+                "     * method doc" + System.getProperty("line.separator")+
+                "     */" + System.getProperty("line.separator")+
+                "    public void methodJava(int arg1){" + System.getProperty("line.separator")+
+                "        /*" + System.getProperty("line.separator")+
+                "        * block comment" + System.getProperty("line.separator")+
+                "         */" + System.getProperty("line.separator")+
+                "        int arg2 = arg1 * 2; // line comment" + System.getProperty("line.separator")+
+                "        System.out.println(arg2);" + System.getProperty("line.separator")+
+                "    }" + System.getProperty("line.separator")+
+                "" + System.getProperty("line.separator")+
+                "    class innerTest{" + System.getProperty("line.separator")+
+                "" + System.getProperty("line.separator")+
+                "    }" + System.getProperty("line.separator")+
+                "}" + System.getProperty("line.separator")+
+                "" + System.getProperty("line.separator")+
+                "class outerTest{" + System.getProperty("line.separator")+
+                "" + System.getProperty("line.separator")+
                 "}";
 
         StructuredCodeFile codeFile = new StructuredCodeFile("Test1.java","Test1.java",1);
