@@ -21,7 +21,8 @@ public class IRBLApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args){
-        driver.setHasPreprocess(true);
-        driver.startLocalRank();
+        driver.startRank("swt-3.1", true);
+        //driver.setHasPreprocess(true);
+        //driver.startLocalRank();
     }
 }

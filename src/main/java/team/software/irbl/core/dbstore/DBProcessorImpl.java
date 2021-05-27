@@ -74,6 +74,25 @@ public class DBProcessorImpl implements DBProcessor {
         return projectMapper.updateById(project);
     }
 
+    /**
+     * 清除与项目相关的所有源代码记录，错误报告记录，以及联系二者的fixedFile记录与rankRecord记录
+     * @param projectIndex
+     * @return
+     */
+    @Override
+    public int cleanProject(int projectIndex) {
+        codeFileMapper.delete(new QueryWrapper<CodeFile>().eq("project_index", projectIndex));
+        List<BugReport> bugReports = bugReportMapper.selectList(new QueryWrapper<BugReport>().eq("project_index", projectIndex));
+        List<Integer> reportIndexList = new ArrayList<>();
+        for(BugReport report: bugReports){
+            reportIndexList.add(report.getReportIndex());
+            fixedFileMapper.delete(new QueryWrapper<FixedFile>().eq("report_index", report.getReportIndex()));
+            rankRecordMapper.delete(new QueryWrapper<RankRecord>().eq("report_index", report.getReportIndex()));
+        }
+        bugReportMapper.deleteBatchIds(reportIndexList);
+        return 0;
+    }
+
     @Override
     public int saveRankRecord(List<RankRecord> records) {
         return rankRecordMapper.insertOrUpdateBatch(records);
@@ -82,5 +101,10 @@ public class DBProcessorImpl implements DBProcessor {
     @Override
     public Project getProjectByIndex(int projectIndex) {
         return projectMapper.selectById(projectIndex);
+    }
+
+    @Override
+    public Project getProjectByName(String projectName) {
+        return projectMapper.selectOne(new QueryWrapper<Project>().eq("project_name", projectName));
     }
 }

@@ -5,17 +5,21 @@ import team.software.irbl.domain.*;
 import java.util.List;
 
 public interface DBProcessor {
-    public int saveCodeFiles(List<CodeFile> codeFiles);
+    int saveCodeFiles(List<CodeFile> codeFiles);
 
-    public int saveBugReports(List<BugReport> bugReports);
+    int saveBugReports(List<BugReport> bugReports);
 
-    public int saveFixedFiles(List<FixedFile> fixedFiles);
+    int saveFixedFiles(List<FixedFile> fixedFiles);
 
-    public int saveProject(Project project);
+    int saveProject(Project project);
 
-    public int updateProject(Project project);
+    int updateProject(Project project);
 
-    public int saveRankRecord(List<RankRecord> records);
+    int cleanProject(int projectIndex);
 
-    public Project getProjectByIndex(int projectIndex);
+    int saveRankRecord(List<RankRecord> records);
+
+    Project getProjectByIndex(int projectIndex);
+
+    Project getProjectByName(String projectName);
 }

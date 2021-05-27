@@ -117,7 +117,7 @@ public class JavaParser {
 
     public static void main(String[] args) {
         //String dirPath = "./IRBL/data/test";
-        String dirPath = SavePath.getAbsolutePath("swt-3.1")+"/";
+        String dirPath = SavePath.getSourcePath("swt-3.1")+"/";
         parseCodeFilesInDir(dirPath, 1);
 
     }

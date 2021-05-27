@@ -37,7 +37,7 @@ public class TranslatorTests {
 
         //List<StructuredBugReport> bugReports = driver.preProcessBugReports("SWTBugRepository.xml", 1);
         //System.out.println(bugReports.get(0).getDescription());
-        FileTranslator.writeBugReport(res,"/test/bugReportFile.json");
+        FileTranslator.writeBugReport(res,"./IRBL/data/test/bugReportFile");
 
     }
     @Test
@@ -102,11 +102,11 @@ public class TranslatorTests {
         codeFiles.add(codeFile);
         //Driver driver = new Driver();
         //List<StructuredCodeFile> codeFiles = driver.preProcessProject("swt-3.1", 1);
-        FileTranslator.writeCodeFile(codeFiles,"/test/codeFile.json");
+        FileTranslator.writeCodeFile(codeFiles,"./IRBL/data/test/codeFile");
     }
     @Test
     public void readBugReportTest() throws IOException {
-        List<StructuredBugReport> res = FileTranslator.readBugReport("/test/bugReportFile.json");
+        List<StructuredBugReport> res = FileTranslator.readBugReport("./IRBL/data/test/bugReportFile");
         if(res!=null){
             for(int i=0;i<res.size();i++){
                 System.out.println(res.get(i).getReportIndex());
@@ -116,7 +116,7 @@ public class TranslatorTests {
     }
     @Test
     public void readCodeFileTest() throws IOException {
-        List<StructuredCodeFile> res = FileTranslator.readCodeFile("/test/codeFile.json");
+        List<StructuredCodeFile> res = FileTranslator.readCodeFile("./IRBL/data/test/codeFile");
         if(res!=null){
             for(int i=0;i<res.size();i++){
                 System.out.println(res.get(i).getFileIndex());
