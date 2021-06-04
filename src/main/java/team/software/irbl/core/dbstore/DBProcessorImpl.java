@@ -3,13 +3,14 @@ package team.software.irbl.core.dbstore;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import team.software.irbl.core.CodeFileMap;
 import team.software.irbl.domain.*;
 import team.software.irbl.mapper.*;
+import team.software.irbl.util.Logger;
 
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class DBProcessorImpl implements DBProcessor {
@@ -35,25 +36,23 @@ public class DBProcessorImpl implements DBProcessor {
     }
 
     @Override
-    public int saveBugReports(List<BugReport> bugReports) {
+    public int saveBugReports(List<BugReport> bugReports, CodeFileMap codeFileMap) {
         int res = bugReportMapper.insertOrUpdateBatch(bugReports);
-        List<CodeFile> codeFiles = codeFileMapper.selectList(new QueryWrapper<CodeFile>().eq("project_index", bugReports.get(0).getProjectIndex()));
-        ConcurrentHashMap<String, Integer> packageNameMap = new ConcurrentHashMap<>();
-        codeFiles.parallelStream().forEach(codeFile -> {
-            packageNameMap.put(codeFile.getPackageName(), codeFile.getFileIndex());
-        });
         List<FixedFile> fixedFiles = new ArrayList<>();
         for(BugReport bugReport : bugReports){
+            List<FixedFile> extendFixedFiles = new ArrayList<>();
             for(FixedFile fixedFile: bugReport.getFixedFiles()){
-                fixedFile.setReportIndex(bugReport.getReportIndex());
-                if(packageNameMap.containsKey(fixedFile.getFilePackageName())) {
-                    fixedFile.setFileIndex(packageNameMap.get(fixedFile.getFilePackageName()));
+                List<CodeFile> codeFiles = codeFileMap.getCodeFileFromMap(fixedFile.getFilePackageName());
+                if(codeFiles != null){
+                    for(CodeFile codeFile: codeFiles){
+                        extendFixedFiles.add(new FixedFile(-1, bugReport.getReportIndex(), codeFile.getFileIndex(), fixedFile.getFilePackageName()));
+                    }
                 }else {
-                    System.out.println(fixedFile.getId());
-                    System.out.println(fixedFile.getFilePackageName());
+                    Logger.errorLog("Not found " + fixedFile.getFilePackageName());
                 }
-                fixedFiles.add(fixedFile);
             }
+            bugReport.setFixedFiles(extendFixedFiles);
+            fixedFiles.addAll(extendFixedFiles);
         }
         saveFixedFiles(fixedFiles);
         return res;

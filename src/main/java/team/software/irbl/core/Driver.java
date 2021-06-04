@@ -64,7 +64,7 @@ public class Driver {
             }
             // 数据库存保存读取的基础信息
             dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
-            dbProcessor.saveBugReports(new ArrayList<>(bugReports));
+            //dbProcessor.saveBugReports(new ArrayList<>(bugReports));
             project.setCodeFileCount(codeFiles.size());
             project.setReportCount(bugReports.size());
             dbProcessor.updateProject(project);

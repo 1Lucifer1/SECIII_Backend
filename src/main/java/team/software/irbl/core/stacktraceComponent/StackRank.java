@@ -1,29 +1,21 @@
-package team.software.irbl.core.stacktrace;
+package team.software.irbl.core.stacktraceComponent;
 
-import lombok.Synchronized;
-import sun.plugin.javascript.navig.LinkArray;
+import team.software.irbl.core.CodeFileMap;
 import team.software.irbl.core.IndicatorEvaluation;
 import team.software.irbl.core.dbstore.DBProcessor;
 import team.software.irbl.core.dbstore.DBProcessorFake;
-import team.software.irbl.core.domain.StructuredBugReport;
 import team.software.irbl.core.domain.StructuredCodeFile;
-import team.software.irbl.core.filestore.FileTranslator;
 import team.software.irbl.core.filestore.XMLParser;
 import team.software.irbl.core.jdt.JavaParser;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.CodeFile;
-import team.software.irbl.domain.FixedFile;
 import team.software.irbl.domain.RankRecord;
 import team.software.irbl.dto.project.Indicator;
-import team.software.irbl.util.Logger;
 import team.software.irbl.util.SavePath;
 
-import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class StackRank {
 
@@ -46,11 +38,11 @@ public class StackRank {
     /**
      * 以包名建立对源代码文件(实际只需要用到源代码文件索引，故直接包装为Rank record)的映射
      */
-    private HashMap<String, CodeFile> codeFileMap;
+    private CodeFileMap codeFileMap;
 
 
-    public StackRank(List<CodeFile> codeFiles){
-        createCodeFileMap(codeFiles);
+    public StackRank(CodeFileMap fileMap){
+        codeFileMap = fileMap;
     }
 
 
@@ -67,7 +59,7 @@ public class StackRank {
         int depth = 1;
         for(String packageName: packageNames){
             if(!tracePackageNames.contains(packageName)){
-                List<CodeFile> codeFiles = getCodeFileFromMap(packageName);
+                List<CodeFile> codeFiles = codeFileMap.getCodeFileFromMap(packageName);
                 if(codeFiles != null){
                     double score = 1.0/depth;
                     for(CodeFile codeFile: codeFiles){
@@ -86,51 +78,6 @@ public class StackRank {
         }
 
         return records;
-    }
-
-    /**
-     * 以包名建立对源代码文件的映射
-     * @param codeFiles
-     */
-    private void createCodeFileMap(List<CodeFile> codeFiles){
-        codeFileMap = new HashMap<>();
-        for(CodeFile codeFile: codeFiles) {
-            // 对于包名冲突的文件，采用包名加后缀 @n 的方式保留
-            if(codeFileMap.containsKey(codeFile.getPackageName())){
-                int conflictCount = 1;
-                String conflictPackage = codeFile.getPackageName() + "@" + conflictCount;
-                while (codeFileMap.containsKey(conflictPackage)){
-                    conflictCount++;
-                    conflictPackage = codeFile.getPackageName() + "@" + conflictCount;
-                }
-                codeFileMap.put(conflictPackage, codeFile);
-            }else {
-                codeFileMap.put(codeFile.getPackageName(), codeFile);
-            }
-        }
-    }
-
-    /**
-     * 从map中取出对应的包装fileIndex的rank record，考虑包名冲突的情况，结果为列表
-     * @param packageName
-     * @return
-     */
-    private List<CodeFile> getCodeFileFromMap(String packageName){
-        if(!codeFileMap.containsKey(packageName)){
-            return null;
-        }
-
-        List<CodeFile> codeFiles = new ArrayList<>();
-        codeFiles.add(codeFileMap.get(packageName));
-
-        int conflictCount = 1;
-        String conflictPackageName = packageName + "@" + conflictCount;
-        while (codeFileMap.containsKey(conflictPackageName)){
-            codeFiles.add(codeFileMap.get(conflictPackageName));
-            conflictCount++;
-            conflictPackageName = packageName + "@" + conflictCount;
-        }
-        return codeFiles;
     }
 
 
@@ -191,11 +138,12 @@ public class StackRank {
         List<StructuredCodeFile> codeFiles = JavaParser.parseCodeFilesInDir(SavePath.getSourcePath(projectName), 1);
         DBProcessor dbProcessor = new DBProcessorFake();
         dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
-        dbProcessor.saveBugReports(reports);
+        CodeFileMap codeFileMap = new CodeFileMap(new ArrayList<>(codeFiles));
+        dbProcessor.saveBugReports(reports, codeFileMap);
 
         if(reports != null) {
             List<BugReport> traceReports = Collections.synchronizedList(new ArrayList<>());
-            StackRank stackRank = new StackRank(new ArrayList<>(codeFiles));
+            StackRank stackRank = new StackRank(codeFileMap);
             reports.parallelStream().forEach(report -> {
                 List<RankRecord> records = stackRank.rank(report);
                 if(records != null){

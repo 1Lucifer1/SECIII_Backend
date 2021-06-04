@@ -1,5 +1,6 @@
 package team.software.irbl.core.dbstore;
 
+import team.software.irbl.core.CodeFileMap;
 import team.software.irbl.domain.*;
 
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.List;
 public interface DBProcessor {
     int saveCodeFiles(List<CodeFile> codeFiles);
 
-    int saveBugReports(List<BugReport> bugReports);
+    int saveBugReports(List<BugReport> bugReports, CodeFileMap codeFileMap);
 
     int saveFixedFiles(List<FixedFile> fixedFiles);
 

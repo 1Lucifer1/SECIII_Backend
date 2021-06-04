@@ -1,4 +1,4 @@
-package team.software.irbl.core.domain;
+package team.software.irbl.core.vsm;
 
 import team.software.irbl.core.vsm.Calculate;
 import team.software.irbl.domain.FileWord;
