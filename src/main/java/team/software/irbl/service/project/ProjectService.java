@@ -1,7 +1,10 @@
 package team.software.irbl.service.project;
 
 import team.software.irbl.dto.project.Indicator;
+import team.software.irbl.dto.project.ProjectInfo;
 import team.software.irbl.util.Err;
+
+import java.util.List;
 
 public interface ProjectService {
 
@@ -11,4 +14,11 @@ public interface ProjectService {
      * @return
      */
     public Indicator getIndicatorEvaluation(Integer projectIndex) throws Err;
+
+    /**
+     * 得到所有项目信息列表
+     * @return
+     * @throws Err
+     */
+    public List<ProjectInfo> getAllProjects() throws Err;
 }
