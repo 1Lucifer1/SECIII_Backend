@@ -1,6 +1,7 @@
 package team.software.irbl.core.dbstore;
 
 import team.software.irbl.domain.*;
+import team.software.irbl.util.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,11 @@ public class DBProcessorFake implements DBProcessor {
             bugReport.setReportIndex(i+1);
             for(FixedFile fixedFile: bugReport.getFixedFiles()){
                 fixedFile.setReportIndex(bugReport.getReportIndex());
-                fixedFile.setFileIndex(packageMap.get(fixedFile.getFilePackageName()));
+                if(packageMap.containsKey(fixedFile.getFilePackageName())) {
+                    fixedFile.setFileIndex(packageMap.get(fixedFile.getFilePackageName()));
+                }else {
+                    Logger.errorLog("Not found " + fixedFile.getFilePackageName());
+                }
                 fixedFiles.add(fixedFile);
             }
         }

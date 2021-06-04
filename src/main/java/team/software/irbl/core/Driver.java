@@ -18,6 +18,8 @@ import team.software.irbl.dto.project.Indicator;
 import team.software.irbl.util.Logger;
 import team.software.irbl.util.SavePath;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +62,13 @@ public class Driver {
                 Logger.errorLog("File preprocess failed.");
                 return null;
             }
+            // 数据库存保存读取的基础信息
+            dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
+            dbProcessor.saveBugReports(new ArrayList<>(bugReports));
+            project.setCodeFileCount(codeFiles.size());
+            project.setReportCount(bugReports.size());
+            dbProcessor.updateProject(project);
+
             try {
                 // 文件形式保存预处理结果
                 FileTranslator.writeBugReport(bugReports,SavePath.getPreProcessReportPath(projectName));
@@ -67,14 +76,9 @@ public class Driver {
             } catch (IOException e) {
                 e.printStackTrace();
                 Logger.errorLog("Saving json file failed.");
+                dbProcessor.cleanProject(project.getProjectIndex());
                 return null;
             }
-            // 数据库存保存读取的基础信息
-            dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
-            dbProcessor.saveBugReports(new ArrayList<>(bugReports));
-            project.setCodeFileCount(codeFiles.size());
-            project.setReportCount(bugReports.size());
-            dbProcessor.updateProject(project);
         }else{
             // 不需要预处理则直接读取保存预处理内容的文件
             try {
@@ -119,7 +123,18 @@ public class Driver {
         String dirPath = SavePath.getSourcePath(projectName) + "/";
         List<StructuredCodeFile> codeFiles = JavaParser.parseCodeFilesInDir(dirPath, projectIndex);
 
+        Logger.log("found " + codeFiles.size() + " code files.");
         // 对codeFile的结构化信息与原生文本分别进行nlp处理
+
+        codeFiles.parallelStream().forEach(codeFile -> {
+            codeFile.setTypes(NLP.standfordNLP(codeFile.getTypes(),true));
+            codeFile.setComments(NLP.standfordNLP(codeFile.getComments(),true));
+            codeFile.setFields(NLP.standfordNLP(codeFile.getFields(),true));
+            codeFile.setMethods(NLP.standfordNLP(codeFile.getMethods(),true));
+            codeFile.setContexts(NLP.standfordNLP(codeFile.getContexts(),false));
+        });
+
+        /*
         for(StructuredCodeFile codeFile : codeFiles){
             codeFile.setTypes(NLP.standfordNLP(codeFile.getTypes(),true));
             codeFile.setComments(NLP.standfordNLP(codeFile.getComments(),true));
@@ -127,13 +142,13 @@ public class Driver {
             codeFile.setMethods(NLP.standfordNLP(codeFile.getMethods(),true));
             codeFile.setContexts(NLP.standfordNLP(codeFile.getContexts(),false));
         }
-
+        */
         return codeFiles;
     }
 
     private List<StructuredBugReport> preProcessBugReports(String projectName, int projectIndex){
         String filePath = SavePath.getSourcePath(projectName) + "/bugRepository.xml";
-        List<BugReport> rawReports =XMLParser.getBugReportsFromXML(filePath, projectIndex);
+        List<BugReport> rawReports = XMLParser.getBugReportsFromXML(filePath, projectIndex);
         if(rawReports == null){
             return null;
         }
@@ -152,8 +167,9 @@ public class Driver {
 
     public static void main(String[] args) {
         Driver driver = new Driver(new DBProcessorFake());
-        List<BugReport> bugReports = driver.startRank("swt-3.1", true);
+        List<BugReport> bugReports = driver.startRank("eclipse-3.1", true);
 
+        File saveResult = new File(SavePath.getSourcePath("result1.txt"));
         IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();
         Indicator indicator = indicatorEvaluation.getEvaluationIndicator(bugReports);
         System.out.println("Top@1:  "+indicator.getTop1());
@@ -161,6 +177,19 @@ public class Driver {
         System.out.println("Top@10: "+indicator.getTop10());
         System.out.println("MRR:    "+indicator.getMRR());
         System.out.println("MAP:    "+indicator.getMAP());
+
+        try{
+            FileWriter writer = new FileWriter(saveResult);
+            writer.write("Result evaluate for eclipse:\n");
+            writer.write("Top@1:  "+indicator.getTop1() + '\n');
+            writer.write("Top@5:  "+indicator.getTop5() + '\n');
+            writer.write("Top@10: "+indicator.getTop10() + '\n');
+            writer.write("MRR:    "+indicator.getMRR() + '\n');
+            writer.write("MAP:    "+indicator.getMAP() + '\n');
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 }

@@ -17,8 +17,9 @@ public class SavePath {
     // 预处理文件存放路径
     private static String Preprocess_FILE_PATH = pathTransformFromWinToLinux(System.getProperty("user.dir")) + "/IRBL/data/preprocess/";
     // 测试所需文件存放路径，后面可能会与上述路径区分开
-    private static String TEST_FILE_PATH = pathTransformFromWinToLinux(System.getProperty("user.dir")) + "/IRBL/data/test";
+    private static String TEST_FILE_PATH = pathTransformFromWinToLinux(System.getProperty("user.dir")) + "/IRBL/data/test/";
 
+    private static String LOG_FILE_PATH = pathTransformFromWinToLinux(System.getProperty("user.dir")) + "/IRBL/log/";
     public static String getSourcePath(String source){
         return SOURCE_PATH + source;
     }
@@ -33,6 +34,10 @@ public class SavePath {
 
     public static String getTestFilePath(String fileName){
         return TEST_FILE_PATH + fileName;
+    }
+
+    public static String getLogFilePath(String fileName) {
+        return LOG_FILE_PATH + fileName;
     }
 
     public static String getPathFromPackage(String pack){

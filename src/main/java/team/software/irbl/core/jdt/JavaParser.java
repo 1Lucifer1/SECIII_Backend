@@ -33,8 +33,14 @@ public class JavaParser {
         codeFile.addContext(str);
 
         PackageDeclaration packageName = cu.getPackage();
-        codeFile.setPackageName(packageName.getName().getFullyQualifiedName()+"."+ codeFile.getFileName());
-
+        Logger.debugLog(codeFile.getFileName());
+        Logger.debugLog(codeFile.getFilePath());
+        // 如果代码文件里没有声明包名，则直接以文件名代替
+        if(packageName!=null && packageName.getName() != null) {
+            codeFile.setPackageName(packageName.getName().getFullyQualifiedName() + "." + codeFile.getFileName());
+        }else {
+            codeFile.setPackageName(codeFile.getFileName());
+        }
         MyASTVisitor myASTVisitor = new MyASTVisitor(cu);
         cu.accept(myASTVisitor);
         codeFile.addField(myASTVisitor.getFields());
@@ -107,11 +113,14 @@ public class JavaParser {
                         dirs.add(file);
                     } else if (file.getName().contains(".java")) {
                         StructuredCodeFile codeFile = new StructuredCodeFile(file.getName(), SavePath.pathTransformFromWinToLinux(file.getPath()).replaceFirst(dirPath, ""), projectIndex);
-                        codeFiles.add(parse(readFileToString(file.getAbsolutePath()), codeFile));
+                        codeFiles.add(codeFile);
                     }
                 }
             }
         }
+        codeFiles.parallelStream().forEach(codeFile -> {
+            parse(readFileToString(dirPath + codeFile.getFilePath()), codeFile);
+        });
         return codeFiles;
     }
 

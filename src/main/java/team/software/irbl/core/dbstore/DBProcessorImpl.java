@@ -39,9 +39,9 @@ public class DBProcessorImpl implements DBProcessor {
         int res = bugReportMapper.insertOrUpdateBatch(bugReports);
         List<CodeFile> codeFiles = codeFileMapper.selectList(new QueryWrapper<CodeFile>().eq("project_index", bugReports.get(0).getProjectIndex()));
         ConcurrentHashMap<String, Integer> packageNameMap = new ConcurrentHashMap<>();
-        for(CodeFile codeFile : codeFiles){
+        codeFiles.parallelStream().forEach(codeFile -> {
             packageNameMap.put(codeFile.getPackageName(), codeFile.getFileIndex());
-        }
+        });
         List<FixedFile> fixedFiles = new ArrayList<>();
         for(BugReport bugReport : bugReports){
             for(FixedFile fixedFile: bugReport.getFixedFiles()){

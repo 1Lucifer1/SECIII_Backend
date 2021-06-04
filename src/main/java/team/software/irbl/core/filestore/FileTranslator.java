@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import team.software.irbl.core.domain.StructuredBugReport;
 
 import team.software.irbl.core.domain.StructuredCodeFile;
+import team.software.irbl.domain.BugReport;
 
 import java.io.*;
 import java.io.File;
@@ -40,5 +41,13 @@ public class FileTranslator {
         ObjectMapper mapper = new ObjectMapper();
         JavaType javaType = mapper.getTypeFactory().constructParametricType(ArrayList.class,StructuredCodeFile.class);
         return mapper.readValue(file, javaType);
+    }
+
+    public static void writeOriginBugReport(List<BugReport> reports, String path) throws IOException{
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(reports);
+        FileWriter writer = new FileWriter(path + ".json");
+        writer.write(json);
+        writer.close();
     }
 }

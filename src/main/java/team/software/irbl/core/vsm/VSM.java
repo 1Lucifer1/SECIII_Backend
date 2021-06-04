@@ -62,6 +62,8 @@ public class VSM {
             }
         }
 
+        weight[ReportWordsType.SUMMARY_WORDS.value()][CodeWordsType.CONTEXTS.value()] = 0;
+        weight[ReportWordsType.DESCRIPTION_WORDS.value()][CodeWordsType.CONTEXTS.value()]=0;
         ArrayList<Double> summarySimilarity = new ArrayList<>();
         summarySimilarity.add(weight[ReportWordsType.SUMMARY_WORDS.value()][CodeWordsType.TYPES.value()] *
                 getSimilarityInList(summaryWords, ReportWordsType.SUMMARY_WORDS,
