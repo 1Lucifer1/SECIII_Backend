@@ -9,7 +9,7 @@ import team.software.irbl.core.nlp.NLP;
 import team.software.irbl.core.dbstore.DBProcessor;
 import team.software.irbl.core.dbstore.DBProcessorFake;
 import team.software.irbl.core.filestore.FileTranslator;
-import team.software.irbl.core.vsm.VSM;
+import team.software.irbl.core.structureComponent.VSM;
 import team.software.irbl.core.filestore.XMLParser;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.Project;
@@ -64,7 +64,8 @@ public class Driver {
             }
             // 数据库存保存读取的基础信息
             dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
-            //dbProcessor.saveBugReports(new ArrayList<>(bugReports));
+            CodeFileMap codeFileMap = new CodeFileMap(new ArrayList<>(codeFiles));
+            dbProcessor.saveBugReports(new ArrayList<>(bugReports), codeFileMap);
             project.setCodeFileCount(codeFiles.size());
             project.setReportCount(bugReports.size());
             dbProcessor.updateProject(project);
@@ -107,7 +108,7 @@ public class Driver {
             Logger.devLog("" + bugReport.getReportIndex());
             for(RankRecord record: bugReport.getRanks()){
                 records.add(record);
-                Logger.devLog("  " + record.getFileIndex() + " : " + record.getFileRank() + " , " +record.getCosineSimilarity());
+                Logger.devLog("  " + record.getFileIndex() + " : " + record.getFileRank() + " , " +record.getScore());
             }
         }
         // 保存排序结果

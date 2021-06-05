@@ -30,13 +30,13 @@ public class StackRank {
     private String tracePattern = "(\\sat\\s([^\\s]{2,}?\\.[^\\s].*?)\\((?:Native\\sMethod|(Unknown\\sSource)|([^)]+?)\\.java.*?|[^)]+?build.+?)\\))";
 
     /**
-     * 决定取前几个堆栈报错信息
+     * 决定取前几个堆栈报错信息（暂未采用）
      */
     private int stackDepthLimit = 10;
 
 
     /**
-     * 以包名建立对源代码文件(实际只需要用到源代码文件索引，故直接包装为Rank record)的映射
+     * 以包名对源代码文件的映射
      */
     private CodeFileMap codeFileMap;
 

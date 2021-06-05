@@ -2,15 +2,10 @@ package team.software.irbl.core.vsm;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
 import team.software.irbl.core.domain.StructuredBugReport;
 import team.software.irbl.core.domain.StructuredCodeFile;
-import team.software.irbl.core.vsm.VSM;
+import team.software.irbl.core.structureComponent.VSM;
 import team.software.irbl.domain.BugReport;
-import team.software.irbl.domain.FixedFile;
 
 import java.util.ArrayList;
 import java.util.List;
