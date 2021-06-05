@@ -42,7 +42,7 @@ public class CodeFileServiceImpl implements CodeFileService {
     @Override
     public FileContent readFile(Integer fileIndex) throws Err {
         CodeFile codeFile = codeFileMapper.selectById(fileIndex);
-        String path = SavePath.getAbsolutePath(projectMapper.selectById(codeFile.getProjectIndex()).getProjectName()+"/"+codeFile.getFilePath());
+        String path = SavePath.getSourcePath(projectMapper.selectById(codeFile.getProjectIndex()).getProjectName()+"/"+codeFile.getFilePath());
         FileContent content = new FileContent();
         BeanUtils.copyProperties(codeFile,content);
         try {

@@ -22,7 +22,9 @@ spring:
 
 
 
-预处理好之后的文件的存放路径：IRBL/data/file
+预处理好之后的文件的存放路径：IRBL/data/preprocess
+
+测试所用文件存放路径：IRBL/data/test
 
 
 

@@ -24,4 +24,9 @@ public class ProjectController {
         return Res.success(projectService.getIndicatorEvaluation(projectIndex));
     }
 
+    @GetMapping("/getAllProjects")
+    public Res getAllProjects() throws Err{
+        return Res.success(projectService.getAllProjects());
+    }
+
 }

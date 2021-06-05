@@ -11,6 +11,7 @@ public class StructuredCodeFile extends CodeFile {
     private List<String> fields;
     private List<String> comments;
     private List<String> contexts;
+    private boolean isStackTrace;
 
     public StructuredCodeFile(){};
     public StructuredCodeFile(String fileName, String filePath, int projectIndex){
@@ -98,5 +99,13 @@ public class StructuredCodeFile extends CodeFile {
 
     public void setContexts(List<String> contexts) {
         this.contexts = contexts;
+    }
+
+    public boolean isStackTrace() {
+        return isStackTrace;
+    }
+
+    public void setStackTrace(boolean stackTrace) {
+        isStackTrace = stackTrace;
     }
 }

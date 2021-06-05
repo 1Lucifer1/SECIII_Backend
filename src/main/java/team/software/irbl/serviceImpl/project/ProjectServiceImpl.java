@@ -1,13 +1,16 @@
 package team.software.irbl.serviceImpl.project;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team.software.irbl.core.IndicatorEvaluation;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.FixedFile;
+import team.software.irbl.domain.Project;
 import team.software.irbl.domain.RankRecord;
 import team.software.irbl.dto.project.Indicator;
+import team.software.irbl.dto.project.ProjectInfo;
 import team.software.irbl.mapper.BugReportMapper;
 import team.software.irbl.mapper.FixedFileMapper;
 import team.software.irbl.mapper.ProjectMapper;
@@ -15,10 +18,9 @@ import team.software.irbl.mapper.RankRecordMapper;
 import team.software.irbl.service.project.ProjectService;
 import team.software.irbl.util.Err;
 
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -31,12 +33,15 @@ public class ProjectServiceImpl implements ProjectService {
 
     private FixedFileMapper fixedFileMapper;
 
+    private ProjectMapper projectMapper;
+
     @Autowired
-    public ProjectServiceImpl(IndicatorEvaluation indicatorEvaluation, RankRecordMapper rankRecordMapper, BugReportMapper bugReportMapper, FixedFileMapper fixedFileMapper) {
+    public ProjectServiceImpl(IndicatorEvaluation indicatorEvaluation, RankRecordMapper rankRecordMapper, BugReportMapper bugReportMapper, FixedFileMapper fixedFileMapper, ProjectMapper projectMapper) {
         this.indicatorEvaluation = indicatorEvaluation;
         this.rankRecordMapper = rankRecordMapper;
         this.bugReportMapper = bugReportMapper;
         this.fixedFileMapper = fixedFileMapper;
+        this.projectMapper = projectMapper;
     }
 
     @Override
@@ -56,5 +61,17 @@ public class ProjectServiceImpl implements ProjectService {
         Indicator indicator = indicatorEvaluation.getEvaluationIndicator(bugReportList);
         indicator.setProjectIndex(projectIndex);
         return indicator;
+    }
+
+    @Override
+    public List<ProjectInfo> getAllProjects() throws Err {
+        List<Project> projectList = projectMapper.selectList(null);
+        List<ProjectInfo> projectInfoList = new ArrayList<>();
+        for(Project project : projectList){
+            ProjectInfo projectInfo = new ProjectInfo();
+            BeanUtils.copyProperties(project, projectInfo);
+            projectInfoList.add(projectInfo);
+        }
+        return projectInfoList;
     }
 }
