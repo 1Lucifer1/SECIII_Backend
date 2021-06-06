@@ -9,14 +9,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Lexicon {
 
-    private List<SubLexicon> subs;
+    private SubLexicon[] subs;
 
     private int fileNum;
 
     private ConcurrentHashMap<String, IDF> wordMap;
 
     public Lexicon(List<List<String>> files){
-        subs = new ArrayList<>(files.size());
+        subs = new SubLexicon[files.size()];
         wordMap = new ConcurrentHashMap<>();
         fileNum = files.size();
 
@@ -26,7 +26,7 @@ public class Lexicon {
             indexes.add(i);
         }
         indexes.parallelStream().forEach(index -> {
-            subs.set(index, new SubLexicon(files.get(index)));
+            subs[index] = new SubLexicon(files.get(index));
             HashSet<String> fileWords = new HashSet<>(files.get(index));
             // ConcurrentHashMap也无法解决一些并发问题，本处为put冲突问题，故采用同步
             synchronized (this){
@@ -61,8 +61,8 @@ public class Lexicon {
     }
 
     public double getTF(int index, String word){
-        if(index < subs.size()) {
-            return subs.get(index).getTF(word);
+        if(index < subs.length) {
+            return subs[index].getTF(word);
         }else {
             Logger.errorLog("Lexicon: 数组越界.");
             return 0;

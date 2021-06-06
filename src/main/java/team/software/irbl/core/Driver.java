@@ -9,7 +9,8 @@ import team.software.irbl.core.nlp.NLP;
 import team.software.irbl.core.dbstore.DBProcessor;
 import team.software.irbl.core.dbstore.DBProcessorFake;
 import team.software.irbl.core.filestore.FileTranslator;
-import team.software.irbl.core.structureComponent.VSM;
+import team.software.irbl.core.stacktraceComponent.StackRank;
+import team.software.irbl.core.structureComponent.StructureRank;
 import team.software.irbl.core.filestore.XMLParser;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.Project;
@@ -22,6 +23,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -101,23 +103,33 @@ public class Driver {
                 + " seconds and results in " + bugReports.size() + " bug reports and " + codeFiles.size() + " code files.");
 
         // 使用vsm进行相似度排序
-        VSM vsm = new VSM();
-        vsm.startRank(bugReports, codeFiles);
+        int count = 0;
+        StackRank stackRank = new StackRank(new CodeFileMap(new ArrayList<>(codeFiles)));
+        StructureRank structureRank = new StructureRank(codeFiles);
         List<RankRecord> records = new ArrayList<>();
-        for(BugReport bugReport: bugReports){
+        for(StructuredBugReport bugReport: bugReports){
             Logger.devLog("" + bugReport.getReportIndex());
-            for(RankRecord record: bugReport.getRanks()){
+            List<RankRecord> recordList = stackRank.rank(bugReport);
+            if(recordList != null) count++;
+            if(recordList == null) recordList = structureRank.rank(bugReport);
+            recordList.sort(Collections.reverseOrder());
+            for(int i=0; i<recordList.size(); ++i){
+                recordList.get(i).setFileRank(i+1);
+            }
+            bugReport.setRanks(recordList);
+            for(RankRecord record: recordList){
                 records.add(record);
                 Logger.devLog("  " + record.getFileIndex() + " : " + record.getFileRank() + " , " +record.getScore());
             }
         }
+        Logger.log(count + " reports use stack rank.");
         // 保存排序结果
         dbProcessor.saveRankRecord(records);
 
         long endTime = System.currentTimeMillis();
         Logger.log("Rank for " + bugReports.size() + " bug reports among " + codeFiles.size() + " code files success in " +
                 (endTime - preprocessEndTime)/1000.0 + " seconds and result in " + records.size() + " rank records.");
-        return new ArrayList<BugReport>(bugReports);
+        return new ArrayList<>(bugReports);
     }
 
     private List<StructuredCodeFile> preProcessProject(String projectName, int projectIndex){
@@ -168,7 +180,7 @@ public class Driver {
 
     public static void main(String[] args) {
         Driver driver = new Driver(new DBProcessorFake());
-        List<BugReport> bugReports = driver.startRank("eclipse-3.1", true);
+        List<BugReport> bugReports = driver.startRank("eclipse-3.1", false);
 
         File saveResult = new File(SavePath.getSourcePath("result1.txt"));
         IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();

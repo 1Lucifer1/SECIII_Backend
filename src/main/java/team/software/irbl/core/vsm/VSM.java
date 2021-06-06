@@ -11,16 +11,16 @@ public class VSM {
         lexicon = new Lexicon(files);
     }
 
-    public List<Double> getScores(List<String> file){
+    public double[] getScores(List<String> file){
         SubLexicon subLexicon = new SubLexicon(file);
 
-        List<Double> scores = new ArrayList<>(lexicon.getFileNum());
+        double[] scores = new double[lexicon.getFileNum()];
         // 在并行的同时保持subs与files对应顺序
         List<Integer> indexes = new ArrayList<>();
         for(int i=0; i<lexicon.getFileNum(); ++i){
             indexes.add(i);
         }
-        indexes.parallelStream().forEach(index -> scores.set(index, getSimilarity(subLexicon, index)));
+        indexes.parallelStream().forEach(index -> scores[index]= getSimilarity(subLexicon, index));
         return scores;
     }
 
@@ -37,10 +37,12 @@ public class VSM {
             lengthOfVectorY += tfIdfY * tfIdfY;
         }
 
+        double score;
         if(lengthOfVectorX == 0 || lengthOfVectorY == 0){
-            return  0;
+            score = 0;
         }else {
-            return innerProduct / (Math.sqrt(lengthOfVectorX) * Math.sqrt(lengthOfVectorY));
+            score = innerProduct / (Math.sqrt(lengthOfVectorX) * Math.sqrt(lengthOfVectorY));
         }
+        return score;
     }
 }

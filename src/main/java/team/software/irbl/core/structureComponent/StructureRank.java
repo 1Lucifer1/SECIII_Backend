@@ -6,25 +6,62 @@ import team.software.irbl.core.enums.CodeWordsType;
 import team.software.irbl.domain.RankRecord;
 import team.software.irbl.core.vsm.VSM;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class StructureRank {
 
+    // 结构数量
     private final static int CODE_PART_NUM = 5;
     private final static int REPORT_PART_NUM = 2;
 
-    private List<VSM> vsmList;
+    // 默认权重, 顺序依照(summary, description) x (type, method, field, comment, context)
+    private final static double[]DEFAULT_WEIGHT = {1,1,1,1,1,1,1,1,1,1};
+
+    private VSM[] vsmList;
 
     private List<StructuredCodeFile> codeFiles;
 
-    public StructureRank(List<StructuredCodeFile> codeFiles){ 
+    public StructureRank(List<StructuredCodeFile> codeFiles){
         this.codeFiles = codeFiles;
         initial();
     }
 
     public List<RankRecord> rank(StructuredBugReport report){
-        return null;
+        return rank(report, DEFAULT_WEIGHT);
+    }
+
+    public List<RankRecord> rank(StructuredBugReport report, double[] weights){
+        double[][] scores = new double[CODE_PART_NUM*REPORT_PART_NUM][];
+
+        for(int index=0; index<CODE_PART_NUM; ++index){
+            double[] scoreSummary = vsmList[index].getScores(report.getSummaryWords());
+            scores[index] = scoreSummary;
+            double[] scoreDesc = vsmList[index].getScores(report.getDescriptionWords());
+            scores[index + CODE_PART_NUM] = scoreDesc;
+        }
+
+        List<RankRecord> records = new ArrayList<>();
+        weights = normalize(weights);
+        for(int fileIndex=0; fileIndex<codeFiles.size(); ++fileIndex){
+            double score = 0;
+            for(int partIndex=0; partIndex<CODE_PART_NUM*REPORT_PART_NUM; ++partIndex){
+                score += weights[partIndex] * scores[partIndex][fileIndex];
+            }
+            records.add(new RankRecord(report.getReportIndex(), codeFiles.get(fileIndex).getFileIndex(), -1, score));
+        }
+        return records;
+    }
+
+    private double[] normalize(double[] weights){
+        double[] newWeights = new double[weights.length];
+        double total = 0;
+        for(double weight: weights){
+            total+=weight;
+        }
+        for(int i=0; i<weights.length; ++i){
+            newWeights[i] = weights[i]/total;
+        }
+        return newWeights;
     }
 
     private void initial(){
@@ -41,9 +78,9 @@ public class StructureRank {
             parts.get(CodeWordsType.CONTEXTS.value()).add(codeFile.getContexts());
         }
 
-        vsmList = new ArrayList<>();
+        vsmList = new VSM[CODE_PART_NUM];
         for(int i=0; i<CODE_PART_NUM ;++i){
-            vsmList.add(new VSM(parts.get(i)));
+            vsmList[i] = new VSM(parts.get(i));
         }
     }
 }
