@@ -11,21 +11,21 @@ public class RankRecord implements Comparable<RankRecord> {
     private int fileIndex;
     @TableField(value = "file_rank")
     private int fileRank;
-    @TableField(value = "cosine_similarity")
-    private double cosineSimilarity;
+    @TableField(value = "score")
+    private double score;
 
     public RankRecord(){}
-    public RankRecord(int reportIndex, int fileIndex, double cosineSimilarity) {
+    public RankRecord(int reportIndex, int fileIndex, double score) {
         this.reportIndex = reportIndex;
         this.fileIndex = fileIndex;
-        this.cosineSimilarity = cosineSimilarity;
+        this.score = score;
     }
 
-    public RankRecord(int reportIndex, int fileIndex, int fileRank, double cosineSimilarity) {
+    public RankRecord(int reportIndex, int fileIndex, int fileRank, double score) {
         this.reportIndex = reportIndex;
         this.fileIndex = fileIndex;
         this.fileRank = fileRank;
-        this.cosineSimilarity = cosineSimilarity;
+        this.score = score;
     }
 
     public int getReportIndex() {
@@ -52,17 +52,17 @@ public class RankRecord implements Comparable<RankRecord> {
         this.fileRank = fileRank;
     }
 
-    public double getCosineSimilarity() {
-        return cosineSimilarity;
+    public double getScore() {
+        return score;
     }
 
-    public void setCosineSimilarity(double cosineSimilarity) {
-        this.cosineSimilarity = cosineSimilarity;
+    public void setScore(double score) {
+        this.score = score;
     }
 
     @Override
     public int compareTo(RankRecord record) {
-        return Double.compare(cosineSimilarity, record.getCosineSimilarity());
+        return Double.compare(score, record.getScore());
     }
 }
 

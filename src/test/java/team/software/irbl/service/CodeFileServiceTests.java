@@ -57,11 +57,11 @@ public class CodeFileServiceTests {
         RankRecord rankRecord1 = new RankRecord();
         RankRecord rankRecord2 = new RankRecord();
         rankRecord1.setFileIndex(1);
-        rankRecord1.setCosineSimilarity(1.2);
+        rankRecord1.setScore(1.2);
         rankRecord1.setFileRank(2);
         rankRecord1.setReportIndex(0);
         rankRecord2.setFileIndex(2);
-        rankRecord2.setCosineSimilarity(2.1);
+        rankRecord2.setScore(2.1);
         rankRecord2.setFileRank(1);
         rankRecord2.setReportIndex(0);
         rankRecordList.add(rankRecord2);

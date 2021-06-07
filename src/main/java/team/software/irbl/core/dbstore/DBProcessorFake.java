@@ -1,17 +1,16 @@
 package team.software.irbl.core.dbstore;
 
+import team.software.irbl.core.CodeFileMap;
 import team.software.irbl.domain.*;
+import team.software.irbl.util.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 不使用数据库而伪造数据库方法调用，方便本地调试vsm
  */
 public class DBProcessorFake implements DBProcessor {
-
-    private ConcurrentHashMap<String, Integer> packageMap = new ConcurrentHashMap<>();
 
     /**
      * 会仿造存数据库为要保存的列表数据加上编号
@@ -23,28 +22,34 @@ public class DBProcessorFake implements DBProcessor {
         for(int i=0; i<codeFiles.size(); ++i){
             CodeFile codeFile = codeFiles.get(i);
             codeFile.setFileIndex(i+1);
-            packageMap.put(codeFile.getPackageName(), i+1);
         }
         return codeFiles.size();
     }
 
     /**
-     * 会为BugReport加上编号并为其包含的FixedFile设置fileIndex与reportIndex，
-     * 注意！！！该方法只能在 saveCodeFiles后调用才能达到预期效果
+     * 会为BugReport加上编号并为其包含的FixedFile设置fileIndex与reportIndex
      * @param bugReports
      * @return
      */
     @Override
-    public int saveBugReports(List<BugReport> bugReports){
+    public int saveBugReports(List<BugReport> bugReports, CodeFileMap codeFileMap){
         List<FixedFile> fixedFiles = new ArrayList<>();
         for(int i=0; i<bugReports.size(); ++i){
             BugReport bugReport = bugReports.get(i);
             bugReport.setReportIndex(i+1);
+            List<FixedFile> extendFixedFiles = new ArrayList<>();
             for(FixedFile fixedFile: bugReport.getFixedFiles()){
-                fixedFile.setReportIndex(bugReport.getReportIndex());
-                fixedFile.setFileIndex(packageMap.get(fixedFile.getFilePackageName()));
-                fixedFiles.add(fixedFile);
+                List<CodeFile> codeFiles = codeFileMap.getCodeFileFromMap(fixedFile.getFilePackageName());
+                if(codeFiles != null){
+                    for(CodeFile codeFile: codeFiles){
+                        extendFixedFiles.add(new FixedFile(-1, bugReport.getReportIndex(), codeFile.getFileIndex(), fixedFile.getFilePackageName()));
+                    }
+                }else {
+                    Logger.errorLog("Not found " + fixedFile.getFilePackageName());
+                }
             }
+            bugReport.setFixedFiles(extendFixedFiles);
+            fixedFiles.addAll(extendFixedFiles);
         }
         saveFixedFiles(fixedFiles);
         return bugReports.size();
