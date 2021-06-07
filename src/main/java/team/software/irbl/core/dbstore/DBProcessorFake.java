@@ -1,6 +1,6 @@
 package team.software.irbl.core.dbstore;
 
-import team.software.irbl.core.CodeFileMap;
+import team.software.irbl.core.maptool.CodeFileMap;
 import team.software.irbl.domain.*;
 import team.software.irbl.util.Logger;
 

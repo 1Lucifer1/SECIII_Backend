@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 import team.software.irbl.core.domain.StructuredBugReport;
 import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.core.jdt.JavaParser;
+import team.software.irbl.core.maptool.CodeFileMap;
+import team.software.irbl.core.maptool.PackageMap;
 import team.software.irbl.core.nlp.NLP;
 import team.software.irbl.core.dbstore.DBProcessor;
 import team.software.irbl.core.dbstore.DBProcessorFake;
@@ -66,7 +68,7 @@ public class Driver {
             }
             // 数据库存保存读取的基础信息
             dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
-            CodeFileMap codeFileMap = new CodeFileMap(new ArrayList<>(codeFiles));
+            CodeFileMap codeFileMap = new PackageMap(new ArrayList<>(codeFiles));
             dbProcessor.saveBugReports(new ArrayList<>(bugReports), codeFileMap);
             project.setCodeFileCount(codeFiles.size());
             project.setReportCount(bugReports.size());
@@ -104,7 +106,7 @@ public class Driver {
 
         // 使用vsm进行相似度排序
         int count = 0;
-        StackRank stackRank = new StackRank(new CodeFileMap(new ArrayList<>(codeFiles)));
+        StackRank stackRank = new StackRank(new PackageMap(new ArrayList<>(codeFiles)));
         StructureRank structureRank = new StructureRank(codeFiles);
         List<RankRecord> records = new ArrayList<>();
         for(StructuredBugReport bugReport: bugReports){
@@ -147,15 +149,6 @@ public class Driver {
             codeFile.setContexts(NLP.standfordNLP(codeFile.getContexts(),false));
         });
 
-        /*
-        for(StructuredCodeFile codeFile : codeFiles){
-            codeFile.setTypes(NLP.standfordNLP(codeFile.getTypes(),true));
-            codeFile.setComments(NLP.standfordNLP(codeFile.getComments(),true));
-            codeFile.setFields(NLP.standfordNLP(codeFile.getFields(),true));
-            codeFile.setMethods(NLP.standfordNLP(codeFile.getMethods(),true));
-            codeFile.setContexts(NLP.standfordNLP(codeFile.getContexts(),false));
-        }
-        */
         return codeFiles;
     }
 

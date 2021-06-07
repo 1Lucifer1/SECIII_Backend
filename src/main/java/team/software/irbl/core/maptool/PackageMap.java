@@ -1,4 +1,4 @@
-package team.software.irbl.core;
+package team.software.irbl.core.maptool;
 
 import team.software.irbl.domain.CodeFile;
 
@@ -6,22 +6,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class CodeFileMap {
+public class PackageMap extends CodeFileMap {
 
     /**
-     * 以包名建立对源代码文件(实际只需要用到源代码文件索引，故直接包装为Rank record)的映射
+     * 以包名建立对源代码文件的映射
      */
     private HashMap<String, CodeFile> codeFileMap;
 
-    private List<CodeFile> codeFiles;
 
-    public CodeFileMap(List<CodeFile> codeFiles){
-        this.codeFiles = codeFiles;
-        createCodeFileMap(codeFiles);
-    }
-
-    public List<CodeFile> values(){
-        return codeFiles;
+    public PackageMap(List<CodeFile> codeFiles){
+        super(codeFiles);
     }
 
     /**
@@ -47,7 +41,7 @@ public class CodeFileMap {
     }
 
     /**
-     * 从map中取出对应的包装fileIndex的rank record，考虑包名冲突的情况，结果为列表
+     * 根据包名取CodeFile
      * @param packageName
      * @return
      */
