@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ErrHandler {
 
     @ExceptionHandler(Err.class)
-    public team.software.irbl.util.Res errHandler(Err e) {
-        return team.software.irbl.util.Res.failure(e.msg);
+    public Res errHandler(Err e) {
+        return Res.failure(e.msg);
     }
 
 }
