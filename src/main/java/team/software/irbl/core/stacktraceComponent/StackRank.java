@@ -1,12 +1,13 @@
 package team.software.irbl.core.stacktraceComponent;
 
-import team.software.irbl.core.CodeFileMap;
+import team.software.irbl.core.maptool.CodeFileMap;
 import team.software.irbl.core.IndicatorEvaluation;
 import team.software.irbl.core.dbstore.DBProcessor;
 import team.software.irbl.core.dbstore.DBProcessorFake;
 import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.core.filestore.XMLParser;
 import team.software.irbl.core.jdt.JavaParser;
+import team.software.irbl.core.maptool.PackageMap;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.CodeFile;
 import team.software.irbl.domain.RankRecord;
@@ -30,13 +31,13 @@ public class StackRank {
     private String tracePattern = "(\\sat\\s([^\\s]{2,}?\\.[^\\s].*?)\\((?:Native\\sMethod|(Unknown\\sSource)|([^)]+?)\\.java.*?|[^)]+?build.+?)\\))";
 
     /**
-     * 决定取前几个堆栈报错信息
+     * 决定取前几个堆栈报错信息（暂未采用）
      */
     private int stackDepthLimit = 10;
 
 
     /**
-     * 以包名建立对源代码文件(实际只需要用到源代码文件索引，故直接包装为Rank record)的映射
+     * 以包名对源代码文件的映射
      */
     private CodeFileMap codeFileMap;
 
@@ -138,7 +139,7 @@ public class StackRank {
         List<StructuredCodeFile> codeFiles = JavaParser.parseCodeFilesInDir(SavePath.getSourcePath(projectName), 1);
         DBProcessor dbProcessor = new DBProcessorFake();
         dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
-        CodeFileMap codeFileMap = new CodeFileMap(new ArrayList<>(codeFiles));
+        CodeFileMap codeFileMap = new PackageMap(new ArrayList<>(codeFiles));
         dbProcessor.saveBugReports(reports, codeFileMap);
 
         if(reports != null) {
