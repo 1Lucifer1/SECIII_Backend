@@ -58,6 +58,7 @@ public class IndicatorEvaluation {
 //                    break;
 //                }
             List<RankRecord> rankRecordList = bugReport.getRanks();
+            rankRecordList.sort(Comparator.comparing(RankRecord::getScore).reversed());
             for (int j=0; j<K; j++) {
                 if(expected.contains(rankRecordList.get(j).getFileIndex())){
                     countOfSuccessLocalization++;
