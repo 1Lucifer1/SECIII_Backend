@@ -1,13 +1,14 @@
 package team.software.irbl.core.versionHistoryComponent;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import team.software.irbl.core.CodeFileMap;
 import team.software.irbl.core.IndicatorEvaluation;
 import team.software.irbl.core.dbstore.DBProcessor;
 import team.software.irbl.core.dbstore.DBProcessorFake;
 import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.core.filestore.XMLParser;
 import team.software.irbl.core.jdt.JavaParser;
+import team.software.irbl.core.maptool.CodeFileMap;
+import team.software.irbl.core.maptool.PackageMap;
 import team.software.irbl.domain.*;
 import team.software.irbl.dto.project.Indicator;
 import team.software.irbl.mapper.ProjectMapper;
@@ -69,12 +70,12 @@ public class VersionHistoryRank {
             RankRecord rankRecord = new RankRecord();
             rankRecord.setReportIndex(bugReport.getReportIndex());
             rankRecord.setFileIndex(codeFile.getFileIndex());
-            rankRecord.setCosineSimilarity(calculateSuspiciousScore(codeFile.getPackageName()));
+            rankRecord.setScore(calculateSuspiciousScore(codeFile.getPackageName()));
             rankRecord.setFileRank(-1);
             records.add(rankRecord);
         }
 
-        records.sort(Comparator.comparing(RankRecord::getCosineSimilarity).reversed());
+        records.sort(Comparator.comparing(RankRecord::getScore).reversed());
 
         for(int i=0; i<records.size(); i++){
             RankRecord rankRecord = records.get(i);
@@ -109,7 +110,7 @@ public class VersionHistoryRank {
         List<StructuredCodeFile> codeFiles = JavaParser.parseCodeFilesInDir(SavePath.getSourcePath(projectName), 1);
         DBProcessor dbProcessor = new DBProcessorFake();
         dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
-        CodeFileMap codeFileMap = new CodeFileMap(new ArrayList<>(codeFiles));
+        CodeFileMap codeFileMap = new PackageMap(new ArrayList<>(codeFiles));
         dbProcessor.saveBugReports(reports, codeFileMap);
 
         VersionHistoryRank versionHistoryRank = new VersionHistoryRank(new ArrayList<>(codeFiles));
