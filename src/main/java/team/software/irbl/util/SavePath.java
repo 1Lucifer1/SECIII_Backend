@@ -20,6 +20,7 @@ public class SavePath {
     private static String TEST_FILE_PATH = pathTransformFromWinToLinux(System.getProperty("user.dir")) + "/IRBL/data/test/";
 
     private static String LOG_FILE_PATH = pathTransformFromWinToLinux(System.getProperty("user.dir")) + "/IRBL/log/";
+
     public static String getSourcePath(String source){
         return SOURCE_PATH + source;
     }
