@@ -32,6 +32,9 @@ public class VSM {
         return scores;
     }
 
+<<<<<<< HEAD
+    public double getSimilarity(SubLexicon subLexicon, int index){
+=======
     /**
      * 向vsm的词典添加新的文件
      * @param file
@@ -41,6 +44,7 @@ public class VSM {
     }
 
     private double getSimilarity(SubLexicon subLexicon, int index){
+>>>>>>> a431b6fb0cd0e70fcd7b51af18656492bee0f80e
         double innerProduct = 0;
         double lengthOfVectorX = 0;
         double lengthOfVectorY = 0;

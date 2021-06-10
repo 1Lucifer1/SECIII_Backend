@@ -18,6 +18,7 @@ public class CodeFile {
     protected String filePath;
     @TableField(value = "package_name")
     protected String packageName;
+    protected double score;
 
     public CodeFile(){}
 
@@ -30,7 +31,7 @@ public class CodeFile {
     /**
      * 用于mybatis-plus的构造函数
      *
-     * @param 所有表中字段对应属性
+     * @param所有表中字段对应属性
      */
     public CodeFile(int fileIndex, int projectIndex, String fileName, String filePath, String packageName) {
         this.fileIndex = fileIndex;
@@ -78,6 +79,14 @@ public class CodeFile {
 
     public void setPackageName(String packageName) {
         this.packageName = packageName;
+    }
+
+    public double getScore() {
+        return score;
+    }
+
+    public void setScore(double rank) {
+        this.score = score;
     }
 }
 
