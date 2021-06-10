@@ -2,6 +2,7 @@ package team.software.irbl.core.similarReportComponent;
 
 import team.software.irbl.core.domain.StructuredBugReport;
 import team.software.irbl.core.domain.StructuredCodeFile;
+import team.software.irbl.core.maptool.CodeFileMap;
 import team.software.irbl.core.vsm.Lexicon;
 import team.software.irbl.core.vsm.SubLexicon;
 import team.software.irbl.core.vsm.VSM;
@@ -48,19 +49,15 @@ public class SimilarReportRank {
             double similarity = lexicon.getSimilarity(subLexicon, i);
             double newRank = similarity/Math.sqrt(fixedFiles.size());
             for(int j=0;j<fixedFiles.size();j++){
-                int fixedIndex = getFileIndex(fixedFiles.get(j));
+                int fixedIndex = getFileIndex(fixedFiles.get(j).getFilePackageName());
                 codeFile.get(fixedIndex).setScore(codeFile.get(fixedIndex).getScore()+newRank);
             }
         }
     }
     //定位到具体的源文件
-    public int getFileIndex(FixedFile fixedFile){
-        for(int i=0;i<codeFile.size();i++){
-            if(codeFile.get(i).getFileIndex()==fixedFile.getFileIndex()){
-                return i;
-            }
-        }
-        return 0;
+    public int getFileIndex(String packageName){
+        CodeFileMap cfm = new CodeFileMap(this.codeFile);
+        List<CodeFile> res = CodeFileMap.getCodeFileFromMap(String packageName);
     }
     //得到排序
     public List<RankRecord> rank(StructuredBugReport bugReport){
@@ -81,6 +78,9 @@ public class SimilarReportRank {
             records.add(new RankRecord(bugReport.getReportIndex(), cf.get(i).getFileIndex(), i+1, cf.get(i).getScore()));
         }
         return records;
+    }
+    public static void main(String[] args){
+
     }
 
 
