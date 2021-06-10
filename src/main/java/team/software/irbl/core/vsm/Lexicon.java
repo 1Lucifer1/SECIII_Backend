@@ -3,10 +3,14 @@ package team.software.irbl.core.vsm;
 import team.software.irbl.util.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 保证同时读或同时写的线程安全，但不保证同时读写的线程安全，也不建议这么用
+ */
 public class Lexicon {
 
     private SubLexicon[] subs;
@@ -15,10 +19,16 @@ public class Lexicon {
 
     private ConcurrentHashMap<String, IDF> wordMap;
 
+    private volatile boolean hasCalculateIDF;
+
     public Lexicon(List<List<String>> files){
-        subs = new SubLexicon[files.size()];
-        wordMap = new ConcurrentHashMap<>();
         fileNum = files.size();
+        // 预留部分空间方便扩展
+        int size = fileNum;
+        if(size < 10) size = 10;
+        else size = size * 3 / 2;
+        subs = new SubLexicon[size];
+        wordMap = new ConcurrentHashMap<>();
 
         // 在并行的同时保持subs与files对应顺序
         List<Integer> indexes = new ArrayList<>();
@@ -37,6 +47,25 @@ public class Lexicon {
         calculateIDF();
     }
 
+    public void addFile(List<String> file){
+        int place;
+        // 不想费脑子所以使用简单同步避免线程不安全
+        synchronized (this) {
+            place = fileNum;
+            fileNum++;
+            if (fileNum > subs.length) {
+                subs = Arrays.copyOf(subs, subs.length * 3 / 2);
+            }
+        }
+        subs[place] = new SubLexicon(file);
+        HashSet<String> fileWords = new HashSet<>(file);
+        synchronized (this){
+            // 确保不会出现重复相同put问题
+            fileWords.parallelStream().forEach(this::putWord);
+            hasCalculateIDF = false;
+        }
+    }
+
     private void putWord(String word){
         if(wordMap.containsKey(word)){
             wordMap.get(word).add();
@@ -45,14 +74,21 @@ public class Lexicon {
         }
     }
 
-    private void calculateIDF(){
+    private synchronized void calculateIDF(){
         wordMap.values().forEach(idf -> {
             idf.setIdf(Calculate.calculateIdf(idf.getAppearFiles(), fileNum));
         });
+        hasCalculateIDF = true;
     }
 
-
+    // 未考虑并行读写问题，故不要一边addFile一边读tf或idf
     public double getIDF(String word){
+        // 经典双检锁保证线程安全
+        if(!hasCalculateIDF){
+            synchronized (this) {
+                if(!hasCalculateIDF) calculateIDF();
+            }
+        }
         if(wordMap.containsKey(word)){
             return wordMap.get(word).getIdf();
         }else {
@@ -61,10 +97,10 @@ public class Lexicon {
     }
 
     public double getTF(int index, String word){
-        if(index < subs.length) {
+        if(index < fileNum) {
             return subs[index].getTF(word);
         }else {
-            Logger.errorLog("Lexicon: 数组越界.");
+            Logger.errorLog("Lexicon: 文件索引越界.");
             return 0;
         }
     }

@@ -33,6 +33,7 @@ public class StructureRank {
     public List<RankRecord> rank(StructuredBugReport report, double[] weights){
         double[][] scores = new double[CODE_PART_NUM*REPORT_PART_NUM][];
 
+        // 计算各部分相似度
         for(int index=0; index<CODE_PART_NUM; ++index){
             double[] scoreSummary = vsmList[index].getScores(report.getSummaryWords());
             scores[index] = scoreSummary;
@@ -40,6 +41,7 @@ public class StructureRank {
             scores[index + CODE_PART_NUM] = scoreDesc;
         }
 
+        // 使用归一化后的权重对各部分的相似得分加权
         List<RankRecord> records = new ArrayList<>();
         weights = normalize(weights);
         for(int fileIndex=0; fileIndex<codeFiles.size(); ++fileIndex){
@@ -52,6 +54,11 @@ public class StructureRank {
         return records;
     }
 
+    /**
+     * 权重归一化（不修改传入的权重）
+     * @param weights
+     * @return
+     */
     private double[] normalize(double[] weights){
         double[] newWeights = new double[weights.length];
         double total = 0;
@@ -78,6 +85,7 @@ public class StructureRank {
             parts.get(CodeWordsType.CONTEXTS.value()).add(codeFile.getContexts());
         }
 
+        // 为源代码文件的各部分都创建一个vsm
         vsmList = new VSM[CODE_PART_NUM];
         for(int i=0; i<CODE_PART_NUM ;++i){
             vsmList[i] = new VSM(parts.get(i));

@@ -3,6 +3,9 @@ package team.software.irbl.core.vsm;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 只处理分性预处理（分词、词性还原之类的）过的文本
+ */
 public class VSM {
 
     private Lexicon lexicon;
@@ -11,6 +14,11 @@ public class VSM {
         lexicon = new Lexicon(files);
     }
 
+    /**
+     * 保证返回分数的顺序与构造函数接受的file列表的顺序，以及通过addFile方法添加file的顺序相同
+     * @param file
+     * @return
+     */
     public double[] getScores(List<String> file){
         SubLexicon subLexicon = new SubLexicon(file);
 
@@ -24,7 +32,19 @@ public class VSM {
         return scores;
     }
 
+<<<<<<< HEAD
     public double getSimilarity(SubLexicon subLexicon, int index){
+=======
+    /**
+     * 向vsm的词典添加新的文件
+     * @param file
+     */
+    public void addFile(List<String> file){
+        lexicon.addFile(file);
+    }
+
+    private double getSimilarity(SubLexicon subLexicon, int index){
+>>>>>>> a431b6fb0cd0e70fcd7b51af18656492bee0f80e
         double innerProduct = 0;
         double lengthOfVectorX = 0;
         double lengthOfVectorY = 0;
