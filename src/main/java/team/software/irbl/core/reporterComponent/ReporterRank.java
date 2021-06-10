@@ -11,6 +11,8 @@ import team.software.irbl.core.jdt.JavaParser;
 import team.software.irbl.core.maptool.CodeFileMap;
 import team.software.irbl.core.maptool.PackageMap;
 import team.software.irbl.core.stacktraceComponent.StackRank;
+import team.software.irbl.core.versionHistoryComponent.CommitInfo;
+import team.software.irbl.core.versionHistoryComponent.VersionHistoryRank;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.CodeFile;
 import team.software.irbl.domain.FixedFile;
@@ -82,13 +84,13 @@ public class ReporterRank {
         for(FixedFile fixedFile: report.getFixedFiles()){
             packages.add(fixedFile.getFilePackageName());
         }
-        reportersPastPackages.put(reporter, new HashSet<>(packages));
+        reportersPastPackages.put(reporter, packages);
         return records;
     }
 
     public static void main(String[] args) throws Err {
-
         String projectName = "swt-3.1";
+
         List<BugReport> reports = XMLParser.getBugReportsFromXML(SavePath.getSourcePath(projectName) + "/bugRepository.xml", 1);
         List<StructuredCodeFile> codeFiles = JavaParser.parseCodeFilesInDir(SavePath.getSourcePath(projectName), 1);
         DBProcessor dbProcessor = new DBProcessorFake();
@@ -96,24 +98,20 @@ public class ReporterRank {
         CodeFileMap codeFileMap = new PackageMap(new ArrayList<>(codeFiles));
         dbProcessor.saveBugReports(reports, codeFileMap);
 
-        if(reports != null) {
-            List<BugReport> traceReports = Collections.synchronizedList(new ArrayList<>());
-            ReporterRank reporterRank = new ReporterRank(projectName, codeFileMap);
-            reports.forEach(report -> {
-                List<RankRecord> records = reporterRank.rank(report);
-                if(records != null){
-                    report.setRanks(records);
-                }
-            });
-//            System.out.println(traceReports.size());
+        ReporterRank reporterRank = new ReporterRank(projectName, codeFileMap);
 
-            IndicatorEvaluation indicatorEvaluation = new IndicatorEvaluation();
-            Indicator indicator = indicatorEvaluation.getEvaluationIndicator(traceReports);
-            System.out.println("Top@1:  "+indicator.getTop1());
-            System.out.println("Top@5:  "+indicator.getTop5());
-            System.out.println("Top@10: "+indicator.getTop10());
-            System.out.println("MRR:    "+indicator.getMRR());
-            System.out.println("MAP:    "+indicator.getMAP());
-        }
+        assert reports != null;
+        reports.forEach(report -> {
+            List<RankRecord> records = reporterRank.rank(report);
+            report.setRanks(records);
+        });
+
+        IndicatorEvaluation indicatorEvaluation = new IndicatorEvaluation();
+        Indicator indicator = indicatorEvaluation.getEvaluationIndicator(reports);
+        System.out.println("Top@1:  "+indicator.getTop1());
+        System.out.println("Top@5:  "+indicator.getTop5());
+        System.out.println("Top@10: "+indicator.getTop10());
+        System.out.println("MRR:    "+indicator.getMRR());
+        System.out.println("MAP:    "+indicator.getMAP());
     }
 }
