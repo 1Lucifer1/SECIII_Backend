@@ -31,6 +31,7 @@ public class FixedFile {
     public void setId(int id) {
         this.id = id;
     }
+    
 
     public int getReportIndex() {
         return reportIndex;

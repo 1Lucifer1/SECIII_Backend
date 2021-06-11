@@ -25,6 +25,7 @@ public class ReportController {
 
     @GetMapping("/getAllReportsByProjectIndex/{projectIndex}")
     public Res getAllReportsByProjectIndex(@PathVariable Integer projectIndex) throws Err {
+        System.out.println(projectIndex);
         return Res.success(reportService.getAllReportsByProjectIndex(projectIndex));
     }
 }
