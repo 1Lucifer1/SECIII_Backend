@@ -23,4 +23,8 @@ public interface DBProcessor {
     Project getProjectByIndex(int projectIndex);
 
     Project getProjectByName(String projectName);
+
+    List<CodeFile> getCodeFilesByProjectIndex(int projectIndex);
+
+    List<BugReport> getBugReportsByProjectIndex(int projectIndex);
 }

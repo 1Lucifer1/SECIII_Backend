@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import team.software.irbl.core.domain.StructuredBugReport;
 import team.software.irbl.core.domain.StructuredCodeFile;
+import team.software.irbl.core.enums.ComponentType;
 import team.software.irbl.core.jdt.JavaParser;
 import team.software.irbl.core.maptool.CodeFileMap;
 import team.software.irbl.core.maptool.FilePathMap;
@@ -12,10 +13,14 @@ import team.software.irbl.core.nlp.NLP;
 import team.software.irbl.core.dbstore.DBProcessor;
 import team.software.irbl.core.dbstore.DBProcessorFake;
 import team.software.irbl.core.filestore.FileTranslator;
+import team.software.irbl.core.reporterComponent.ReporterRank;
+import team.software.irbl.core.similarReportComponent.SimilarReportRank;
 import team.software.irbl.core.stacktraceComponent.StackRank;
 import team.software.irbl.core.structureComponent.StructureRank;
 import team.software.irbl.core.filestore.XMLParser;
+import team.software.irbl.core.versionHistoryComponent.VersionHistoryRank;
 import team.software.irbl.domain.BugReport;
+import team.software.irbl.domain.CodeFile;
 import team.software.irbl.domain.Project;
 import team.software.irbl.domain.RankRecord;
 import team.software.irbl.dto.project.Indicator;
@@ -27,15 +32,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 @Component
 public class Driver {
 
-    private  DBProcessor dbProcessor;
+    private static final double[] weights = {1, 1, 1, 1, 1};
 
-    private List<StructuredCodeFile> codeFiles;
-    private List<StructuredBugReport> bugReports;
+    private  DBProcessor dbProcessor;
 
     @Autowired
     public Driver(DBProcessor dbProcessor){
@@ -51,16 +58,17 @@ public class Driver {
     public List<BugReport> startRank(String projectName, boolean forcePreprocess){
         long startTime = System.currentTimeMillis();
         Project project = dbProcessor.getProjectByName(projectName);
-        // 如果项目未经过预处理（即不存在）或强制要求重新预处理
-        // 注：使用DBProcessorFake时，project永不为null，故forcePreprocess即实际指定是否进行预处理
-        if(forcePreprocess || project == null){
-            // 如果project不存在则创建新project，否则将原project相关记录清空
-            if(project == null) {
-                project = new Project(projectName);
-                dbProcessor.saveProject(project);
-            }else{
-                dbProcessor.cleanProject(project.getProjectIndex());
-            }
+        boolean isNewProject = false;
+        if(project == null) {
+            project = new Project(projectName);
+            dbProcessor.saveProject(project);
+            isNewProject = true;
+        }
+        List<StructuredBugReport> bugReports;
+        List<StructuredCodeFile> codeFiles;
+        // 如果项目要求重新预处理（spring boot运行时使用nlp处理会出错，故不推荐运行spring boot时再进行预处理）
+        if(forcePreprocess){
+            dbProcessor.cleanProject(project.getProjectIndex());
             // 预处理
             codeFiles = preProcessProject(projectName, project.getProjectIndex());
             bugReports = preProcessBugReports(projectName, project.getProjectIndex());
@@ -68,39 +76,46 @@ public class Driver {
                 Logger.errorLog("File preprocess failed.");
                 return null;
             }
-            // 数据库存保存读取的基础信息
-            dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
-            CodeFileMap codeFileMap;
-            if(projectName.equals("aspectj")) codeFileMap = new  FilePathMap(new ArrayList<>(codeFiles));
-            else codeFileMap = new PackageMap(new ArrayList<>(codeFiles));
-            dbProcessor.saveBugReports(new ArrayList<>(bugReports), codeFileMap);
-            project.setCodeFileCount(codeFiles.size());
-            project.setReportCount(bugReports.size());
-            dbProcessor.updateProject(project);
-
-            try {
-                // 文件形式保存预处理结果
-                FileTranslator.writeBugReport(bugReports,SavePath.getPreProcessReportPath(projectName));
-                FileTranslator.writeCodeFile(codeFiles,SavePath.getPreProcessSourcePath(projectName));
-            } catch (IOException e) {
-                e.printStackTrace();
-                Logger.errorLog("Saving json file failed.");
-                dbProcessor.cleanProject(project.getProjectIndex());
-                return null;
-            }
+            saveCodeFilesABugReports(new ArrayList<>(codeFiles), new ArrayList<>(bugReports), project);
+            // 保存预处理结果
+            FileTranslator.writeBugReport(bugReports,SavePath.getPreProcessReportPath(projectName));
+            FileTranslator.writeCodeFile(codeFiles,SavePath.getPreProcessSourcePath(projectName));
         }else{
             // 不需要预处理则直接读取保存预处理内容的文件
-            try {
-                bugReports = FileTranslator.readBugReport(SavePath.getPreProcessReportPath(projectName));
-                codeFiles = FileTranslator.readCodeFile(SavePath.getPreProcessSourcePath(projectName));
-                if(bugReports==null || codeFiles == null || bugReports.size()==0 || codeFiles.size() == 0){
-                    Logger.errorLog("Reading preprocessed files failed.");
+            bugReports = FileTranslator.readBugReport(SavePath.getPreProcessReportPath(projectName));
+            codeFiles = FileTranslator.readCodeFile(SavePath.getPreProcessSourcePath(projectName));
+            if(bugReports==null || codeFiles == null){
+                Logger.errorLog("Reading preprocessed files failed.");
+                return null;
+            }
+            // 清空预处理数据中的可能的失效部分
+            int projectIndex = project.getProjectIndex();
+            bugReports.forEach(report -> {
+                report.setProjectIndex(projectIndex);
+                report.setReportIndex(-1);
+            });
+            codeFiles.forEach(codeFile -> {
+                codeFile.setProjectIndex(projectIndex);
+                codeFile.setFileIndex(-1);
+            });
+            if(isNewProject){
+                saveCodeFilesABugReports(new ArrayList<>(codeFiles), new ArrayList<>(bugReports), project);
+            }else {
+                List<CodeFile> codeFilesFromDB = dbProcessor.getCodeFilesByProjectIndex(projectIndex);
+                List<BugReport> bugReportsFromDB = dbProcessor.getBugReportsByProjectIndex(projectIndex);
+                bugReportsFromDB.sort(Comparator.comparingInt(BugReport::getBugId));
+                if(bugReports.size() != bugReportsFromDB.size() || codeFiles.size() != codeFilesFromDB.size()){
+                    Logger.errorLog("Bug report num or code file num changed.");
                     return null;
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-                Logger.errorLog("Reading json file failed.");
-                return null;
+                // 更新index
+                for(int i=0; i<bugReports.size(); ++i){
+                    bugReports.get(i).setReportIndex(bugReportsFromDB.get(i).getReportIndex());
+                }
+                FilePathMap filePathMap = new FilePathMap(codeFilesFromDB);
+                codeFiles.forEach(codeFile -> {
+                    codeFile.setFileIndex(filePathMap.getCodeFileFromMap(codeFile.getFilePath()).get(0).getFileIndex());
+                });
             }
         }
 
@@ -108,34 +123,66 @@ public class Driver {
         Logger.log("Getting preprocessed files successes in " + (preprocessEndTime-startTime)/1000.0
                 + " seconds and results in " + bugReports.size() + " bug reports and " + codeFiles.size() + " code files.");
 
-        // 使用vsm进行相似度排序
+        rank(codeFiles, bugReports);
+
+        long endTime = System.currentTimeMillis();
+        Logger.log("Rank for " + bugReports.size() + " bug reports among " + codeFiles.size() + " code files success in " +
+                (endTime - preprocessEndTime)/1000.0 + " seconds and result.");
+        return new ArrayList<>(bugReports);
+    }
+
+    private void rank(List<StructuredCodeFile> codeFiles, List<StructuredBugReport> bugReports){
         int count = 0;
-        StackRank stackRank = new StackRank(new PackageMap(new ArrayList<>(codeFiles)));
+        PackageMap packageMap = new PackageMap(new ArrayList<>(codeFiles));
+        StackRank stackRank = new StackRank(packageMap);
         StructureRank structureRank = new StructureRank(codeFiles);
+        SimilarReportRank similarReportRank = new SimilarReportRank(codeFiles);
+        ReporterRank reporterRank = new ReporterRank(codeFiles, packageMap);
+        VersionHistoryRank versionHistoryRank = new VersionHistoryRank();
         List<RankRecord> records = new ArrayList<>();
         for(StructuredBugReport bugReport: bugReports){
-            Logger.devLog("" + bugReport.getReportIndex());
+            ConcurrentHashMap<Integer, Double> scoreMap = new ConcurrentHashMap<>();
             List<RankRecord> recordList = stackRank.rank(bugReport);
-            if(recordList != null) count++;
-            if(recordList == null) recordList = structureRank.rank(bugReport);
+            if(recordList != null) {
+                count++;   
+                recordList.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), rankRecord.getScore()*weights[ComponentType.STACK.value()]));
+            }
+            if(recordList == null){
+                recordList = structureRank.rank(bugReport);
+                recordList.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), rankRecord.getScore()*weights[ComponentType.STRUCTURE.value()]));
+            }
+
+            recordList = similarReportRank.rank(bugReport);
+            recordList.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), scoreMap.get(rankRecord.getFileIndex())+rankRecord.getScore()*weights[ComponentType.REPORT.value()]));
+
+            recordList = reporterRank.rank(bugReport);
+            recordList.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), scoreMap.get(rankRecord.getFileIndex())+rankRecord.getScore()*weights[ComponentType.REPORTER.value()]));
+
+            recordList
+
             recordList.sort(Collections.reverseOrder());
             for(int i=0; i<recordList.size(); ++i){
                 recordList.get(i).setFileRank(i+1);
             }
             bugReport.setRanks(recordList);
-            for(RankRecord record: recordList){
-                records.add(record);
-                Logger.devLog("  " + record.getFileIndex() + " : " + record.getFileRank() + " , " +record.getScore());
-            }
+            records.addAll(recordList);
         }
         Logger.log(count + " reports use stack rank.");
         // 保存排序结果
         dbProcessor.saveRankRecord(records);
+    }
 
-        long endTime = System.currentTimeMillis();
-        Logger.log("Rank for " + bugReports.size() + " bug reports among " + codeFiles.size() + " code files success in " +
-                (endTime - preprocessEndTime)/1000.0 + " seconds and result in " + records.size() + " rank records.");
-        return new ArrayList<>(bugReports);
+    private void saveCodeFilesABugReports(List<CodeFile> codeFiles, List<BugReport> bugReports, Project project){
+        // 数据库存保存读取的基础信息
+        dbProcessor.saveCodeFiles(codeFiles);
+        // aspectj的bug report中使用文件路径来对应代码文件
+        CodeFileMap codeFileMap;
+        if(project.getProjectName().equals("aspectj")) codeFileMap = new  FilePathMap(new ArrayList<>(codeFiles));
+        else codeFileMap = new PackageMap(codeFiles);
+        dbProcessor.saveBugReports(bugReports, codeFileMap);
+        project.setCodeFileCount(codeFiles.size());
+        project.setReportCount(bugReports.size());
+        dbProcessor.updateProject(project);
     }
 
 

@@ -106,4 +106,14 @@ public class DBProcessorImpl implements DBProcessor {
     public Project getProjectByName(String projectName) {
         return projectMapper.selectOne(new QueryWrapper<Project>().eq("project_name", projectName));
     }
+
+    @Override
+    public List<CodeFile> getCodeFilesByProjectIndex(int projectIndex) {
+        return codeFileMapper.selectList(new QueryWrapper<CodeFile>().eq("project_index", projectIndex));
+    }
+
+    @Override
+    public List<BugReport> getBugReportsByProjectIndex(int projectIndex) {
+        return bugReportMapper.selectList(new QueryWrapper<BugReport>().eq("project_index", projectIndex));
+    }
 }

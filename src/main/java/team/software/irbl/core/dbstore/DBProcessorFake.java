@@ -110,4 +110,14 @@ public class DBProcessorFake implements DBProcessor {
         project.setProjectIndex(2);
         return project;
     }
+
+    @Override
+    public List<CodeFile> getCodeFilesByProjectIndex(int projectIndex) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<BugReport> getBugReportsByProjectIndex(int projectIndex) {
+        return new ArrayList<>();
+    }
 }
