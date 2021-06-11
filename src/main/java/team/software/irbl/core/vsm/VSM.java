@@ -38,7 +38,8 @@ public class VSM {
     public void addFile(List<String> file){
         lexicon.addFile(file);
     }
-    public double getSimilarity(SubLexicon subLexicon, int index){
+
+    private double getSimilarity(SubLexicon subLexicon, int index){
         double innerProduct = 0;
         double lengthOfVectorX = 0;
         double lengthOfVectorY = 0;
