@@ -6,6 +6,7 @@ import team.software.irbl.core.domain.StructuredBugReport;
 import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.core.jdt.JavaParser;
 import team.software.irbl.core.maptool.CodeFileMap;
+import team.software.irbl.core.maptool.FilePathMap;
 import team.software.irbl.core.maptool.PackageMap;
 import team.software.irbl.core.nlp.NLP;
 import team.software.irbl.core.dbstore.DBProcessor;
@@ -33,6 +34,9 @@ public class Driver {
 
     private  DBProcessor dbProcessor;
 
+    private List<StructuredCodeFile> codeFiles;
+    private List<StructuredBugReport> bugReports;
+
     @Autowired
     public Driver(DBProcessor dbProcessor){
         this.dbProcessor = dbProcessor;
@@ -46,8 +50,6 @@ public class Driver {
      */
     public List<BugReport> startRank(String projectName, boolean forcePreprocess){
         long startTime = System.currentTimeMillis();
-        List<StructuredCodeFile> codeFiles = null;
-        List<StructuredBugReport> bugReports = null;
         Project project = dbProcessor.getProjectByName(projectName);
         // 如果项目未经过预处理（即不存在）或强制要求重新预处理
         // 注：使用DBProcessorFake时，project永不为null，故forcePreprocess即实际指定是否进行预处理
@@ -68,7 +70,9 @@ public class Driver {
             }
             // 数据库存保存读取的基础信息
             dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
-            CodeFileMap codeFileMap = new PackageMap(new ArrayList<>(codeFiles));
+            CodeFileMap codeFileMap;
+            if(projectName.equals("aspectj")) codeFileMap = new  FilePathMap(new ArrayList<>(codeFiles));
+            else codeFileMap = new PackageMap(new ArrayList<>(codeFiles));
             dbProcessor.saveBugReports(new ArrayList<>(bugReports), codeFileMap);
             project.setCodeFileCount(codeFiles.size());
             project.setReportCount(bugReports.size());
@@ -134,11 +138,12 @@ public class Driver {
         return new ArrayList<>(bugReports);
     }
 
+
     private List<StructuredCodeFile> preProcessProject(String projectName, int projectIndex){
         String dirPath = SavePath.getSourcePath(projectName) + "/";
         List<StructuredCodeFile> codeFiles = JavaParser.parseCodeFilesInDir(dirPath, projectIndex);
 
-        Logger.log("found " + codeFiles.size() + " code files.");
+        Logger.log("found " + codeFiles.size() +   " code files.");
         // 对codeFile的结构化信息与原生文本分别进行nlp处理
 
         codeFiles.parallelStream().forEach(codeFile -> {
@@ -173,7 +178,7 @@ public class Driver {
 
     public static void main(String[] args) {
         Driver driver = new Driver(new DBProcessorFake());
-        List<BugReport> bugReports = driver.startRank("eclipse-3.1", false);
+        List<BugReport> bugReports = driver.startRank("aspectj", true);
 
         File saveResult = new File(SavePath.getSourcePath("result1.txt"));
         IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();
