@@ -31,11 +31,14 @@ public class VersionHistoryRank {
 
     private List<CodeFile> codeFileList;
 
-    public VersionHistoryRank(List<CodeFile> codeFileList){
+    public VersionHistoryRank(List<CodeFile> codeFileList, Project project){
         this.codeFileList = codeFileList;
+        this.commitInfoList = XMLParser.getCommitInfosFromXML(SavePath.getSourcePath(project.getProjectName())+"/CommitRepository.xml", project.getProjectIndex());
     }
 
-    public List<RankRecord> rankOfVersionHistory(BugReport bugReport, List<CommitInfo> commitInfoList){
+    public List<RankRecord> rankOfVersionHistory(BugReport bugReport){
+        List<CommitInfo> commitInfoList = new ArrayList<>(this.commitInfoList);
+
         try {
             // 注意：可选项FixDate | OpenDate
             Date date = format.parse(bugReport.getFixDate());
@@ -48,7 +51,7 @@ public class VersionHistoryRank {
             for (int i=0;i<commitInfoList.size();i++) {
                 CommitInfo commitInfo = commitInfoList.get(i);
                 Date commitDate = format.parse(commitInfo.getDate());
-                if(commitDate.before(tolerableDate) || commitDate.after(date) || commitDate.equals(date)){
+                if(commitDate.before(tolerableDate) || commitDate.after(date) ){
                     commitInfoList.remove(commitInfo);
                     i--;
                 }
@@ -63,14 +66,12 @@ public class VersionHistoryRank {
             return null;
         }
 
-        this.commitInfoList = commitInfoList;
-
         List<RankRecord> records = new ArrayList<>();
         for(CodeFile codeFile: codeFileList){
             RankRecord rankRecord = new RankRecord();
             rankRecord.setReportIndex(bugReport.getReportIndex());
             rankRecord.setFileIndex(codeFile.getFileIndex());
-            rankRecord.setScore(calculateSuspiciousScore(codeFile.getPackageName()));
+            rankRecord.setScore(calculateSuspiciousScore(codeFile.getPackageName(), commitInfoList));
             rankRecord.setFileRank(-1);
             records.add(rankRecord);
         }
@@ -86,7 +87,7 @@ public class VersionHistoryRank {
     }
 
     // 计算某个源文件的可疑度得分
-    private double calculateSuspiciousScore(String packageName){
+    private double calculateSuspiciousScore(String packageName, List<CommitInfo> commitInfoList){
         double score = 0;
         for(CommitInfo commitInfo: commitInfoList){
             List<FixedFile> fixedFileList = commitInfo.getFixedFiles();
@@ -103,8 +104,9 @@ public class VersionHistoryRank {
 
     public static void main(String[] args) {
         String projectName = "swt-3.1";
-        List<CommitInfo> commitInfoList = XMLParser.getCommitInfosFromXML(SavePath.getSourcePath(projectName)+"/CommitRepository.xml", 1);
-        System.out.println(commitInfoList.size());
+        int projectIndex = 1;
+        Project project = new Project(projectName);
+        project.setProjectIndex(projectIndex);
 
         List<BugReport> reports = XMLParser.getBugReportsFromXML(SavePath.getSourcePath(projectName) + "/bugRepository.xml", 1);
         List<StructuredCodeFile> codeFiles = JavaParser.parseCodeFilesInDir(SavePath.getSourcePath(projectName), 1);
@@ -113,11 +115,11 @@ public class VersionHistoryRank {
         CodeFileMap codeFileMap = new PackageMap(new ArrayList<>(codeFiles));
         dbProcessor.saveBugReports(reports, codeFileMap);
 
-        VersionHistoryRank versionHistoryRank = new VersionHistoryRank(new ArrayList<>(codeFiles));
+        VersionHistoryRank versionHistoryRank = new VersionHistoryRank(new ArrayList<>(codeFiles), project);
 
         assert reports != null;
         reports.forEach(report -> {
-            List<RankRecord> records = versionHistoryRank.rankOfVersionHistory(report, new ArrayList<>(commitInfoList));
+            List<RankRecord> records = versionHistoryRank.rankOfVersionHistory(report);
             report.setRanks(records);
         });
 
