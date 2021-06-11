@@ -31,7 +31,6 @@ public class VSM {
         indexes.parallelStream().forEach(index -> scores[index]= getSimilarity(subLexicon, index));
         return scores;
     }
-    public double getSimilarity(SubLexicon subLexicon, int index){
     /**
      * 向vsm的词典添加新的文件
      * @param file
@@ -39,8 +38,7 @@ public class VSM {
     public void addFile(List<String> file){
         lexicon.addFile(file);
     }
-
-    private double getSimilarity(SubLexicon subLexicon, int index){
+    public double getSimilarity(SubLexicon subLexicon, int index){
         double innerProduct = 0;
         double lengthOfVectorX = 0;
         double lengthOfVectorY = 0;

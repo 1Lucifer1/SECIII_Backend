@@ -2,492 +2,492 @@
 <reporters>
     <reporter>
         <bugId>75739</bugId>
-        <name>ggregory</name>
-        <id>Gary Gregory</id>
+        <name>Gary Gregory</name>
+        <id>ggregory</id>
     </reporter>
     <reporter>
         <bugId>77948</bugId>
-        <name>douglas.pollock</name>
-        <id>Douglas Pollock</id>
+        <name>Douglas Pollock</name>
+        <id>douglas.pollock</id>
     </reporter>
     <reporter>
         <bugId>78548</bugId>
-        <name>grant_gayed</name>
-        <id>Grant Gayed</id>
+        <name>Grant Gayed</name>
+        <id>grant_gayed</id>
     </reporter>
     <reporter>
         <bugId>78559</bugId>
-        <name>grant_gayed</name>
-        <id>Grant Gayed</id>
+        <name>Grant Gayed</name>
+        <id>grant_gayed</id>
     </reporter>
     <reporter>
         <bugId>79107</bugId>
-        <name>Silenio_Quarti</name>
-        <id>Silenio Quarti</id>
+        <name>Silenio Quarti</name>
+        <id>Silenio_Quarti</id>
     </reporter>
     <reporter>
         <bugId>79481</bugId>
-        <name>bpasero</name>
-        <id>Benjamin Pasero</id>
+        <name>Benjamin Pasero</name>
+        <id>bpasero</id>
     </reporter>
     <reporter>
         <bugId>80120</bugId>
-        <name>michaelvanmeekeren</name>
-        <id>Michael Van Meekeren</id>
+        <name>Michael Van Meekeren</name>
+        <id>michaelvanmeekeren</id>
     </reporter>
     <reporter>
         <bugId>80276</bugId>
-        <name>billy.biggs</name>
-        <id>Billy Biggs</id>
+        <name>Billy Biggs</name>
+        <id>billy.biggs</id>
     </reporter>
     <reporter>
         <bugId>78854</bugId>
-        <name>artyom.kuanbekov</name>
-        <id>Artyom Kuanbekov</id>
+        <name>Artyom Kuanbekov</name>
+        <id>artyom.kuanbekov</id>
     </reporter>
     <reporter>
         <bugId>81265</bugId>
-        <name>platform-swt-inbox</name>
-        <id>Platform-SWT-Inbox</id>
+        <name>Platform-SWT-Inbox</name>
+        <id>platform-swt-inbox</id>
     </reporter>
     <reporter>
         <bugId>80506</bugId>
-        <name>platform-swt-inbox</name>
-        <id>Platform-SWT-Inbox</id>
+        <name>Platform-SWT-Inbox</name>
+        <id>platform-swt-inbox</id>
     </reporter>
     <reporter>
         <bugId>58185</bugId>
-        <name>Jim.Adams</name>
-        <id>Jim Adams</id>
+        <name>Jim Adams</name>
+        <id>Jim.Adams</id>
     </reporter>
     <reporter>
         <bugId>83251</bugId>
-        <name>Olivier_Thomann</name>
-        <id>Olivier Thomann</id>
+        <name>Olivier Thomann</name>
+        <id>Olivier_Thomann</id>
     </reporter>
     <reporter>
         <bugId>82346</bugId>
-        <name>Fabian.Wolf</name>
-        <id>Fabian Wolf</id>
+        <name>Fabian Wolf</name>
+        <id>Fabian.Wolf</id>
     </reporter>
     <reporter>
         <bugId>83699</bugId>
-        <name>daniel_megert</name>
-        <id>Dani Megert</id>
+        <name>Dani Megert</name>
+        <id>daniel_megert</id>
     </reporter>
     <reporter>
         <bugId>79419</bugId>
-        <name>Tod_Creasey</name>
-        <id>Tod Creasey</id>
+        <name>Tod Creasey</name>
+        <id>Tod_Creasey</id>
     </reporter>
     <reporter>
         <bugId>83262</bugId>
-        <name>billy.biggs</name>
-        <id>Billy Biggs</id>
+        <name>Billy Biggs</name>
+        <id>billy.biggs</id>
     </reporter>
     <reporter>
         <bugId>80830</bugId>
-        <name>eclipse</name>
-        <id>Tom Hofmann</id>
+        <name>Tom Hofmann</name>
+        <id>eclipse</id>
     </reporter>
     <reporter>
         <bugId>82905</bugId>
-        <name>sma</name>
-        <id>Stefan Matthias Aust</id>
+        <name>Stefan Matthias Aust</name>
+        <id>sma</id>
     </reporter>
     <reporter>
         <bugId>84557</bugId>
-        <name>edoardo</name>
-        <id>Edoardo Comar</id>
+        <name>Edoardo Comar</name>
+        <id>edoardo</id>
     </reporter>
     <reporter>
         <bugId>86000</bugId>
-        <name>Tjwolf</name>
-        <id>Tim Wolf</id>
+        <name>Tim Wolf</name>
+        <id>Tjwolf</id>
     </reporter>
     <reporter>
         <bugId>84012</bugId>
-        <name>fwp</name>
-        <id>Florian Priester</id>
+        <name>Florian Priester</name>
+        <id>fwp</id>
     </reporter>
     <reporter>
         <bugId>87363</bugId>
-        <name>veronika_irvine</name>
-        <id>Veronika Irvine</id>
+        <name>Veronika Irvine</name>
+        <id>veronika_irvine</id>
     </reporter>
     <reporter>
         <bugId>87676</bugId>
-        <name>wassim.melhem</name>
-        <id>Wassim Melhem</id>
+        <name>Wassim Melhem</name>
+        <id>wassim.melhem</id>
     </reporter>
     <reporter>
         <bugId>86294</bugId>
-        <name>christophe.cornu+eclipse</name>
-        <id>Christophe Cornu</id>
+        <name>Christophe Cornu</name>
+        <id>christophe.cornu+eclipse</id>
     </reporter>
     <reporter>
         <bugId>87855</bugId>
-        <name>eclipse</name>
-        <id>Genady Beryozkin</id>
+        <name>Genady Beryozkin</name>
+        <id>eclipse</id>
     </reporter>
     <reporter>
         <bugId>89533</bugId>
-        <name>markus.kell.r</name>
-        <id>Markus Keller</id>
+        <name>Markus Keller</name>
+        <id>markus.kell.r</id>
     </reporter>
     <reporter>
         <bugId>90018</bugId>
-        <name>hudsonr</name>
-        <id>Randy Hudson</id>
+        <name>Randy Hudson</name>
+        <id>hudsonr</id>
     </reporter>
     <reporter>
         <bugId>87997</bugId>
-        <name>vulcannis</name>
-        <id>Kory Markevich</id>
+        <name>Kory Markevich</name>
+        <id>vulcannis</id>
     </reporter>
     <reporter>
         <bugId>88829</bugId>
-        <name>grant_gayed</name>
-        <id>Grant Gayed</id>
+        <name>Grant Gayed</name>
+        <id>grant_gayed</id>
     </reporter>
     <reporter>
         <bugId>86631</bugId>
-        <name>snorthov</name>
-        <id>Steve Northover</id>
+        <name>Steve Northover</name>
+        <id>snorthov</id>
     </reporter>
     <reporter>
         <bugId>81242</bugId>
-        <name>veronika_irvine</name>
-        <id>Veronika Irvine</id>
+        <name>Veronika Irvine</name>
+        <id>veronika_irvine</id>
     </reporter>
     <reporter>
         <bugId>92017</bugId>
-        <name>igraham</name>
-        <id>Ian Graham</id>
+        <name>Ian Graham</name>
+        <id>igraham</id>
     </reporter>
     <reporter>
         <bugId>88717</bugId>
-        <name>bpasero</name>
-        <id>Benjamin Pasero</id>
+        <name>Benjamin Pasero</name>
+        <id>bpasero</id>
     </reporter>
     <reporter>
         <bugId>92612</bugId>
-        <name>grant_gayed</name>
-        <id>Grant Gayed</id>
+        <name>Grant Gayed</name>
+        <id>grant_gayed</id>
     </reporter>
     <reporter>
         <bugId>92181</bugId>
-        <name>sxenos</name>
-        <id>Stefan Xenos</id>
+        <name>Stefan Xenos</name>
+        <id>sxenos</id>
     </reporter>
     <reporter>
         <bugId>91159</bugId>
-        <name>veronika_irvine</name>
-        <id>Veronika Irvine</id>
+        <name>Veronika Irvine</name>
+        <id>veronika_irvine</id>
     </reporter>
     <reporter>
         <bugId>79268</bugId>
-        <name>eclipse</name>
-        <id>Tom Hofmann</id>
+        <name>Tom Hofmann</name>
+        <id>eclipse</id>
     </reporter>
     <reporter>
         <bugId>94467</bugId>
-        <name>sxenos</name>
-        <id>Stefan Xenos</id>
+        <name>Stefan Xenos</name>
+        <id>sxenos</id>
     </reporter>
     <reporter>
         <bugId>94598</bugId>
-        <name>ccyang</name>
-        <id>Sanny CC Yang</id>
+        <name>Sanny CC Yang</name>
+        <id>ccyang</id>
     </reporter>
     <reporter>
         <bugId>93724</bugId>
-        <name>billy.biggs</name>
-        <id>Billy Biggs</id>
+        <name>Billy Biggs</name>
+        <id>billy.biggs</id>
     </reporter>
     <reporter>
         <bugId>97651</bugId>
-        <name>grant_gayed</name>
-        <id>Grant Gayed</id>
+        <name>Grant Gayed</name>
+        <id>grant_gayed</id>
     </reporter>
     <reporter>
         <bugId>97678</bugId>
-        <name>veronika_irvine</name>
-        <id>Veronika Irvine</id>
+        <name>Veronika Irvine</name>
+        <id>veronika_irvine</id>
     </reporter>
     <reporter>
         <bugId>97745</bugId>
-        <name>susan</name>
-        <id>Susan McCourt</id>
+        <name>Susan McCourt</name>
+        <id>susan</id>
     </reporter>
     <reporter>
         <bugId>97177</bugId>
-        <name>thefloe</name>
-        <id>Haibing</id>
+        <name>Haibing</name>
+        <id>thefloe</id>
     </reporter>
     <reporter>
         <bugId>99376</bugId>
-        <name>grant_gayed</name>
-        <id>Grant Gayed</id>
+        <name>Grant Gayed</name>
+        <id>grant_gayed</id>
     </reporter>
     <reporter>
         <bugId>100040</bugId>
-        <name>n.a.edgar</name>
-        <id>Nick Edgar</id>
+        <name>Nick Edgar</name>
+        <id>n.a.edgar</id>
     </reporter>
     <reporter>
         <bugId>78634</bugId>
-        <name>christophe.cornu+eclipse</name>
-        <id>Christophe Cornu</id>
+        <name>Christophe Cornu</name>
+        <id>christophe.cornu+eclipse</id>
     </reporter>
     <reporter>
         <bugId>94603</bugId>
-        <name>eclipse.sprigogin</name>
-        <id>Sergey Prigogin</id>
+        <name>Sergey Prigogin</name>
+        <id>eclipse.sprigogin</id>
     </reporter>
     <reporter>
         <bugId>96916</bugId>
-        <name>lindovsky</name>
-        <id>Petr Lindovsky</id>
+        <name>Petr Lindovsky</name>
+        <id>lindovsky</id>
     </reporter>
     <reporter>
         <bugId>102794</bugId>
-        <name>chris</name>
-        <id>Chris Gilbert</id>
+        <name>Chris Gilbert</name>
+        <id>chris</id>
     </reporter>
     <reporter>
         <bugId>100387</bugId>
-        <name>billy.biggs</name>
-        <id>Billy Biggs</id>
+        <name>Billy Biggs</name>
+        <id>billy.biggs</id>
     </reporter>
     <reporter>
         <bugId>104966</bugId>
-        <name>brockj</name>
-        <id>Brock Janiczak</id>
+        <name>Brock Janiczak</name>
+        <id>brockj</id>
     </reporter>
     <reporter>
         <bugId>90258</bugId>
-        <name>eclipse</name>
-        <id>Tom Hofmann</id>
+        <name>Tom Hofmann</name>
+        <id>eclipse</id>
     </reporter>
     <reporter>
         <bugId>107145</bugId>
-        <name>veronika_irvine</name>
-        <id>Veronika Irvine</id>
+        <name>Veronika Irvine</name>
+        <id>veronika_irvine</id>
     </reporter>
     <reporter>
         <bugId>92013</bugId>
-        <name>dejan</name>
-        <id>Dejan Glozic</id>
+        <name>Dejan Glozic</name>
+        <id>dejan</id>
     </reporter>
     <reporter>
         <bugId>96053</bugId>
-        <name>fwp</name>
-        <id>Florian Priester</id>
+        <name>Florian Priester</name>
+        <id>fwp</id>
     </reporter>
     <reporter>
         <bugId>105772</bugId>
-        <name>dirk_baeumer</name>
-        <id>Dirk Baeumer</id>
+        <name>Dirk Baeumer</name>
+        <id>dirk_baeumer</id>
     </reporter>
     <reporter>
         <bugId>84609</bugId>
-        <name>loskutov</name>
-        <id>Andrey Loskutov</id>
+        <name>Andrey Loskutov</name>
+        <id>loskutov</id>
     </reporter>
     <reporter>
         <bugId>99266</bugId>
-        <name>eclipse.sprigogin</name>
-        <id>Sergey Prigogin</id>
+        <name>Sergey Prigogin</name>
+        <id>eclipse.sprigogin</id>
     </reporter>
     <reporter>
         <bugId>113971</bugId>
-        <name>douglas.pollock</name>
-        <id>Douglas Pollock</id>
+        <name>Douglas Pollock</name>
+        <id>douglas.pollock</id>
     </reporter>
     <reporter>
         <bugId>112358</bugId>
-        <name>veronika_irvine</name>
-        <id>Veronika Irvine</id>
+        <name>Veronika Irvine</name>
+        <id>veronika_irvine</id>
     </reporter>
     <reporter>
         <bugId>82277</bugId>
-        <name>gounis</name>
-        <id>Stavros Kounis</id>
+        <name>Stavros Kounis</name>
+        <id>gounis</id>
     </reporter>
     <reporter>
         <bugId>92341</bugId>
-        <name>yharms</name>
-        <id>Yves Harms</id>
+        <name>Yves Harms</name>
+        <id>yharms</id>
     </reporter>
     <reporter>
         <bugId>117574</bugId>
-        <name>eclipse.felipe</name>
-        <id>Felipe Heidrich</id>
+        <name>Felipe Heidrich</name>
+        <id>eclipse.felipe</id>
     </reporter>
     <reporter>
         <bugId>93380</bugId>
-        <name>brockj</name>
-        <id>Brock Janiczak</id>
+        <name>Brock Janiczak</name>
+        <id>brockj</id>
     </reporter>
     <reporter>
         <bugId>103976</bugId>
-        <name>luigiwalser</name>
-        <id>David Walser</id>
+        <name>David Walser</name>
+        <id>luigiwalser</id>
     </reporter>
     <reporter>
         <bugId>106289</bugId>
-        <name>mark.k.mclaren</name>
-        <id>Mark McLaren</id>
+        <name>Mark McLaren</name>
+        <id>mark.k.mclaren</id>
     </reporter>
     <reporter>
         <bugId>104150</bugId>
-        <name>fwp</name>
-        <id>Florian Priester</id>
+        <name>Florian Priester</name>
+        <id>fwp</id>
     </reporter>
     <reporter>
         <bugId>81264</bugId>
-        <name>chanskw</name>
-        <id>Samantha Chan</id>
+        <name>Samantha Chan</name>
+        <id>chanskw</id>
     </reporter>
     <reporter>
         <bugId>99145</bugId>
-        <name>martinae</name>
-        <id>Martin Aeschlimann</id>
+        <name>Martin Aeschlimann</name>
+        <id>martinae</id>
     </reporter>
     <reporter>
         <bugId>101354</bugId>
-        <name>carolynmacleod4</name>
-        <id>Carolyn MacLeod</id>
+        <name>Carolyn MacLeod</name>
+        <id>carolynmacleod4</id>
     </reporter>
     <reporter>
         <bugId>108769</bugId>
-        <name>dman</name>
-        <id>Derrick Hudson</id>
+        <name>Derrick Hudson</name>
+        <id>dman</id>
     </reporter>
     <reporter>
         <bugId>85072</bugId>
-        <name>zaphod</name>
-        <id>Alexander Staubo</id>
+        <name>Alexander Staubo</name>
+        <id>zaphod</id>
     </reporter>
     <reporter>
         <bugId>102756</bugId>
-        <name>david.malcom.graham</name>
-        <id>David Graham</id>
+        <name>David Graham</name>
+        <id>david.malcom.graham</id>
     </reporter>
     <reporter>
         <bugId>81834</bugId>
-        <name>hokamoto</name>
-        <id>Hiroyuki Okamoto</id>
+        <name>Hiroyuki Okamoto</name>
+        <id>hokamoto</id>
     </reporter>
     <reporter>
         <bugId>106372</bugId>
-        <name>daniel_megert</name>
-        <id>Dani Megert</id>
+        <name>Dani Megert</name>
+        <id>daniel_megert</id>
     </reporter>
     <reporter>
         <bugId>115947</bugId>
-        <name>david_taieb</name>
-        <id>David Taieb</id>
+        <name>David Taieb</name>
+        <id>david_taieb</id>
     </reporter>
     <reporter>
         <bugId>84911</bugId>
-        <name>ext-frederic.philippe</name>
-        <id>Frederic Philippe</id>
+        <name>Frederic Philippe</name>
+        <id>ext-frederic.philippe</id>
     </reporter>
     <reporter>
         <bugId>84906</bugId>
-        <name>ext-frederic.philippe</name>
-        <id>Frederic Philippe</id>
+        <name>Frederic Philippe</name>
+        <id>ext-frederic.philippe</id>
     </reporter>
     <reporter>
         <bugId>14654</bugId>
-        <name>vladgri</name>
-        <id>Vladimir Grishchenko</id>
+        <name>Vladimir Grishchenko</name>
+        <id>vladgri</id>
     </reporter>
     <reporter>
         <bugId>82500</bugId>
-        <name>rdowdall</name>
-        <id>Rodney Dowdall</id>
+        <name>Rodney Dowdall</name>
+        <id>rdowdall</id>
     </reporter>
     <reporter>
         <bugId>92241</bugId>
-        <name>eclipse</name>
-        <id>Tom Hofmann</id>
+        <name>Tom Hofmann</name>
+        <id>eclipse</id>
     </reporter>
     <reporter>
         <bugId>108591</bugId>
-        <name>hokamoto</name>
-        <id>Hiroyuki Okamoto</id>
+        <name>Hiroyuki Okamoto</name>
+        <id>hokamoto</id>
     </reporter>
     <reporter>
         <bugId>108813</bugId>
-        <name>david_williams</name>
-        <id>David Williams</id>
+        <name>David Williams</name>
+        <id>david_williams</id>
     </reporter>
     <reporter>
         <bugId>78856</bugId>
-        <name>steveshaw</name>
-        <id>Steven R. Shaw</id>
+        <name>Steven R. Shaw</name>
+        <id>steveshaw</id>
     </reporter>
     <reporter>
         <bugId>100095</bugId>
-        <name>bpasero</name>
-        <id>Benjamin Pasero</id>
+        <name>Benjamin Pasero</name>
+        <id>bpasero</id>
     </reporter>
     <reporter>
         <bugId>111259</bugId>
-        <name>ppshah</name>
-        <id>Pratik Shah</id>
+        <name>Pratik Shah</name>
+        <id>ppshah</id>
     </reporter>
     <reporter>
         <bugId>91317</bugId>
-        <name>veronika_irvine</name>
-        <id>Veronika Irvine</id>
+        <name>Veronika Irvine</name>
+        <id>veronika_irvine</id>
     </reporter>
     <reporter>
         <bugId>87460</bugId>
-        <name>fwp</name>
-        <id>Florian Priester</id>
+        <name>Florian Priester</name>
+        <id>fwp</id>
     </reporter>
     <reporter>
         <bugId>92757</bugId>
-        <name>fwp</name>
-        <id>Florian Priester</id>
+        <name>Florian Priester</name>
+        <id>fwp</id>
     </reporter>
     <reporter>
         <bugId>83408</bugId>
-        <name>veronika_irvine</name>
-        <id>Veronika Irvine</id>
+        <name>Veronika Irvine</name>
+        <id>veronika_irvine</id>
     </reporter>
     <reporter>
         <bugId>108236</bugId>
-        <name>n.a.edgar</name>
-        <id>Nick Edgar</id>
+        <name>Nick Edgar</name>
+        <id>n.a.edgar</id>
     </reporter>
     <reporter>
         <bugId>104545</bugId>
-        <name>bokowski</name>
-        <id>Boris Bokowski</id>
+        <name>Boris Bokowski</name>
+        <id>bokowski</id>
     </reporter>
     <reporter>
         <bugId>95410</bugId>
-        <name>hudsonr</name>
-        <id>Randy Hudson</id>
+        <name>Randy Hudson</name>
+        <id>hudsonr</id>
     </reporter>
     <reporter>
         <bugId>103863</bugId>
-        <name>sxenos</name>
-        <id>Stefan Xenos</id>
+        <name>Stefan Xenos</name>
+        <id>sxenos</id>
     </reporter>
     <reporter>
         <bugId>119192</bugId>
-        <name>mariano.dellano</name>
-        <id>Mariano de Llano</id>
+        <name>Mariano de Llano</name>
+        <id>mariano.dellano</id>
     </reporter>
     <reporter>
         <bugId>108792</bugId>
-        <name>christof_marti</name>
-        <id>Christof Marti</id>
+        <name>Christof Marti</name>
+        <id>christof_marti</id>
     </reporter>
 </reporters>
