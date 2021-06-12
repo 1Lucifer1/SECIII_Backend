@@ -1,4 +1,5 @@
 package team.software.irbl.core.reporterComponent;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -36,52 +37,54 @@ public class ReporterRank {
         reportersPastPackages = new HashMap<>();
         codeFileMap = fileMap;
         String xmlFilePath = SavePath.getSourcePath(projectName) + "/reporters.xml";
+        Document doc = null;
         try {
-            Document doc = XMLTools.parseXML(xmlFilePath);
-            NodeList nodeList = doc.getElementsByTagName("reporter");
-            for(int i = 0; i < nodeList.getLength(); ++i){
-                Node node = nodeList.item(i);
-                StringBuilder sb = new StringBuilder();
-                int id = 0;
-                for(Node insideNode = node.getFirstChild(); insideNode != null; insideNode = insideNode.getNextSibling()){
-                    if(insideNode.getNodeType()!=Node.ELEMENT_NODE){
-                        continue;
-                    }
-                    if(insideNode.getNodeName().equals("bugId")){
-                        id = Integer.parseInt(insideNode.getFirstChild().getNodeValue());
-                    }
-                    if(insideNode.getNodeName().equals("name")){
-                        sb.append(insideNode.getFirstChild().getNodeValue()).append(" ");
-                    }
-                    if(insideNode.getNodeName().equals("id")){
-                        sb.append(insideNode.getFirstChild().getNodeValue());
-                    }
-                }
-                reportsReporter.put(id, sb.toString());
-            }
+            doc = XMLTools.parseXML(xmlFilePath);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Err(e.getMessage());
+            return;
+        }
+        NodeList nodeList = doc.getElementsByTagName("reporter");
+        for (int i = 0; i < nodeList.getLength(); ++i) {
+            Node node = nodeList.item(i);
+            StringBuilder sb = new StringBuilder();
+            int id = 0;
+            for (Node insideNode = node.getFirstChild(); insideNode != null; insideNode = insideNode.getNextSibling()) {
+                if (insideNode.getNodeType() != Node.ELEMENT_NODE) {
+                    continue;
+                }
+                if (insideNode.getNodeName().equals("bugId")) {
+                    id = Integer.parseInt(insideNode.getFirstChild().getNodeValue());
+                }
+                if (insideNode.getNodeName().equals("name")) {
+                    if (insideNode.getFirstChild() != null)
+                        sb.append(insideNode.getFirstChild().getNodeValue()).append(" ");
+                }
+                if (insideNode.getNodeName().equals("id")) {
+                    sb.append(insideNode.getFirstChild().getNodeValue());
+                }
+            }
+            reportsReporter.put(id, sb.toString());
         }
     }
 
-    public List<RankRecord> rank(BugReport report){
+    public List<RankRecord> rank(BugReport report) {
         List<RankRecord> records = new ArrayList<>();
         String reporter = reportsReporter.get(report.getBugId());
         Set<String> packages;
-        if(reportersPastPackages.containsKey(reporter)){
+        if (reportersPastPackages.containsKey(reporter)) {
             packages = reportersPastPackages.get(reporter);
-        }else{
+        } else {
             packages = new HashSet<>();
         }
-        for(CodeFile codeFile: codeFileMap.values()){
+        for (CodeFile codeFile : codeFileMap.values()) {
             String packageName = codeFile.getPackageName();
             RankRecord rankRecord = new RankRecord(report.getReportIndex(), codeFile.getFileIndex(), -1, 0);
-            if(packages.contains(packageName)) rankRecord.setScore(1);
+            if (packages.contains(packageName)) rankRecord.setScore(1);
             records.add(rankRecord);
 //            if(rankRecord.getScore() == 1.0) System.out.print(1);
         }
-        for(FixedFile fixedFile: report.getFixedFiles()){
+        for (FixedFile fixedFile : report.getFixedFiles()) {
             packages.add(fixedFile.getFilePackageName());
         }
         reportersPastPackages.put(reporter, packages);
@@ -89,7 +92,7 @@ public class ReporterRank {
     }
 
     public static void main(String[] args) throws Err {
-        String projectName = "swt-3.1";
+        String projectName = "aspectj";
 
         List<BugReport> reports = XMLParser.getBugReportsFromXML(SavePath.getSourcePath(projectName) + "/bugRepository.xml", 1);
         List<StructuredCodeFile> codeFiles = JavaParser.parseCodeFilesInDir(SavePath.getSourcePath(projectName), 1);
@@ -108,10 +111,10 @@ public class ReporterRank {
 
         IndicatorEvaluation indicatorEvaluation = new IndicatorEvaluation();
         Indicator indicator = indicatorEvaluation.getEvaluationIndicator(reports);
-        System.out.println("Top@1:  "+indicator.getTop1());
-        System.out.println("Top@5:  "+indicator.getTop5());
-        System.out.println("Top@10: "+indicator.getTop10());
-        System.out.println("MRR:    "+indicator.getMRR());
-        System.out.println("MAP:    "+indicator.getMAP());
+        System.out.println("Top@1:  " + indicator.getTop1());
+        System.out.println("Top@5:  " + indicator.getTop5());
+        System.out.println("Top@10: " + indicator.getTop10());
+        System.out.println("MRR:    " + indicator.getMRR());
+        System.out.println("MAP:    " + indicator.getMAP());
     }
 }
