@@ -130,25 +130,19 @@ public class Driver {
     }
 
     private void rank(List<StructuredCodeFile> codeFiles, List<StructuredBugReport> bugReports, Project project){
-        int count = 0;
+        //int count = 0;
         PackageMap packageMap = new PackageMap(new ArrayList<>(codeFiles));
         StackRank stackRank = new StackRank(packageMap);
         StructureRank structureRank = new StructureRank(codeFiles);
         SimilarReportRank similarReportRank = new SimilarReportRank(packageMap);
-        ReporterRank reporterRank;
-        try {
-            reporterRank = new ReporterRank(project.getProjectName(), packageMap);
-        }catch (Exception e){
-            e.printStackTrace();
-            return;
-        }
+        ReporterRank reporterRank = new ReporterRank(project.getProjectName(), packageMap);
         VersionHistoryRank versionHistoryRank = new VersionHistoryRank(new ArrayList<>(codeFiles), project);
         List<RankRecord> records = new ArrayList<>();
         for(StructuredBugReport bugReport: bugReports){
             ConcurrentHashMap<Integer, Double> scoreMap = new ConcurrentHashMap<>();
             List<RankRecord> recordList = stackRank.rank(bugReport);
             if(recordList != null) {
-                count++;   
+                //count++;
                 recordList.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), rankRecord.getScore()*weights[ComponentType.STACK.value()]));
             }
             if(recordList == null){
@@ -177,7 +171,7 @@ public class Driver {
             bugReport.setRanks(recordList);
             records.addAll(recordList);
         }
-        Logger.log(count + " reports use stack rank.");
+        //Logger.log(count + " reports use stack rank.");
         // 保存排序结果
         dbProcessor.saveRankRecord(records);
     }
@@ -235,7 +229,7 @@ public class Driver {
 
     public static void main(String[] args) {
         Driver driver = new Driver(new DBProcessorFake());
-        List<BugReport> bugReports = driver.startRank("swt-3.1", false);
+        List<BugReport> bugReports = driver.startRank("aspectj", false);
 
         File saveResult = new File(SavePath.getSourcePath("result1.txt"));
         IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();

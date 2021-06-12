@@ -140,12 +140,12 @@ public class StackRank {
 
     public static void main(String[] args) {
 
-        String projectName = "eclipse-3.1";
+        String projectName = "aspectj";
         List<BugReport> reports = XMLParser.getBugReportsFromXML(SavePath.getSourcePath(projectName) + "/bugRepository.xml", 1);
         List<StructuredCodeFile> codeFiles = JavaParser.parseCodeFilesInDir(SavePath.getSourcePath(projectName+"/"), 1);
         DBProcessor dbProcessor = new DBProcessorFake();
         dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
-        dbProcessor.saveBugReports(reports, new PackageMap(new ArrayList<>(codeFiles)));
+        dbProcessor.saveBugReports(reports, new FilePathMap(new ArrayList<>(codeFiles)));
 
         if(reports != null) {
             List<BugReport> traceReports = Collections.synchronizedList(new ArrayList<>());

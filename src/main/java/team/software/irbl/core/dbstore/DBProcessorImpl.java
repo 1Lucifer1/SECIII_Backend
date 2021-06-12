@@ -45,7 +45,7 @@ public class DBProcessorImpl implements DBProcessor {
                 List<CodeFile> codeFiles = codeFileMap.getCodeFileFromMap(fixedFile.getFilePackageName());
                 if(codeFiles != null){
                     for(CodeFile codeFile: codeFiles){
-                        extendFixedFiles.add(new FixedFile(-1, bugReport.getReportIndex(), codeFile.getFileIndex(), fixedFile.getFilePackageName()));
+                        extendFixedFiles.add(new FixedFile(-1, bugReport.getReportIndex(), codeFile.getFileIndex(), codeFile.getPackageName()));
                     }
                 }else {
                     Logger.errorLog("Not found " + fixedFile.getFilePackageName());
