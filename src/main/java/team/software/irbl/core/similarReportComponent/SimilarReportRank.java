@@ -89,8 +89,10 @@ public class SimilarReportRank {
             double newRank = score[i]/Math.sqrt(fixedFiles.size());
             for(int j=0;j<fixedFiles.size();j++){
                 List<CodeFile> codeFiles = codeFileMap.getCodeFileFromMap(fixedFiles.get(j).getFilePackageName());
-                for(int k=0;k<codeFiles.size();k++){
-                    fileScore.put(codeFiles.get(k),fileScore.get(codeFiles.get(k))+newRank);
+                if(codeFiles != null){
+                    for(int k=0;k<codeFiles.size();k++){
+                        fileScore.put(codeFiles.get(k),fileScore.get(codeFiles.get(k))+newRank);
+                    }
                 }
             }
         }
