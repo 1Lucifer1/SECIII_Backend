@@ -35,13 +35,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 
 @Component
 public class Driver {
 
-    private static final double[] weights = {1, 1, 1, 1, 1};
-
+    private static final double[] weights = {0.5, 1, 0.1, 0.1, 0.1};
     private  DBProcessor dbProcessor;
 
     @Autowired
@@ -123,7 +121,7 @@ public class Driver {
         Logger.log("Getting preprocessed files successes in " + (preprocessEndTime-startTime)/1000.0
                 + " seconds and results in " + bugReports.size() + " bug reports and " + codeFiles.size() + " code files.");
 
-        rank(codeFiles, bugReports);
+        rank(codeFiles, bugReports, project);
 
         long endTime = System.currentTimeMillis();
         Logger.log("Rank for " + bugReports.size() + " bug reports among " + codeFiles.size() + " code files success in " +
@@ -131,14 +129,20 @@ public class Driver {
         return new ArrayList<>(bugReports);
     }
 
-    private void rank(List<StructuredCodeFile> codeFiles, List<StructuredBugReport> bugReports){
+    private void rank(List<StructuredCodeFile> codeFiles, List<StructuredBugReport> bugReports, Project project){
         int count = 0;
         PackageMap packageMap = new PackageMap(new ArrayList<>(codeFiles));
         StackRank stackRank = new StackRank(packageMap);
         StructureRank structureRank = new StructureRank(codeFiles);
-        SimilarReportRank similarReportRank = new SimilarReportRank(codeFiles);
-        ReporterRank reporterRank = new ReporterRank(codeFiles, packageMap);
-        VersionHistoryRank versionHistoryRank = new VersionHistoryRank();
+        SimilarReportRank similarReportRank = new SimilarReportRank(packageMap);
+        ReporterRank reporterRank;
+        try {
+            reporterRank = new ReporterRank(project.getProjectName(), packageMap);
+        }catch (Exception e){
+            e.printStackTrace();
+            return;
+        }
+        VersionHistoryRank versionHistoryRank = new VersionHistoryRank(new ArrayList<>(codeFiles), project);
         List<RankRecord> records = new ArrayList<>();
         for(StructuredBugReport bugReport: bugReports){
             ConcurrentHashMap<Integer, Double> scoreMap = new ConcurrentHashMap<>();
@@ -158,7 +162,13 @@ public class Driver {
             recordList = reporterRank.rank(bugReport);
             recordList.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), scoreMap.get(rankRecord.getFileIndex())+rankRecord.getScore()*weights[ComponentType.REPORTER.value()]));
 
-            recordList
+            recordList = versionHistoryRank.rank(bugReport);
+            recordList.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), scoreMap.get(rankRecord.getFileIndex())+rankRecord.getScore()*weights[ComponentType.VERSION.value()]));
+
+            recordList = new ArrayList<>();
+            for(CodeFile codeFile: codeFiles){
+                recordList.add(new RankRecord(bugReport.getReportIndex(), codeFile.getFileIndex(), -1, scoreMap.get(codeFile.getFileIndex())));
+            }
 
             recordList.sort(Collections.reverseOrder());
             for(int i=0; i<recordList.size(); ++i){
@@ -225,7 +235,7 @@ public class Driver {
 
     public static void main(String[] args) {
         Driver driver = new Driver(new DBProcessorFake());
-        List<BugReport> bugReports = driver.startRank("aspectj", true);
+        List<BugReport> bugReports = driver.startRank("swt-3.1", false);
 
         File saveResult = new File(SavePath.getSourcePath("result1.txt"));
         IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();

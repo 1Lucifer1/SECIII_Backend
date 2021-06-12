@@ -36,7 +36,7 @@ public class VersionHistoryRank {
         this.commitInfoList = XMLParser.getCommitInfosFromXML(SavePath.getSourcePath(project.getProjectName())+"/CommitRepository.xml", project.getProjectIndex());
     }
 
-    public List<RankRecord> rankOfVersionHistory(BugReport bugReport){
+    public List<RankRecord> rank(BugReport bugReport){
         List<CommitInfo> commitInfoList = new ArrayList<>(this.commitInfoList);
 
         try {
@@ -119,7 +119,7 @@ public class VersionHistoryRank {
 
         assert reports != null;
         reports.forEach(report -> {
-            List<RankRecord> records = versionHistoryRank.rankOfVersionHistory(report);
+            List<RankRecord> records = versionHistoryRank.rank(report);
             report.setRanks(records);
         });
 

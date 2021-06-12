@@ -106,9 +106,7 @@ public class DBProcessorFake implements DBProcessor {
      */
     @Override
     public Project getProjectByName(String projectName) {
-        Project project = new Project(projectName);
-        project.setProjectIndex(2);
-        return project;
+        return null;
     }
 
     @Override

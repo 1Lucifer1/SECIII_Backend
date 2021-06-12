@@ -34,6 +34,7 @@ public class SimilarReportRank {
     public SimilarReportRank(CodeFileMap codeFileMap){
         //this.codeFile = codeFiles;
         this.codeFileMap = codeFileMap;
+        init();
     }
     public void init(){
         fileScore = new HashMap<>();
@@ -128,7 +129,7 @@ public class SimilarReportRank {
         dbProcessor.saveBugReports(reports, codeFileMap);
 
         SimilarReportRank similarReportRank = new SimilarReportRank(codeFileMap);
-        similarReportRank.init();
+        //similarReportRank.init();
 
         assert reports != null;
         reports.forEach(report -> {
