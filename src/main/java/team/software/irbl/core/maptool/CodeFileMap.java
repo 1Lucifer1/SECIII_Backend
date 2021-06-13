@@ -26,7 +26,7 @@ public abstract class CodeFileMap {
     public abstract void createCodeFileMap(List<CodeFile> codeFiles);
 
     /**
-     * 从map中取出对应的源代码
+     * 从map中取出对应的源代码，不存在则会返回null
      * @param packageName
      * @return
      */

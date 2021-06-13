@@ -42,10 +42,10 @@ public class DBProcessorImpl implements DBProcessor {
         for(BugReport bugReport : bugReports){
             List<FixedFile> extendFixedFiles = new ArrayList<>();
             for(FixedFile fixedFile: bugReport.getFixedFiles()){
-                List<CodeFile> codeFiles = codeFileMap.getCodeFileFromMap(fixedFile.getFilePackageName());
+                List<CodeFile> codeFiles = codeFileMap.getCodeFileFromMap(fixedFile.getFileIdentifyString());
                 if(codeFiles != null){
                     for(CodeFile codeFile: codeFiles){
-                        extendFixedFiles.add(new FixedFile(-1, bugReport.getReportIndex(), codeFile.getFileIndex(), fixedFile.getFilePackageName()));
+                        extendFixedFiles.add(new FixedFile(-1, bugReport.getReportIndex(), codeFile.getFileIndex(), codeFile.getPackageName(), codeFile.getFilePath()));
                     }
                 }else {
                     Logger.errorLog("Not found " + fixedFile.getFilePackageName());
@@ -105,5 +105,15 @@ public class DBProcessorImpl implements DBProcessor {
     @Override
     public Project getProjectByName(String projectName) {
         return projectMapper.selectOne(new QueryWrapper<Project>().eq("project_name", projectName));
+    }
+
+    @Override
+    public List<CodeFile> getCodeFilesByProjectIndex(int projectIndex) {
+        return codeFileMapper.selectList(new QueryWrapper<CodeFile>().eq("project_index", projectIndex));
+    }
+
+    @Override
+    public List<BugReport> getBugReportsByProjectIndex(int projectIndex) {
+        return bugReportMapper.selectList(new QueryWrapper<BugReport>().eq("project_index", projectIndex));
     }
 }

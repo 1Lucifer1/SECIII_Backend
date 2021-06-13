@@ -7,21 +7,25 @@ public class FixedFile {
     @TableField(value = "report_index")
     private int reportIndex;
     @TableField(value = "file_package_name")
+    private String fileIdentifyString;
     private String filePackageName;
     @TableField(value = "file_index")
     private int fileIndex;
 
     public FixedFile(){}
-    public FixedFile(int reportIndex, String filePackageName) {
+
+    public FixedFile(int reportIndex,String filePackageName, String fileIdentifyString) {
         this.reportIndex = reportIndex;
         this.filePackageName = filePackageName;
+        this.fileIdentifyString = fileIdentifyString;
     }
 
-    public FixedFile(int id, int reportIndex, int fileIndex, String filePackageName) {
+    public FixedFile(int id, int reportIndex, int fileIndex, String filePackageName, String fileIdentifyString) {
         this.id = id;
         this.reportIndex = reportIndex;
         this.fileIndex = fileIndex;
         this.filePackageName = filePackageName;
+        this.fileIdentifyString = fileIdentifyString;
     }
 
     public int getId() {
@@ -55,5 +59,13 @@ public class FixedFile {
 
     public void setFileIndex(int fileIndex) {
         this.fileIndex = fileIndex;
+    }
+
+    public String getFileIdentifyString() {
+        return fileIdentifyString;
+    }
+
+    public void setFileIdentifyString(String fileIdentifyString) {
+        this.fileIdentifyString = fileIdentifyString;
     }
 }

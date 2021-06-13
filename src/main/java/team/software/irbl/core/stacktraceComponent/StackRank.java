@@ -7,6 +7,7 @@ import team.software.irbl.core.dbstore.DBProcessorFake;
 import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.core.filestore.XMLParser;
 import team.software.irbl.core.jdt.JavaParser;
+import team.software.irbl.core.maptool.FilePathMap;
 import team.software.irbl.core.maptool.PackageMap;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.CodeFile;
@@ -28,7 +29,7 @@ public class StackRank {
      * group3 : Unknown Source (与group4不共存，用以特殊处理堆栈报错中出现Unknown Source的情况)
      * group4 : Main
      */
-    private String tracePattern = "(\\sat\\s([^\\s]{2,}?\\.[^\\s].*?)\\((?:Native\\sMethod|(Unknown\\sSource)|([^)]+?)\\.java.*?|[^)]+?build.+?)\\))";
+    private String tracePattern = "(\\sat\\s(org\\.[^\\s].*?)\\((?:Native\\sMethod|(Unknown\\sSource)|([^)]+?)\\.java.*?|[^)]+?build.+?|[^)]+?\\.aj.*?)\\))";
 
     /**
      * 决定取前几个堆栈报错信息（暂未采用）
@@ -102,6 +103,11 @@ public class StackRank {
 //            Logger.errorLog(matcher.group(2));
             // 从匹配的每条堆栈报错信息中提取对应的文件包名
             if(matcher.group(2) != null && (matcher.group(3) != null || matcher.group(4) != null)){
+//                String[] parts = matcher.group(2).split("\\sat\\s");
+//                if(parts.length> 1){
+//                    System.out.println(matcher.group(2));
+//                }
+//                String trace = parts[parts.length-1].replaceAll("\\s", "");
                 String trace = matcher.group(2).replaceAll("\\s", "");
                 String packageName;
                 if(matcher.group(3) != null){
@@ -134,17 +140,16 @@ public class StackRank {
 
     public static void main(String[] args) {
 
-        String projectName = "eclipse-3.1";
+        String projectName = "aspectj";
         List<BugReport> reports = XMLParser.getBugReportsFromXML(SavePath.getSourcePath(projectName) + "/bugRepository.xml", 1);
-        List<StructuredCodeFile> codeFiles = JavaParser.parseCodeFilesInDir(SavePath.getSourcePath(projectName), 1);
+        List<StructuredCodeFile> codeFiles = JavaParser.parseCodeFilesInDir(SavePath.getSourcePath(projectName+"/"), 1);
         DBProcessor dbProcessor = new DBProcessorFake();
         dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
-        CodeFileMap codeFileMap = new PackageMap(new ArrayList<>(codeFiles));
-        dbProcessor.saveBugReports(reports, codeFileMap);
+        dbProcessor.saveBugReports(reports, new FilePathMap(new ArrayList<>(codeFiles)));
 
         if(reports != null) {
             List<BugReport> traceReports = Collections.synchronizedList(new ArrayList<>());
-            StackRank stackRank = new StackRank(codeFileMap);
+            StackRank stackRank = new StackRank(new PackageMap(new ArrayList<>(codeFiles)));
             reports.parallelStream().forEach(report -> {
                 List<RankRecord> records = stackRank.rank(report);
                 if(records != null){

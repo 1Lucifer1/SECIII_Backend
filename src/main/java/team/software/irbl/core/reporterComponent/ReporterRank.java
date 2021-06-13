@@ -84,7 +84,7 @@ public class ReporterRank {
             RankRecord rankRecord = new RankRecord(report.getReportIndex(), codeFile.getFileIndex(), -1, 0);
             if (packages.contains(packageName)) rankRecord.setScore(1);
             records.add(rankRecord);
-            if(rankRecord.getScore() == 1.0) System.out.print(1);
+//            if(rankRecord.getScore() == 1.0) System.out.print(1);
         }
         for (FixedFile fixedFile : report.getFixedFiles()) {
             packages.add(fixedFile.getFilePackageName());

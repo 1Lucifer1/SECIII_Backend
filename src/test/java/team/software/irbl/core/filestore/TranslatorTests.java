@@ -14,8 +14,8 @@ public class TranslatorTests {
     @Test
     public void writeBugReportTest() throws IOException {
         List<FixedFile> fixedFiles = new ArrayList<>();
-        fixedFiles.add(new FixedFile(-1, "org.eclipse.swt.widgets.Button.java"));
-        fixedFiles.add(new FixedFile(-1, "org.eclipse.swt.widgets.ToolItem.java"));
+        fixedFiles.add(new FixedFile(-1, "org.eclipse.swt.widgets.Button.java","org.eclipse.swt.widgets.Button.java"));
+        fixedFiles.add(new FixedFile(-1, "org.eclipse.swt.widgets.ToolItem.java","org.eclipse.swt.widgets.ToolItem.java"));
         BugReport report = new BugReport(1, 78548, "2004-11-12 16:15:00", "2004-11-24 14:30:00",
                 "[consistency] Button Selection fires before MouseUp",
                 "- run the ControlExample, Button tab - turn on listeners MouseUp and Selection - click on an example Button -&gt; on OSX you'll get Selection - MouseUp -&gt; everywhere else you'll get MouseUp - Selection",
