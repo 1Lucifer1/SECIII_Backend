@@ -18,7 +18,6 @@ public class CodeFile {
     protected String filePath;
     @TableField(value = "package_name")
     protected String packageName;
-    protected double score;
 
     public CodeFile(){}
 
@@ -81,12 +80,5 @@ public class CodeFile {
         this.packageName = packageName;
     }
 
-    public double getScore() {
-        return score;
-    }
-
-    public void setScore(double rank) {
-        this.score = score;
-    }
 }
 

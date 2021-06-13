@@ -103,7 +103,7 @@ public class VersionHistoryRank {
     }
 
     public static void main(String[] args) {
-        String projectName = "swt-3.1";
+        String projectName = "eclipse-3.1";
         int projectIndex = 1;
         Project project = new Project(projectName);
         project.setProjectIndex(projectIndex);

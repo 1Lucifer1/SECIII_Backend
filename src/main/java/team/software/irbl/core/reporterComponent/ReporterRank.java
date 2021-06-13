@@ -10,6 +10,7 @@ import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.core.filestore.XMLParser;
 import team.software.irbl.core.jdt.JavaParser;
 import team.software.irbl.core.maptool.CodeFileMap;
+import team.software.irbl.core.maptool.FilePathMap;
 import team.software.irbl.core.maptool.PackageMap;
 import team.software.irbl.core.stacktraceComponent.StackRank;
 import team.software.irbl.core.versionHistoryComponent.CommitInfo;
@@ -32,7 +33,7 @@ public class ReporterRank {
 
     private final CodeFileMap codeFileMap;
 
-    public ReporterRank(String projectName, CodeFileMap fileMap) throws Err {
+    public ReporterRank(String projectName, CodeFileMap fileMap) {
         reportsReporter = new HashMap<>();
         reportersPastPackages = new HashMap<>();
         codeFileMap = fileMap;
@@ -92,14 +93,14 @@ public class ReporterRank {
     }
 
     public static void main(String[] args) throws Err {
-        String projectName = "aspectj";
+        String projectName = "eclipse-3.1";
 
         List<BugReport> reports = XMLParser.getBugReportsFromXML(SavePath.getSourcePath(projectName) + "/bugRepository.xml", 1);
-        List<StructuredCodeFile> codeFiles = JavaParser.parseCodeFilesInDir(SavePath.getSourcePath(projectName), 1);
+        List<StructuredCodeFile> codeFiles = JavaParser.parseCodeFilesInDir(SavePath.getSourcePath(projectName)+"/", 1);
         DBProcessor dbProcessor = new DBProcessorFake();
         dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
         CodeFileMap codeFileMap = new PackageMap(new ArrayList<>(codeFiles));
-        dbProcessor.saveBugReports(reports, codeFileMap);
+        dbProcessor.saveBugReports(reports, new PackageMap(new ArrayList<>(codeFiles)));
 
         ReporterRank reporterRank = new ReporterRank(projectName, codeFileMap);
 

@@ -55,7 +55,7 @@ public class XMLParser {
                     }else if(insideNode.getNodeName().equals("fixedFiles")){
                         for(Node node=insideNode.getFirstChild(); node!=null; node=node.getNextSibling()){
                             if(node.getNodeType() == Node.ELEMENT_NODE ){
-                                files.add(new FixedFile(-1, node.getFirstChild().getNodeValue()));
+                                files.add(new FixedFile(-1, null, node.getFirstChild().getNodeValue()));
                             }
                         }
                     }
@@ -113,7 +113,7 @@ public class XMLParser {
                                 }
                                 // emmm，这个包名的替换可能有问题
                                 String packageName = fileName.replace('/','.');
-                                fixedFiles.add(new FixedFile(-1, packageName));
+                                fixedFiles.add(new FixedFile(-1, packageName, null));
                             }
                         }
                         commitInfo.setFixedFiles(fixedFiles);

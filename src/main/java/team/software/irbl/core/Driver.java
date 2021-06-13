@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class Driver {
 
-    private static final double[] weights = {0.5, 1, 0.1, 0.1, 0.1};
+    private static final double[] weights = {1, 2, 0.1, 0.1, 0.1};
     private  DBProcessor dbProcessor;
 
     @Autowired
@@ -74,7 +74,16 @@ public class Driver {
                 Logger.errorLog("File preprocess failed.");
                 return null;
             }
-            saveCodeFilesABugReports(new ArrayList<>(codeFiles), new ArrayList<>(bugReports), project);
+            // 数据库存保存读取的基础信息
+            dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
+            // aspectj的bug report中使用文件路径来对应代码文件
+            CodeFileMap codeFileMap;
+            if(project.getProjectName().equals("aspectj")) codeFileMap = new  FilePathMap(new ArrayList<>(codeFiles));
+            else codeFileMap = new PackageMap(new ArrayList<>(codeFiles));
+            dbProcessor.saveBugReports(new ArrayList<>(bugReports), codeFileMap);
+            project.setCodeFileCount(codeFiles.size());
+            project.setReportCount(bugReports.size());
+            dbProcessor.updateProject(project);
             // 保存预处理结果
             FileTranslator.writeBugReport(bugReports,SavePath.getPreProcessReportPath(projectName));
             FileTranslator.writeCodeFile(codeFiles,SavePath.getPreProcessSourcePath(projectName));
@@ -97,7 +106,12 @@ public class Driver {
                 codeFile.setFileIndex(-1);
             });
             if(isNewProject){
-                saveCodeFilesABugReports(new ArrayList<>(codeFiles), new ArrayList<>(bugReports), project);
+                // 数据库存保存读取的基础信息
+                dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
+                dbProcessor.saveBugReports(new ArrayList<>(bugReports), new FilePathMap(new ArrayList<>(codeFiles)));
+                project.setCodeFileCount(codeFiles.size());
+                project.setReportCount(bugReports.size());
+                dbProcessor.updateProject(project);
             }else {
                 List<CodeFile> codeFilesFromDB = dbProcessor.getCodeFilesByProjectIndex(projectIndex);
                 List<BugReport> bugReportsFromDB = dbProcessor.getBugReportsByProjectIndex(projectIndex);
@@ -134,7 +148,7 @@ public class Driver {
         PackageMap packageMap = new PackageMap(new ArrayList<>(codeFiles));
         StackRank stackRank = new StackRank(packageMap);
         StructureRank structureRank = new StructureRank(codeFiles);
-        SimilarReportRank similarReportRank = new SimilarReportRank(packageMap);
+        SimilarReportRank similarReportRank = new SimilarReportRank(new ArrayList<>(codeFiles));
         ReporterRank reporterRank = new ReporterRank(project.getProjectName(), packageMap);
         VersionHistoryRank versionHistoryRank = new VersionHistoryRank(new ArrayList<>(codeFiles), project);
         List<RankRecord> records = new ArrayList<>();
@@ -202,10 +216,32 @@ public class Driver {
             codeFile.setComments(NLP.standfordNLP(codeFile.getComments(),true));
             codeFile.setFields(NLP.standfordNLP(codeFile.getFields(),true));
             codeFile.setMethods(NLP.standfordNLP(codeFile.getMethods(),true));
-            codeFile.setContexts(NLP.standfordNLP(codeFile.getContexts(),false));
+            // 限制单个文本长度
+            List<String> contexts = new ArrayList<>();
+            for(String context: split(codeFile.getContexts().get(0),5000)){
+                contexts.addAll(NLP.standfordNLP(context, false));
+            }
+            codeFile.setContexts(contexts);
         });
 
         return codeFiles;
+    }
+
+    private List<String> split(String context, int length){
+        List<String> res = new ArrayList<>();
+        if(context.length() < length) {
+            res.add(context);
+        }else {
+            int start = 0;
+            while (start + length < context.length()){
+                int last = start;
+                start += length;
+                while (start < context.length() && context.charAt(start)!=' ' && context.charAt(start)!='\n'){ start++;}
+                res.add(context.substring(last, start));
+            }
+            if(start != context.length()) res.add(context.substring(start));
+        }
+        return res;
     }
 
     private List<StructuredBugReport> preProcessBugReports(String projectName, int projectIndex){
@@ -227,11 +263,8 @@ public class Driver {
         return reports;
     }
 
-    public static void main(String[] args) {
-        Driver driver = new Driver(new DBProcessorFake());
-        List<BugReport> bugReports = driver.startRank("aspectj", false);
-
-        File saveResult = new File(SavePath.getSourcePath("result1.txt"));
+    public static void evaluateAndSave(List<BugReport> bugReports, String savePath, String projectName){
+        File saveResult = new File(SavePath.getSourcePath(savePath));
         IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();
         Indicator indicator = indicatorEvaluation.getEvaluationIndicator(bugReports);
         System.out.println("Top@1:  "+indicator.getTop1());
@@ -241,8 +274,8 @@ public class Driver {
         System.out.println("MAP:    "+indicator.getMAP());
 
         try{
-            FileWriter writer = new FileWriter(saveResult);
-            writer.write("Result evaluate for eclipse:\n");
+            FileWriter writer = new FileWriter(saveResult, true);
+            writer.write("Result evaluate for " + projectName +" :\n");
             writer.write("Top@1:  "+indicator.getTop1() + '\n');
             writer.write("Top@5:  "+indicator.getTop5() + '\n');
             writer.write("Top@10: "+indicator.getTop10() + '\n');
@@ -252,6 +285,18 @@ public class Driver {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    public static void main(String[] args) {
+        long startTime = System.currentTimeMillis();
+        Driver driver = new Driver(new DBProcessorFake());
+        List<BugReport> bugReportsSwt = driver.startRank("swt-3.1", false);
+        evaluateAndSave(bugReportsSwt, "result1.txt", "swt-3.1");
+        List<BugReport> bugReportsEclipse = driver.startRank("eclipse-3.1", false);
+        evaluateAndSave(bugReportsEclipse, "result1.txt", "eclipse-3.1");
+        List<BugReport> bugReportsAspectj = driver.startRank("aspectj", false);
+        evaluateAndSave(bugReportsAspectj, "result1.txt", "aspectj");
+        long processEndTime = System.currentTimeMillis();
+        Logger.log("Finish all rank in " + (processEndTime-startTime)/1000.0 + " seconds");
     }
 }

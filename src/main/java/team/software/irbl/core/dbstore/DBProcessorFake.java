@@ -34,24 +34,27 @@ public class DBProcessorFake implements DBProcessor {
     @Override
     public int saveBugReports(List<BugReport> bugReports, CodeFileMap codeFileMap){
         List<FixedFile> fixedFiles = new ArrayList<>();
+        int count = 0;
         for(int i=0; i<bugReports.size(); ++i){
             BugReport bugReport = bugReports.get(i);
             bugReport.setReportIndex(i+1);
             List<FixedFile> extendFixedFiles = new ArrayList<>();
             for(FixedFile fixedFile: bugReport.getFixedFiles()){
-                List<CodeFile> codeFiles = codeFileMap.getCodeFileFromMap(fixedFile.getFilePackageName());
+                List<CodeFile> codeFiles = codeFileMap.getCodeFileFromMap(fixedFile.getFileIdentifyString());
                 if(codeFiles != null){
+                    if(codeFiles.size()!=1) count += codeFiles.size();
                     for(CodeFile codeFile: codeFiles){
-                        extendFixedFiles.add(new FixedFile(-1, bugReport.getReportIndex(), codeFile.getFileIndex(), codeFile.getPackageName()));
+                        extendFixedFiles.add(new FixedFile(-1, bugReport.getReportIndex(), codeFile.getFileIndex(), codeFile.getPackageName(), codeFile.getFilePath()));
                     }
                 }else {
-                    Logger.errorLog("Not found " + fixedFile.getFilePackageName());
+                    Logger.errorLog("Not found " + fixedFile.getFileIdentifyString());
                 }
             }
             bugReport.setFixedFiles(extendFixedFiles);
             fixedFiles.addAll(extendFixedFiles);
         }
         saveFixedFiles(fixedFiles);
+        System.out.println(count);
         return bugReports.size();
     }
 

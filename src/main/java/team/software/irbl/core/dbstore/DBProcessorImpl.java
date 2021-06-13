@@ -42,10 +42,10 @@ public class DBProcessorImpl implements DBProcessor {
         for(BugReport bugReport : bugReports){
             List<FixedFile> extendFixedFiles = new ArrayList<>();
             for(FixedFile fixedFile: bugReport.getFixedFiles()){
-                List<CodeFile> codeFiles = codeFileMap.getCodeFileFromMap(fixedFile.getFilePackageName());
+                List<CodeFile> codeFiles = codeFileMap.getCodeFileFromMap(fixedFile.getFileIdentifyString());
                 if(codeFiles != null){
                     for(CodeFile codeFile: codeFiles){
-                        extendFixedFiles.add(new FixedFile(-1, bugReport.getReportIndex(), codeFile.getFileIndex(), codeFile.getPackageName()));
+                        extendFixedFiles.add(new FixedFile(-1, bugReport.getReportIndex(), codeFile.getFileIndex(), codeFile.getPackageName(), codeFile.getFilePath()));
                     }
                 }else {
                     Logger.errorLog("Not found " + fixedFile.getFilePackageName());
