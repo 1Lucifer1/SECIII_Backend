@@ -31,12 +31,12 @@ public class ReporterRank {
 
     private final Map<String, Set<String>> reportersPastPackages;
 
-    private final List<StructuredCodeFile> codeFileList;
+    private final CodeFileMap codeFileMap;
 
-    public ReporterRank(String projectName,  List<StructuredCodeFile> codeFileList){
+    public ReporterRank(String projectName, CodeFileMap fileMap){
         reportsReporter = new HashMap<>();
         reportersPastPackages = new HashMap<>();
-        this.codeFileList = codeFileList;
+        codeFileMap = fileMap;
         String xmlFilePath = SavePath.getSourcePath(projectName) + "/reporters.xml";
         Document doc;
         try {
@@ -79,7 +79,7 @@ public class ReporterRank {
             packages = new HashSet<>();
         }
 
-        for (CodeFile codeFile : codeFileList) {
+        for (CodeFile codeFile : codeFileMap.values()) {
             String packageName = codeFile.getPackageName();
             RankRecord rankRecord = new RankRecord(report.getReportIndex(), codeFile.getFileIndex(), -1, 0);
             if (packages.contains(packageName)) rankRecord.setScore(1);
@@ -104,7 +104,7 @@ public class ReporterRank {
 //        dbProcessor.saveBugReports(reports, codeFileMap);
         dbProcessor.saveBugReports(reports, new FilePathMap(new ArrayList<>(codeFiles)));
 
-        ReporterRank reporterRank = new ReporterRank(projectName, codeFiles);
+        ReporterRank reporterRank = new ReporterRank(projectName, codeFileMap);
 
         assert reports != null;
         reports.forEach(report -> {

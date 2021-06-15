@@ -55,14 +55,14 @@ public class VSMTests {
         String projectName = "swt-3.1";
 
         List<BugReport> reports = XMLParser.getBugReportsFromXML(SavePath.getSourcePath(projectName) + "/bugRepository.xml", 1);
-        List<StructuredCodeFile> codeFiles = JavaParser.parseCodeFilesInDir(SavePath.getSourcePath(projectName + "/"), 1);
+        List<StructuredCodeFile> codeFiles = JavaParser.parseCodeFilesInDir(SavePath.getSourcePath(projectName), 1);
         DBProcessor dbProcessor = new DBProcessorFake();
         dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
         CodeFileMap codeFileMap = new PackageMap(new ArrayList<>(codeFiles));
-//        dbProcessor.saveBugReports(reports, codeFileMap);
-        dbProcessor.saveBugReports(reports, new FilePathMap(new ArrayList<>(codeFiles)));
+        dbProcessor.saveBugReports(reports, codeFileMap);
+//        dbProcessor.saveBugReports(reports, new FilePathMap(new ArrayList<>(codeFiles)));
 
-        ReporterRank reporterRank = new ReporterRank(projectName, codeFiles);
+        ReporterRank reporterRank = new ReporterRank(projectName, codeFileMap);
 
         assert reports != null;
         reports.forEach(report -> {
@@ -72,10 +72,15 @@ public class VSMTests {
 
         IndicatorEvaluation indicatorEvaluation = new IndicatorEvaluation();
         Indicator indicator = indicatorEvaluation.getEvaluationIndicator(reports);
+        System.out.println("Top@1:  " + indicator.getTop1());
+        System.out.println("Top@5:  " + indicator.getTop5());
+        System.out.println("Top@10: " + indicator.getTop10());
+        System.out.println("MRR:    " + indicator.getMRR());
+        System.out.println("MAP:    " + indicator.getMAP());
         Assert.assertTrue(indicator.getTop1() > 0.0);
         Assert.assertTrue(indicator.getTop5() > 0.0);
         Assert.assertTrue(indicator.getTop10() > 0.0);
+        Assert.assertTrue(indicator.getMRR() != 0.0);
         Assert.assertTrue(indicator.getMAP() > 0.0);
-        Assert.assertTrue(indicator.getMRR() > 0.0);
     }
 }
