@@ -161,11 +161,7 @@ public class StackRank {
 
             IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();
             Indicator indicator = indicatorEvaluation.getEvaluationIndicator(traceReports);
-            System.out.println("Top@1:  "+indicator.getTop1());
-            System.out.println("Top@5:  "+indicator.getTop5());
-            System.out.println("Top@10: "+indicator.getTop10());
-            System.out.println("MRR:    "+indicator.getMRR());
-            System.out.println("MAP:    "+indicator.getMAP());
+            indicator.print();
         }
 
 

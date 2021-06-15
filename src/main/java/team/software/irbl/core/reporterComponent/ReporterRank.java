@@ -109,15 +109,15 @@ public class ReporterRank {
         assert reports != null;
         reports.forEach(report -> {
             List<RankRecord> records = reporterRank.rank(report);
+            records.sort(Collections.reverseOrder());
+            for(int i=0; i<records.size(); ++i){
+                records.get(i).setFileRank(i+1);
+            }
             report.setRanks(records);
         });
 
         IndicatorEvaluation indicatorEvaluation = new IndicatorEvaluation();
         Indicator indicator = indicatorEvaluation.getEvaluationIndicator(reports);
-        System.out.println("Top@1:  " + indicator.getTop1());
-        System.out.println("Top@5:  " + indicator.getTop5());
-        System.out.println("Top@10: " + indicator.getTop10());
-        System.out.println("MRR:    " + indicator.getMRR());
-        System.out.println("MAP:    " + indicator.getMAP());
+        indicator.print();
     }
 }

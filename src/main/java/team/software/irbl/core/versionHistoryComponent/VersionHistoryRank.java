@@ -125,11 +125,7 @@ public class VersionHistoryRank {
 
         IndicatorEvaluation indicatorEvaluation = new IndicatorEvaluation();
         Indicator indicator = indicatorEvaluation.getEvaluationIndicator(reports);
-        System.out.println("Top@1:  "+indicator.getTop1());
-        System.out.println("Top@5:  "+indicator.getTop5());
-        System.out.println("Top@10: "+indicator.getTop10());
-        System.out.println("MRR:    "+indicator.getMRR());
-        System.out.println("MAP:    "+indicator.getMAP());
+        indicator.print();
 
 //        try {
 //            Date date = format.parse("2021-06-04 11:00:00");

@@ -19,6 +19,7 @@ import team.software.irbl.dto.project.Indicator;
 import team.software.irbl.util.SavePath;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class VSMTests {
@@ -67,20 +68,20 @@ public class VSMTests {
         assert reports != null;
         reports.forEach(report -> {
             List<RankRecord> records = reporterRank.rank(report);
+            records.sort(Collections.reverseOrder());
+            for(int i=0; i<records.size(); ++i){
+                records.get(i).setFileRank(i+1);
+            }
             report.setRanks(records);
         });
 
         IndicatorEvaluation indicatorEvaluation = new IndicatorEvaluation();
         Indicator indicator = indicatorEvaluation.getEvaluationIndicator(reports);
-        System.out.println("Top@1:  " + indicator.getTop1());
-        System.out.println("Top@5:  " + indicator.getTop5());
-        System.out.println("Top@10: " + indicator.getTop10());
-        System.out.println("MRR:    " + indicator.getMRR());
-        System.out.println("MAP:    " + indicator.getMAP());
+        indicator.print();
         Assert.assertTrue(indicator.getTop1() > 0.0);
         Assert.assertTrue(indicator.getTop5() > 0.0);
         Assert.assertTrue(indicator.getTop10() > 0.0);
-        Assert.assertTrue(indicator.getMRR() != 0.0);
+        Assert.assertTrue(indicator.getMRR() > 0.0);
         Assert.assertTrue(indicator.getMAP() > 0.0);
     }
 }
