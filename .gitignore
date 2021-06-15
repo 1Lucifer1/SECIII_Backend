@@ -37,7 +37,7 @@ application-dev.yml
 ### output file
 
 
-/resource/
+#/resource/
 #!resource/data/swt-3.1/
 #!resource/data/test/
 #!resource/data/preprocess/swt-3.1_report.json
