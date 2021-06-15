@@ -99,11 +99,11 @@ public class Driver {
             int projectIndex = project.getProjectIndex();
             bugReports.forEach(report -> {
                 report.setProjectIndex(projectIndex);
-                report.setReportIndex(-1);
+                report.setReportIndex(0);
             });
             codeFiles.forEach(codeFile -> {
                 codeFile.setProjectIndex(projectIndex);
-                codeFile.setFileIndex(-1);
+                codeFile.setFileIndex(0);
             });
             if(isNewProject){
                 // 数据库存保存读取的基础信息

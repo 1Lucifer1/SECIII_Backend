@@ -45,7 +45,7 @@ public class DBProcessorImpl implements DBProcessor {
                 List<CodeFile> codeFiles = codeFileMap.getCodeFileFromMap(fixedFile.getFileIdentifyString());
                 if(codeFiles != null){
                     for(CodeFile codeFile: codeFiles){
-                        extendFixedFiles.add(new FixedFile(-1, bugReport.getReportIndex(), codeFile.getFileIndex(), codeFile.getPackageName(), codeFile.getFilePath()));
+                        extendFixedFiles.add(new FixedFile(0, bugReport.getReportIndex(), codeFile.getFileIndex(), codeFile.getPackageName(), codeFile.getFilePath()));
                     }
                 }else {
                     Logger.errorLog("Not found " + fixedFile.getFilePackageName());
@@ -94,7 +94,15 @@ public class DBProcessorImpl implements DBProcessor {
 
     @Override
     public int saveRankRecord(List<RankRecord> records) {
-        return rankRecordMapper.insertOrUpdateBatch(records);
+        int maxSize = 100000;
+        int length = records.size();
+        int count = 0, start = 0;
+        while (start + maxSize < length) {
+            count += rankRecordMapper.insertOrUpdateBatch(records.subList(start, start+maxSize));
+            start += maxSize;
+        }
+        count += rankRecordMapper.insertOrUpdateBatch(records.subList(start, length));
+        return count;
     }
 
     @Override

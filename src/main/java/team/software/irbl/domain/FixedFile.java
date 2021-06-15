@@ -6,8 +6,9 @@ public class FixedFile {
     private int id;
     @TableField(value = "report_index")
     private int reportIndex;
-    @TableField(value = "file_package_name")
+    @TableField(value = "file_identify")
     private String fileIdentifyString;
+    @TableField(value = "file_package_name")
     private String filePackageName;
     @TableField(value = "file_index")
     private int fileIndex;

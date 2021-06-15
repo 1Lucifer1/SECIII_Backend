@@ -73,10 +73,11 @@ CREATE TABLE `fixed_file`(
     id                  int(32) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY ,
     report_index        int(32) unsigned NOT NULL ,
     file_index          int(32) unsigned NOT NULL ,
+    file_identify       varchar (1023) NOT NULL ,
     file_package_name   varchar(1023) NOT NULL
 )ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 BEGIN;
-INSERT INTO `fixed_file` VALUES (1, 1, 1, 'test.test1.java');
+INSERT INTO `fixed_file` VALUES (1, 1, 1, 'test.test1.java','test.test1.java');
 COMMIT;
 
 DROP TABLE  IF EXISTS `rank_record`;
