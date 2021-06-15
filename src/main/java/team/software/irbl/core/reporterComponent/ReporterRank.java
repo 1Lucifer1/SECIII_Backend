@@ -40,7 +40,7 @@ public class ReporterRank {
         String xmlFilePath = SavePath.getSourcePath(projectName) + "/reporters.xml";
         Document doc;
         try {
-            doc = XMLTools.parseXML(xmlFilePath);
+            doc = XMLParser.parseXML(xmlFilePath);
         } catch (Exception e) {
             e.printStackTrace();
             return;
