@@ -295,7 +295,7 @@ public class Driver {
 
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
-        String result = "result2.txt";
+        String result = "result.txt";
         Driver driver = new Driver(new DBProcessorFake());
 
         driver.setWeights(new double[]{1, 2, 0.5, 0.1, 0.1});
