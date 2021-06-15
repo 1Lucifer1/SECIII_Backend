@@ -55,4 +55,12 @@ public class Indicator {
     public void setMAP(double MAP) {
         this.MAP = MAP;
     }
+
+    public void print(){
+        System.out.println("Top@1:  " + getTop1());
+        System.out.println("Top@5:  " + getTop5());
+        System.out.println("Top@10: " + getTop10());
+        System.out.println("MRR:    " + getMRR());
+        System.out.println("MAP:    " + getMAP());
+    }
 }

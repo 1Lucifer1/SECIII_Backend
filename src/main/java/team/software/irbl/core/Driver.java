@@ -291,6 +291,8 @@ public class Driver {
         }
     }
 
+
+
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
         String result = "result2.txt";
@@ -298,17 +300,17 @@ public class Driver {
 
         driver.setWeights(new double[]{1, 2, 0.5, 0.1, 0.1});
         List<BugReport> bugReportsSwt = driver.startRank("swt-3.1", false);
-        FileTranslator.writeObject(bugReportsSwt, SavePath.getSourcePath("swt-res"));
+        FileTranslator.writeOriginBugReport(bugReportsSwt, SavePath.getSourcePath("swt-res"));
         evaluateAndSave(bugReportsSwt, result, "swt-3.1");
 
         driver.setWeights(new double[]{1, 2, 0.1, 0.1, 0.1});
         List<BugReport> bugReportsEclipse = driver.startRank("eclipse-3.1", false);
-        FileTranslator.writeObject(bugReportsEclipse, SavePath.getSourcePath("eclipse-res"));
+        FileTranslator.writeOriginBugReport(bugReportsEclipse, SavePath.getSourcePath("eclipse-res"));
         evaluateAndSave(bugReportsEclipse, result, "eclipse-3.1");
 
         driver.setWeights(new double[]{1, 2, 0.5, 0.1, 0.1});
         List<BugReport> bugReportsAspectj = driver.startRank("aspectj", false);
-        FileTranslator.writeObject(bugReportsAspectj, SavePath.getSourcePath("aspectj-res"));
+        FileTranslator.writeOriginBugReport(bugReportsAspectj, SavePath.getSourcePath("aspectj-res"));
         evaluateAndSave(bugReportsAspectj, result, "aspectj");
         long processEndTime = System.currentTimeMillis();
         Logger.log("Finish all rank in " + (processEndTime-startTime)/1000.0 + " seconds");
