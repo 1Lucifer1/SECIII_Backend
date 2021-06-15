@@ -5,20 +5,20 @@ import org.springframework.stereotype.Component;
 import team.software.irbl.core.domain.StructuredBugReport;
 import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.core.enums.ComponentType;
-import team.software.irbl.core.jdt.JavaParser;
-import team.software.irbl.core.maptool.CodeFileMap;
-import team.software.irbl.core.maptool.FilePathMap;
-import team.software.irbl.core.maptool.PackageMap;
-import team.software.irbl.core.nlp.NLP;
-import team.software.irbl.core.dbstore.DBProcessor;
-import team.software.irbl.core.dbstore.DBProcessorFake;
-import team.software.irbl.core.filestore.FileTranslator;
-import team.software.irbl.core.reporterComponent.ReporterRank;
-import team.software.irbl.core.similarReportComponent.SimilarReportRank;
-import team.software.irbl.core.stacktraceComponent.StackRank;
-import team.software.irbl.core.structureComponent.StructureRank;
-import team.software.irbl.core.filestore.XMLParser;
-import team.software.irbl.core.versionHistoryComponent.VersionHistoryRank;
+import team.software.irbl.core.utils.jdt.JavaParser;
+import team.software.irbl.core.common.maptool.CodeFileMap;
+import team.software.irbl.core.common.maptool.FilePathMap;
+import team.software.irbl.core.common.maptool.PackageMap;
+import team.software.irbl.core.utils.nlp.NLP;
+import team.software.irbl.core.common.dbstore.DBProcessor;
+import team.software.irbl.core.common.dbstore.DBProcessorFake;
+import team.software.irbl.core.utils.filestore.FileTranslator;
+import team.software.irbl.core.component.reporterComponent.ReporterRank;
+import team.software.irbl.core.component.similarReportComponent.SimilarReportRank;
+import team.software.irbl.core.component.stacktraceComponent.StackRank;
+import team.software.irbl.core.component.structureComponent.StructureRank;
+import team.software.irbl.core.utils.filestore.XMLParser;
+import team.software.irbl.core.component.versionHistoryComponent.VersionHistoryRank;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.CodeFile;
 import team.software.irbl.domain.Project;
@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class Driver {
 
-    private static final double[] weights = {1, 2, 0.1, 0.1, 0.1};
+    private double[] weights = {1, 2, 0.5, 0.1, 0.1};
     private  DBProcessor dbProcessor;
 
     @Autowired
@@ -190,6 +190,10 @@ public class Driver {
         dbProcessor.saveRankRecord(records);
     }
 
+    private void setWeights(double[] weights){
+        this.weights = weights;
+    }
+
     private void saveCodeFilesABugReports(List<CodeFile> codeFiles, List<BugReport> bugReports, Project project){
         // 数据库存保存读取的基础信息
         dbProcessor.saveCodeFiles(codeFiles);
@@ -289,13 +293,23 @@ public class Driver {
 
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
+        String result = "result.txt";
         Driver driver = new Driver(new DBProcessorFake());
+
+        driver.setWeights(new double[]{1, 2, 0.5, 0.1, 0.1});
         List<BugReport> bugReportsSwt = driver.startRank("swt-3.1", false);
-        evaluateAndSave(bugReportsSwt, "result1.txt", "swt-3.1");
+        FileTranslator.writeOriginBugReport(bugReportsSwt, SavePath.getSourcePath("swt-res"));
+        evaluateAndSave(bugReportsSwt, result, "swt-3.1");
+
+        driver.setWeights(new double[]{1, 2, 0.1, 0.1, 0.1});
         List<BugReport> bugReportsEclipse = driver.startRank("eclipse-3.1", false);
-        evaluateAndSave(bugReportsEclipse, "result1.txt", "eclipse-3.1");
+        FileTranslator.writeOriginBugReport(bugReportsEclipse, SavePath.getSourcePath("eclipse-res"));
+        evaluateAndSave(bugReportsEclipse, result, "eclipse-3.1");
+
+        driver.setWeights(new double[]{1, 2, 0.5, 0.1, 0.1});
         List<BugReport> bugReportsAspectj = driver.startRank("aspectj", false);
-        evaluateAndSave(bugReportsAspectj, "result1.txt", "aspectj");
+        FileTranslator.writeOriginBugReport(bugReportsAspectj, SavePath.getSourcePath("aspectj-res"));
+        evaluateAndSave(bugReportsAspectj, result, "aspectj");
         long processEndTime = System.currentTimeMillis();
         Logger.log("Finish all rank in " + (processEndTime-startTime)/1000.0 + " seconds");
     }
