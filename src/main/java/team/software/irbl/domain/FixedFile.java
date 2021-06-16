@@ -3,6 +3,7 @@ package team.software.irbl.domain;
 import com.baomidou.mybatisplus.annotation.TableField;
 
 public class FixedFile {
+    @TableField(exist = false)
     private int id;
     @TableField(value = "report_index")
     private int reportIndex;
@@ -21,8 +22,7 @@ public class FixedFile {
         this.fileIdentifyString = fileIdentifyString;
     }
 
-    public FixedFile(int id, int reportIndex, int fileIndex, String filePackageName, String fileIdentifyString) {
-        this.id = id;
+    public FixedFile(int reportIndex, int fileIndex, String filePackageName, String fileIdentifyString) {
         this.reportIndex = reportIndex;
         this.fileIndex = fileIndex;
         this.filePackageName = filePackageName;
@@ -36,7 +36,6 @@ public class FixedFile {
     public void setId(int id) {
         this.id = id;
     }
-
 
     public int getReportIndex() {
         return reportIndex;

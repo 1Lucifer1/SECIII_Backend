@@ -32,11 +32,21 @@ public class DBProcessorImpl implements DBProcessor {
 
     @Override
     public int saveCodeFiles(List<CodeFile> codeFiles) {
+        int current = codeFileMapper.selectCount(new QueryWrapper<CodeFile>().gt("file_index",0));
+        for(CodeFile codeFile:codeFiles){
+            current++;
+            codeFile.setFileIndex(current);
+        }
         return codeFileMapper.insertOrUpdateBatch(codeFiles);
     }
 
     @Override
     public int saveBugReports(List<BugReport> bugReports, CodeFileMap codeFileMap) {
+        int current = bugReportMapper.selectCount(new QueryWrapper<BugReport>().gt("report_index",0));
+        for(BugReport report: bugReports){
+            current++;
+            report.setReportIndex(current);
+        }
         int res = bugReportMapper.insertOrUpdateBatch(bugReports);
         List<FixedFile> fixedFiles = new ArrayList<>();
         for(BugReport bugReport : bugReports){
@@ -45,7 +55,7 @@ public class DBProcessorImpl implements DBProcessor {
                 List<CodeFile> codeFiles = codeFileMap.getCodeFileFromMap(fixedFile.getFileIdentifyString());
                 if(codeFiles != null){
                     for(CodeFile codeFile: codeFiles){
-                        extendFixedFiles.add(new FixedFile(0, bugReport.getReportIndex(), codeFile.getFileIndex(), codeFile.getPackageName(), codeFile.getFilePath()));
+                        extendFixedFiles.add(new FixedFile( bugReport.getReportIndex(), codeFile.getFileIndex(), codeFile.getPackageName(), codeFile.getFilePath()));
                     }
                 }else {
                     Logger.errorLog("Not found " + fixedFile.getFilePackageName());

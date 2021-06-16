@@ -101,11 +101,11 @@ public class Driver {
             int projectIndex = project.getProjectIndex();
             bugReports.forEach(report -> {
                 report.setProjectIndex(projectIndex);
-                report.setReportIndex(0);
+                report.setReportIndex(-1);
             });
             codeFiles.forEach(codeFile -> {
                 codeFile.setProjectIndex(projectIndex);
-                codeFile.setFileIndex(0);
+                codeFile.setFileIndex(-1);
             });
             if(isNewProject){
                 // 数据库存保存读取的基础信息
@@ -190,7 +190,7 @@ public class Driver {
             results.add(result);
             // rank record数据量过大会占用过多空间，故采用分批保存以释放内存
             if(results.size() >= 10){
-                FileTranslator.writeRawResults(results, SavePath.getSourcePath("rawResult/"+project.getProjectName()+"-res"+batchCount));
+                //FileTranslator.writeRawResults(results, SavePath.getSourcePath("rawResult/"+project.getProjectName()+"-res"+batchCount));
                 batchCount++;
                 results = new ArrayList<>();
             }
@@ -226,7 +226,7 @@ public class Driver {
             records.addAll(recordList);
         }
         // 保存未加权的数据
-        if(results.size() != 0) FileTranslator.writeRawResults(results, SavePath.getSourcePath("rawResult/"+project.getProjectName()+"-res" + batchCount));
+        //if(results.size() != 0) FileTranslator.writeRawResults(results, SavePath.getSourcePath("rawResult/"+project.getProjectName()+"-res" + batchCount));
         //Logger.log(count + " reports use stack rank.");
         // 保存排序结果
         dbProcessor.saveRankRecord(records);

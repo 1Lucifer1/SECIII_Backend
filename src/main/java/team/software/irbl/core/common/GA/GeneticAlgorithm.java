@@ -5,18 +5,19 @@ import team.software.irbl.core.domain.RawResult;
 import team.software.irbl.core.enums.ComponentType;
 import team.software.irbl.core.utils.filestore.FileTranslator;
 import team.software.irbl.domain.BugReport;
+import team.software.irbl.domain.CodeFile;
+import team.software.irbl.domain.RankRecord;
 import team.software.irbl.util.SavePath;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.Map.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 
 public class GeneticAlgorithm {
 
     // 种群，以一个64位Long来作为5种权重的表示，其中每种权重被分配10位，取值范围（0.00~10.23）
-    private long[] population;
+    private Unity[] population;
     private static int PresentBit = 10;
     private static long UnityLimit = (long) Math.pow(2, 50);
     
@@ -25,19 +26,20 @@ public class GeneticAlgorithm {
 
     // 数据集路径
     private String dataSetPath;
+    private int dataSize;
 
     private int batchSize;
     private int repeatTimes;
     private int populationSize;
 
 
-    public GeneticAlgorithm(String dataSetPath){
+    public GeneticAlgorithm(String dataSetPath, int dataSize){
         this(dataSetPath, 100, 300, 1000);
     }
 
     public GeneticAlgorithm(String dataSetPath, int populationSize, int batchSize, int repeatTimes){
         this.dataSetPath = dataSetPath;
-        this.population = new long[populationSize];
+        this.population = new Unity[populationSize];
         this.populationSize = populationSize;
         this.batchSize = batchSize;
         this.repeatTimes = repeatTimes;
@@ -51,11 +53,11 @@ public class GeneticAlgorithm {
         // 随机初始化
         Random random = new Random();
         for(int i=0; i<populationSize; ++i){
-            population[i] = (long)(random.nextDouble()*UnityLimit);
+            population[i] = new Unity((long)(random.nextDouble()*UnityLimit));
         }
     }
 
-    private long[] newGeneration(long[] old){
+    private Unity[] newGeneration(Unity[] old){
         return null;
     }
 
@@ -66,9 +68,10 @@ public class GeneticAlgorithm {
      * @param noRepeat 指定是否强制要求交换位置不重复
      * @return
      */
-    private long[] cross(long unity1, long unity2, boolean noRepeat){
+    private Unity[] cross(Unity unity1, Unity unity2, boolean noRepeat){
         Random random = new Random();
-        long son1 = unity1, son2 = unity2;
+        long value1 = unity1.value, value2 = unity2.value;
+        long son1 = value1, son2 = value2; // 女拳警告
 
         HashSet<Integer> positions = new HashSet<>();
         for(int i=0; i<CrossSize; ++i){
@@ -79,18 +82,34 @@ public class GeneticAlgorithm {
                 positions.add(position);
             }
             long mask = (long)Math.pow(2, position);
-            son1 = (son1 & ~mask) | (unity2 & mask);
-            son2 = (son2 & ~mask) | (unity1 & mask);
+            son1 = (son1 & ~mask) | (value2 & mask);
+            son2 = (son2 & ~mask) | (value1 & mask);
         }
-        return new long[]{son1, son2};
+        return new Unity[]{new Unity(son1), new Unity(son2)};
     }
 
+    /**
+     * 变异算子
+     * @param unity
+     * @return
+     */
     private long variant(long unity){
+
         return unity;
     }
 
-    private double evaluate(long unity){
-        return 0.0;
+    private void evaluate(Unity unity, boolean useWhole, boolean print){
+        double[] weights = extractWeights(unity.value);
+
+        List<RawResult> results = new ArrayList<>();
+        List<BugReport> reports = new ArrayList<>();
+
+        if(useWhole){
+            for(int i=0; i<dataSize; ++i){
+
+            }
+        }
+
     }
 
     /**
@@ -111,6 +130,45 @@ public class GeneticAlgorithm {
         return weights;
     }
 
+    private List<BugReport> processResult(List<RawResult> results, double[] weights){
+        List<BugReport> reports = new ArrayList<>();
+        for(RawResult result: results) {
+            BugReport bugReport = result.getReport();
+            ConcurrentHashMap<Integer, Double> scoreMap = new ConcurrentHashMap<>();
+
+            // 根据论文公式计算与合并各部分打分
+            result.getRankResults(ComponentType.STRUCTURE.value()).forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), rankRecord.getScore() * weights[ComponentType.STRUCTURE.value()]));
+
+            if (result.getRankResults(ComponentType.STACK.value()) != null)
+                result.getRankResults(ComponentType.STACK.value()).forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), scoreMap.get(rankRecord.getFileIndex()) + rankRecord.getScore() * weights[ComponentType.STACK.value()]));
+
+            for (int i = 0; i < ComponentType.total.value(); ++i) {
+                if (i != ComponentType.STRUCTURE.value() && i != ComponentType.STACK.value()) {
+                    for (RankRecord rankRecord : result.getRankResults(i)) {
+                        double before = scoreMap.get(rankRecord.getFileIndex());
+                        if (before != 0) {
+                            scoreMap.put(rankRecord.getFileIndex(), before + rankRecord.getScore() * weights[i]);
+                        }
+                    }
+                }
+            }
+
+            List<RankRecord> recordList = new ArrayList<>();
+            Set<Entry<Integer, Double>> entrySet = scoreMap.entrySet();
+            for(Entry<Integer, Double> entry: entrySet){
+                recordList.add(new RankRecord(bugReport.getReportIndex(), entry.getKey(), -1, entry.getValue()));
+            }
+
+            recordList.sort(Collections.reverseOrder());
+            for(int i=0; i<recordList.size(); ++i){
+                recordList.get(i).setFileRank(i+1);
+            }
+            bugReport.setRanks(recordList);
+            reports.add(bugReport);
+        }
+        return reports;
+    }
+
 
     public static void main(String[] args) {
 //        String dir = SavePath.getSourcePath("rawResult/");
@@ -118,8 +176,23 @@ public class GeneticAlgorithm {
 //        assert results != null;
 //        System.out.println(results.size());
 
-        GeneticAlgorithm ga = new GeneticAlgorithm(null);
-        long unity = 240 + (long)Math.pow(2, 10)*351 + (long)Math.pow(2, 20)*10 + (long)Math.pow(2, 30)*1023 + (long)Math.pow(2, 40)*1024;
-        System.out.println(Arrays.toString(ga.extractWeights(unity)));
+        GeneticAlgorithm ga = new GeneticAlgorithm(null, 308);
+        long unity1 = 240 + (long)Math.pow(2, 10)*351 + (long)Math.pow(2, 20)*10 + (long)Math.pow(2, 30)*1023 + (long)Math.pow(2, 40)*555;
+        long unity2 = 255 + (long)Math.pow(2, 10)*457 + (long)Math.pow(2, 20)*1000 + (long)Math.pow(2, 30)*23 + (long)Math.pow(2, 40)*347;
+        Unity[] sons = ga.cross(new Unity(unity1), new Unity(unity2), true);
+        System.out.println((unity1|unity2)==(sons[0].value|sons[1].value));
+        System.out.println(Long.toBinaryString(unity1));
+        System.out.println(Long.toBinaryString(unity2));
+        System.out.println(Long.toBinaryString(sons[0].value));
+        System.out.println(Long.toBinaryString(sons[1].value));
+    }
+}
+
+class Unity{
+    protected long value;
+    protected double score;
+
+    protected Unity(long value){
+        this.value = value;
     }
 }

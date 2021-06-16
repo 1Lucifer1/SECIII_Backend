@@ -44,7 +44,7 @@ public class DBProcessorFake implements DBProcessor {
                 if(codeFiles != null){
                     //if(codeFiles.size()!=1) count += codeFiles.size();
                     for(CodeFile codeFile: codeFiles){
-                        extendFixedFiles.add(new FixedFile(-1, bugReport.getReportIndex(), codeFile.getFileIndex(), codeFile.getPackageName(), codeFile.getFilePath()));
+                        extendFixedFiles.add(new FixedFile(bugReport.getReportIndex(), codeFile.getFileIndex(), codeFile.getPackageName(), codeFile.getFilePath()));
                     }
                 }else {
                     Logger.errorLog("Not found " + fixedFile.getFileIdentifyString());
@@ -65,9 +65,6 @@ public class DBProcessorFake implements DBProcessor {
      */
     @Override
     public int saveFixedFiles(List<FixedFile> fixedFiles){
-        for(int i=0; i<fixedFiles.size(); ++i){
-            fixedFiles.get(i).setId(i+1);
-        }
         return fixedFiles.size();
     }
 
