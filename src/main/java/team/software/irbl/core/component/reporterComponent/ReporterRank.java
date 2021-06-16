@@ -6,6 +6,7 @@ import org.w3c.dom.NodeList;
 import team.software.irbl.core.IndicatorEvaluation;
 import team.software.irbl.core.common.dbstore.DBProcessor;
 import team.software.irbl.core.common.dbstore.DBProcessorFake;
+import team.software.irbl.core.component.ComponentRank;
 import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.core.utils.filestore.XMLParser;
 import team.software.irbl.core.utils.jdt.JavaParser;
@@ -21,7 +22,7 @@ import team.software.irbl.util.SavePath;
 
 import java.util.*;
 
-public class ReporterRank {
+public class ReporterRank implements ComponentRank {
 
     private final Map<Integer, String> reportsReporter;
 

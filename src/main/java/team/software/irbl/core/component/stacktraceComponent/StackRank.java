@@ -4,6 +4,7 @@ import team.software.irbl.core.common.maptool.CodeFileMap;
 import team.software.irbl.core.IndicatorEvaluation;
 import team.software.irbl.core.common.dbstore.DBProcessor;
 import team.software.irbl.core.common.dbstore.DBProcessorFake;
+import team.software.irbl.core.component.ComponentRank;
 import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.core.utils.filestore.XMLParser;
 import team.software.irbl.core.utils.jdt.JavaParser;
@@ -19,7 +20,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StackRank {
+public class StackRank implements ComponentRank {
 
     /**
      * 该正则表达式可以输出多组匹配,其中部分组可能为null

@@ -2,6 +2,7 @@ package team.software.irbl.core.utils.filestore;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import team.software.irbl.core.domain.RawResult;
 import team.software.irbl.core.domain.StructuredBugReport;
 
 import team.software.irbl.core.domain.StructuredCodeFile;
@@ -62,34 +63,25 @@ public class FileTranslator {
         }
     }
 
-    public static void writeOriginBugReport(List<BugReport> reports, String path) {
-        int maxSize = 100;
-        int length = reports.size();
-        int start = 0;
-        int count = 1;
-        while (start + maxSize < length) {
-            writeObject(reports.subList(start, start+maxSize), path + count);
-            count++;
-            start += maxSize;
-        }
-        writeObject(reports.subList(start, length), path + count);
+    public static void writeRawResults(List<RawResult> results, String path) {
+        writeObject(results, path);
     }
 
-    public static List<BugReport> readOriginBugReport(String path){
+    public static List<RawResult> readRawResults(String path){
         try {
             ObjectMapper mapper = new ObjectMapper();
-            JavaType javaType = mapper.getTypeFactory().constructParametricType(ArrayList.class, StructuredBugReport.class);
+            JavaType javaType = mapper.getTypeFactory().constructParametricType(ArrayList.class, RawResult.class);
 
-            List<StructuredBugReport> reports = new ArrayList<>();
+            List<RawResult> results = new ArrayList<>();
             int count = 1;
             File file = new File(path+count+".json");
             while (file.exists()){
                 //System.out.println(count);
-                reports.addAll(mapper.readValue(file, javaType));
+                results.addAll(mapper.readValue(file, javaType));
                 count++;
                 file = new File(path+count+".json");
             }
-            return new ArrayList<>(reports);
+            return new ArrayList<>(results);
         } catch (IOException e) {
             e.printStackTrace();
             Logger.errorLog("Reading json file failed.");

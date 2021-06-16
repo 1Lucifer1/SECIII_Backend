@@ -1,14 +1,16 @@
 package team.software.irbl.core.component.structureComponent;
 
+import team.software.irbl.core.component.ComponentRank;
 import team.software.irbl.core.domain.StructuredBugReport;
 import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.core.enums.CodeWordsType;
+import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.RankRecord;
 import team.software.irbl.core.common.vsm.VSM;
 
 import java.util.*;
 
-public class StructureRank {
+public class StructureRank implements ComponentRank {
 
     // 结构数量
     private final static int CODE_PART_NUM = 5;
@@ -26,8 +28,8 @@ public class StructureRank {
         initial();
     }
 
-    public List<RankRecord> rank(StructuredBugReport report){
-        return rank(report, DEFAULT_WEIGHT);
+    public List<RankRecord> rank(BugReport report){
+        return rank((StructuredBugReport) report, DEFAULT_WEIGHT);
     }
 
     public List<RankRecord> rank(StructuredBugReport report, double[] weights){

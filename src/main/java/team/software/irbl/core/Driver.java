@@ -2,6 +2,8 @@ package team.software.irbl.core;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import team.software.irbl.core.component.ComponentRank;
+import team.software.irbl.core.domain.RawResult;
 import team.software.irbl.core.domain.StructuredBugReport;
 import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.core.enums.ComponentType;
@@ -146,34 +148,72 @@ public class Driver {
     private void rank(List<StructuredCodeFile> codeFiles, List<StructuredBugReport> bugReports, Project project){
         //int count = 0;
         PackageMap packageMap = new PackageMap(new ArrayList<>(codeFiles));
-        StackRank stackRank = new StackRank(packageMap);
-        StructureRank structureRank = new StructureRank(codeFiles);
-        SimilarReportRank similarReportRank = new SimilarReportRank(new ArrayList<>(codeFiles));
-        ReporterRank reporterRank = new ReporterRank(project.getProjectName(), packageMap);
-        VersionHistoryRank versionHistoryRank = new VersionHistoryRank(new ArrayList<>(codeFiles), project);
+
+        List<ComponentRank> ranks = new ArrayList<>();
+        for(int i=0; i<ComponentType.total.value(); ++i) ranks.add(null);
+        ranks.set(ComponentType.STACK.value(), new StackRank(packageMap));
+        ranks.set(ComponentType.STRUCTURE.value(), new StructureRank(codeFiles));
+        ranks.set(ComponentType.REPORT.value(), new SimilarReportRank(new ArrayList<>(codeFiles)));
+        ranks.set(ComponentType.REPORTER.value(), new ReporterRank(project.getProjectName(), packageMap));
+        ranks.set(ComponentType.VERSION.value(), new VersionHistoryRank(new ArrayList<>(codeFiles), project));
+
         List<RankRecord> records = new ArrayList<>();
+        List<RawResult> results = new ArrayList<>();
+        int batchCount = 1;
         for(StructuredBugReport bugReport: bugReports){
             ConcurrentHashMap<Integer, Double> scoreMap = new ConcurrentHashMap<>();
-            List<RankRecord> recordList = stackRank.rank(bugReport);
-            if(recordList != null) {
-                //count++;
-                recordList.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), rankRecord.getScore()*weights[ComponentType.STACK.value()]));
+
+            RawResult result = new RawResult(bugReport);
+            // 根据论文公式计算与合并各部分打分
+            List<RankRecord> middleRecord = ranks.get(ComponentType.STRUCTURE.value()).rank(bugReport);
+            middleRecord.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), rankRecord.getScore()*weights[ComponentType.STRUCTURE.value()]));
+            result.setRankResults(middleRecord, ComponentType.STRUCTURE.value());
+
+            middleRecord = ranks.get(ComponentType.STACK.value()).rank(bugReport);
+            if(middleRecord != null) middleRecord.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), scoreMap.get(rankRecord.getFileIndex())+rankRecord.getScore()*weights[ComponentType.STACK.value()]));
+            result.setRankResults(middleRecord, ComponentType.STACK.value());
+
+            for(int i=0; i<ComponentType.total.value(); ++i){
+                if(i != ComponentType.STRUCTURE.value() && i != ComponentType.STACK.value()){
+                    middleRecord = ranks.get(i).rank(bugReport);
+                    for(RankRecord rankRecord:middleRecord){
+                        double before = scoreMap.get(rankRecord.getFileIndex());
+                        if(before != 0){
+                            scoreMap.put(rankRecord.getFileIndex(), before + rankRecord.getScore()*weights[i]);
+                        }
+                    }
+                    result.setRankResults(middleRecord, i);
+                }
             }
-            if(recordList == null){
-                recordList = structureRank.rank(bugReport);
-                recordList.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), rankRecord.getScore()*weights[ComponentType.STRUCTURE.value()]));
+
+            // 保存未加权的数据
+            results.add(result);
+            // rank record数据量过大会占用过多空间，故采用分批保存以释放内存
+            if(results.size() >= 50){
+                FileTranslator.writeRawResults(results, SavePath.getSourcePath("rawResult/"+project.getProjectName()+"-res"+batchCount));
+                batchCount++;
+                results = new ArrayList<>();
             }
+            //            List<RankRecord> recordList = stackRank.rank(bugReport);
+//            if(recordList != null) {
+//                //count++;
+//                recordList.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), rankRecord.getScore()*weights[ComponentType.STACK.value()]));
+//            }
+//            if(recordList == null){
+//                recordList = structureRank.rank(bugReport);
+//                recordList.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), rankRecord.getScore()*weights[ComponentType.STRUCTURE.value()]));
+//            }
+//
+//            recordList = similarReportRank.rank(bugReport);
+//            recordList.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), scoreMap.get(rankRecord.getFileIndex())+rankRecord.getScore()*weights[ComponentType.REPORT.value()]));
+//
+//            recordList = reporterRank.rank(bugReport);
+//            recordList.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), scoreMap.get(rankRecord.getFileIndex())+rankRecord.getScore()*weights[ComponentType.REPORTER.value()]));
+//
+//            recordList = versionHistoryRank.rank(bugReport);
+//            recordList.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), scoreMap.get(rankRecord.getFileIndex())+rankRecord.getScore()*weights[ComponentType.VERSION.value()]));
 
-            recordList = similarReportRank.rank(bugReport);
-            recordList.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), scoreMap.get(rankRecord.getFileIndex())+rankRecord.getScore()*weights[ComponentType.REPORT.value()]));
-
-            recordList = reporterRank.rank(bugReport);
-            recordList.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), scoreMap.get(rankRecord.getFileIndex())+rankRecord.getScore()*weights[ComponentType.REPORTER.value()]));
-
-            recordList = versionHistoryRank.rank(bugReport);
-            recordList.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), scoreMap.get(rankRecord.getFileIndex())+rankRecord.getScore()*weights[ComponentType.VERSION.value()]));
-
-            recordList = new ArrayList<>();
+            List<RankRecord> recordList = new ArrayList<>();
             for(CodeFile codeFile: codeFiles){
                 recordList.add(new RankRecord(bugReport.getReportIndex(), codeFile.getFileIndex(), -1, scoreMap.get(codeFile.getFileIndex())));
             }
@@ -185,6 +225,8 @@ public class Driver {
             bugReport.setRanks(recordList);
             records.addAll(recordList);
         }
+        // 保存未加权的数据
+        if(results.size() != 0) FileTranslator.writeRawResults(results, SavePath.getSourcePath("rawResult/"+project.getProjectName()+"-res" + batchCount));
         //Logger.log(count + " reports use stack rank.");
         // 保存排序结果
         dbProcessor.saveRankRecord(records);
@@ -271,11 +313,7 @@ public class Driver {
         File saveResult = new File(SavePath.getSourcePath(savePath));
         IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();
         Indicator indicator = indicatorEvaluation.getEvaluationIndicator(bugReports);
-        System.out.println("Top@1:  "+indicator.getTop1());
-        System.out.println("Top@5:  "+indicator.getTop5());
-        System.out.println("Top@10: "+indicator.getTop10());
-        System.out.println("MRR:    "+indicator.getMRR());
-        System.out.println("MAP:    "+indicator.getMAP());
+        indicator.print();
 
         try{
             FileWriter writer = new FileWriter(saveResult, true);
@@ -293,22 +331,19 @@ public class Driver {
 
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
-        String result = "result.txt";
+        String result = "result4.txt";
         Driver driver = new Driver(new DBProcessorFake());
 
         driver.setWeights(new double[]{1, 2, 0.5, 0.1, 0.1});
         List<BugReport> bugReportsSwt = driver.startRank("swt-3.1", false);
-        FileTranslator.writeOriginBugReport(bugReportsSwt, SavePath.getSourcePath("swt-res"));
         evaluateAndSave(bugReportsSwt, result, "swt-3.1");
 
         driver.setWeights(new double[]{1, 2, 0.1, 0.1, 0.1});
         List<BugReport> bugReportsEclipse = driver.startRank("eclipse-3.1", false);
-        FileTranslator.writeOriginBugReport(bugReportsEclipse, SavePath.getSourcePath("eclipse-res"));
         evaluateAndSave(bugReportsEclipse, result, "eclipse-3.1");
 
         driver.setWeights(new double[]{1, 2, 0.5, 0.1, 0.1});
         List<BugReport> bugReportsAspectj = driver.startRank("aspectj", false);
-        FileTranslator.writeOriginBugReport(bugReportsAspectj, SavePath.getSourcePath("aspectj-res"));
         evaluateAndSave(bugReportsAspectj, result, "aspectj");
         long processEndTime = System.currentTimeMillis();
         Logger.log("Finish all rank in " + (processEndTime-startTime)/1000.0 + " seconds");

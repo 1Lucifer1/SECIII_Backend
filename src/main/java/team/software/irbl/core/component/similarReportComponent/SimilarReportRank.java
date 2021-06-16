@@ -3,6 +3,7 @@ package team.software.irbl.core.component.similarReportComponent;
 import team.software.irbl.core.IndicatorEvaluation;
 import team.software.irbl.core.common.dbstore.DBProcessor;
 import team.software.irbl.core.common.dbstore.DBProcessorFake;
+import team.software.irbl.core.component.ComponentRank;
 import team.software.irbl.core.domain.StructuredBugReport;
 import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.core.utils.filestore.FileTranslator;
@@ -18,7 +19,7 @@ import team.software.irbl.util.SavePath;
 
 import java.util.*;
 
-public class SimilarReportRank {
+public class SimilarReportRank implements ComponentRank {
     //private List<StructuredCodeFile> codeFile;
     private List<CodeFile> codeFiles;
     //private List<StructuredBugReport> reports = new ArrayList<>();
@@ -102,9 +103,9 @@ public class SimilarReportRank {
 //        }
     }
     //得到排序
-    public List<RankRecord> rank(StructuredBugReport bugReport){
+    public List<RankRecord> rank(BugReport bugReport){
         //this.reports.add(bugReport);
-        getRank(bugReport);
+        getRank((StructuredBugReport) bugReport);
         List<RankRecord> records = new ArrayList<>();
         for(CodeFile codeFile: codeFiles){
             int index = codeFile.getFileIndex();

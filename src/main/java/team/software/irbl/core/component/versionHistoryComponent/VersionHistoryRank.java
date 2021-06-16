@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import team.software.irbl.core.IndicatorEvaluation;
 import team.software.irbl.core.common.dbstore.DBProcessor;
 import team.software.irbl.core.common.dbstore.DBProcessorFake;
+import team.software.irbl.core.component.ComponentRank;
 import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.core.utils.filestore.XMLParser;
 import team.software.irbl.core.utils.jdt.JavaParser;
@@ -18,10 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class VersionHistoryRank {
-
-    @Autowired
-    private ProjectMapper projectMapper;
+public class VersionHistoryRank implements ComponentRank {
 
     private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
