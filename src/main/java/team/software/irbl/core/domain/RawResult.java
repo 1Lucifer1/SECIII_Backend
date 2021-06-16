@@ -14,6 +14,10 @@ public class RawResult {
 
     private List<List<RankRecord>> rankResults;
 
+    public RawResult(){
+
+    }
+
     public RawResult(BugReport report){
         this.report = miniReport(report);
         rankResults = new ArrayList<>();
@@ -30,6 +34,18 @@ public class RawResult {
 
     public List<RankRecord> getRankResults(int index){
         return rankResults.get(index);
+    }
+
+    public void setReport(BugReport report) {
+        this.report = report;
+    }
+
+    public List<List<RankRecord>> getRankResults() {
+        return rankResults;
+    }
+
+    public void setRankResults(List<List<RankRecord>> rankResults) {
+        this.rankResults = rankResults;
     }
 
     /**

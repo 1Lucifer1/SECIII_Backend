@@ -71,17 +71,8 @@ public class FileTranslator {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JavaType javaType = mapper.getTypeFactory().constructParametricType(ArrayList.class, RawResult.class);
-
-            List<RawResult> results = new ArrayList<>();
-            int count = 1;
-            File file = new File(path+count+".json");
-            while (file.exists()){
-                //System.out.println(count);
-                results.addAll(mapper.readValue(file, javaType));
-                count++;
-                file = new File(path+count+".json");
-            }
-            return new ArrayList<>(results);
+            File file = new File(path+".json");
+            return mapper.readValue(file, javaType);
         } catch (IOException e) {
             e.printStackTrace();
             Logger.errorLog("Reading json file failed.");

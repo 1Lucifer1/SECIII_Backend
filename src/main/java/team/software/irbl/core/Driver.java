@@ -189,7 +189,7 @@ public class Driver {
             // 保存未加权的数据
             results.add(result);
             // rank record数据量过大会占用过多空间，故采用分批保存以释放内存
-            if(results.size() >= 50){
+            if(results.size() >= 10){
                 FileTranslator.writeRawResults(results, SavePath.getSourcePath("rawResult/"+project.getProjectName()+"-res"+batchCount));
                 batchCount++;
                 results = new ArrayList<>();
@@ -331,7 +331,7 @@ public class Driver {
 
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
-        String result = "result4.txt";
+        String result = "result.txt";
         Driver driver = new Driver(new DBProcessorFake());
 
         driver.setWeights(new double[]{1, 2, 0.5, 0.1, 0.1});
