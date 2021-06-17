@@ -334,7 +334,7 @@ public class Driver {
         String result = "result1.txt";
         Driver driver = new Driver(new DBProcessorFake());
 
-        driver.setWeights(new double[]{3.63, 7.93, 0.73, 0.45, 0.23});
+        driver.setWeights(new double[]{2.77, 10.05, 0.96, 0.43, 0.1});
         List<BugReport> bugReportsSwt = driver.startRank("swt-3.1", false);
         evaluateAndSave(bugReportsSwt, result, "swt-3.1");
 
@@ -343,7 +343,8 @@ public class Driver {
 //        evaluateAndSave(bugReportsEclipse, result, "eclipse-3.1");
 
 //        driver.setWeights(new double[]{6.47, 10.14, 1.36, 0.53, 0.03});
-        driver.setWeights(new double[]{3.63, 7.93, 0.73, 0.45, 0.23});
+//        driver.setWeights(new double[]{3.63, 7.93, 0.73, 0.45, 0.23});
+        driver.setWeights(new double[]{2.77, 10.05, 0.96, 0.43, 0.1});
         List<BugReport> bugReportsAspectj = driver.startRank("aspectj", false);
         evaluateAndSave(bugReportsAspectj, result, "aspectj");
         long processEndTime = System.currentTimeMillis();

@@ -35,21 +35,23 @@ public class GeneticAlgorithm {
     private static double VariantP = 0.05;
 
     // 数据集路径
-    private String dataSetPath;
-    private int dataSize;
+    private String[] dataSetPath;
+    private int[] dataSize;
+    private double[] ratio;
 
     private int batchSize;
     private int repeatTimes;
     private int populationSize;
     private String savePath;
 
-    public GeneticAlgorithm(String dataSetPath, int dataSize, String savePath){
-        this(dataSetPath,dataSize, savePath,100, 300, 1000);
+    public GeneticAlgorithm(String[] dataSetPath, int[] dataSize, double[] ratio, String savePath){
+        this(dataSetPath,dataSize, ratio, savePath,100, 300, 1000);
     }
 
-    public GeneticAlgorithm(String dataSetPath,int dataSize, String savePath, int populationSize, int batchSize, int repeatTimes){
+    public GeneticAlgorithm(String[] dataSetPath,int[] dataSize, double[] ratio, String savePath, int populationSize, int batchSize, int repeatTimes){
         this.dataSetPath = dataSetPath;
         this.dataSize = dataSize;
+        this.ratio = ratio;
         this.population = new Unity[populationSize];
         this.populationSize = populationSize;
         this.batchSize = batchSize;
@@ -67,9 +69,10 @@ public class GeneticAlgorithm {
         this.populationSize = population.length;
     }
 
-    public void changeDataSet(String dataSetPath, int dataSize) {
+    public void changeDataSet(String[] dataSetPath, int[] dataSize, double[] ratio) {
         this.dataSetPath = dataSetPath;
         this.dataSize = dataSize;
+        this.ratio = ratio;
     }
 
     public void setRepeatTimes(int repeatTimes) {
@@ -87,7 +90,9 @@ public class GeneticAlgorithm {
             population = newGeneration(population, 10);
             long processEndTime = System.currentTimeMillis();
             Logger.log("Finish one generation in " + (processEndTime-startTime)/1000.0 + " seconds");
-            evaluateWhole(population[0], savePath);
+            for(int j=0; j<dataSetPath.length; ++j){
+                evaluateWhole(population[0], savePath, dataSetPath[j], dataSize[j]);
+            }
         }
         long end = System.currentTimeMillis();
         Logger.log("Finish train in " + (end - begin)/1000.0 + " seconds");
@@ -102,10 +107,15 @@ public class GeneticAlgorithm {
     }
 
     private Unity[] newGeneration(Unity[] old, int time){
-        List<RawResult> batch = getRandomBatch();
+        List<List<RawResult>> batches = new ArrayList<>();
+        for(int i=0; i<dataSetPath.length; ++i){
+            batches.add(getRandomBatch(dataSetPath[i], dataSize[i]));
+        }
         List<Unity> unities = new ArrayList<>(Arrays.asList(old));
         unities.parallelStream().forEach(unity -> {
-            evaluate(unity, batch);
+            double score = 0;
+            for (int i=0; i<batches.size(); ++i) score += evaluate(unity, batches.get(i)) * ratio[i];
+            unity.score = score;
         });
         unities.sort(Collections.reverseOrder());
 
@@ -123,7 +133,9 @@ public class GeneticAlgorithm {
                  int parent2 = random.nextInt(populationSize/2);
                  Unity[] sons = cross(finalUnities.get(parent1), finalUnities.get(parent2), false);
                  for(Unity son:sons){
-                     evaluate(son, batch);
+                     double score = 0;
+                     for (int j=0; j<batches.size(); ++j) score += evaluate(son, batches.get(j)) * ratio[j];
+                     son.score = score;
                      if(random.nextDouble() < VariantP) variant(son);
                      newUnities.add(son);
                  }
@@ -184,7 +196,7 @@ public class GeneticAlgorithm {
         unity.value = value;
     }
 
-    private List<RawResult> getRandomBatch(){
+    private List<RawResult> getRandomBatch( String dataSetPath, int dataSize){
         Random random = new Random();
         List<RawResult> results = new ArrayList<>();
         HashSet<Integer> added = new HashSet<>();
@@ -198,17 +210,17 @@ public class GeneticAlgorithm {
     }
 
 
-    private void evaluate(Unity unity, List<RawResult> data){
+    private double evaluate(Unity unity, List<RawResult> data){
         double[] weights = extractWeights(unity.value);
 
         List<BugReport> reports = processResult(data, weights);
         IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();
         Indicator indicator = indicatorEvaluation.getEvaluationIndicator(reports);
-        unity.score = indicator.getMAP() + indicator.getMRR();
+        return indicator.getMAP() + indicator.getMRR();
         //indicator.print();
     }
 
-    private void evaluateWhole(Unity unity, String savePath){
+    private void evaluateWhole(Unity unity, String savePath, String dataSetPath, int dataSize){
         double[] weights = extractWeights(unity.value);
         System.out.println(Arrays.toString(weights));
         List<BugReport> reports = new ArrayList<>();
@@ -262,8 +274,8 @@ public class GeneticAlgorithm {
     }
 
     private List<BugReport> processResult(List<RawResult> results, double[] weights){
-        List<BugReport> reports = new ArrayList<>();
-        for(RawResult result: results) {
+        List<BugReport> reports = Collections.synchronizedList(new ArrayList<>());
+        results.parallelStream().forEach(result -> {
             BugReport bugReport = new BugReport();
             bugReport.setReportIndex(result.getReport().getReportIndex());
             bugReport.setFixedFiles(result.getReport().getFixedFiles());
@@ -273,7 +285,7 @@ public class GeneticAlgorithm {
             result.getRankResults(ComponentType.STRUCTURE.value()).forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), rankRecord.getScore() * weights[ComponentType.STRUCTURE.value()]));
 
             if (result.getRankResults(ComponentType.STACK.value()) != null)
-                result.getRankResults(ComponentType.STACK.value()).forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), scoreMap.get(rankRecord.getFileIndex()) + rankRecord.getScore() * weights[ComponentType.STACK.value()]));
+                result.getRankResults(ComponentType.STACK.value()).forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), scoreMap.get(rankRecord.getFileIndex()) +rankRecord.getScore() * weights[ComponentType.STACK.value()]));
 
             for (int i = 0; i < ComponentType.total.value(); ++i) {
                 if (i != ComponentType.STRUCTURE.value() && i != ComponentType.STACK.value()) {
@@ -298,7 +310,7 @@ public class GeneticAlgorithm {
             }
             bugReport.setRanks(recordList);
             reports.add(bugReport);
-        }
+        });
         return reports;
     }
 
@@ -308,8 +320,10 @@ public class GeneticAlgorithm {
 //        List<RawResult> results = FileTranslator.readRawResults(dir+"eclipse-3.1-res");
 //        assert results != null;
 //        System.out.println(results.size());
-
-        GeneticAlgorithm ga = new GeneticAlgorithm(SavePath.getSourcePath("rawResult/eclipse-3.1-res"), 308, SavePath.getSourcePath("weights3.txt"));
+        String[] dataSetPath = {SavePath.getSourcePath("rawResult/swt-3.1-res"),SavePath.getSourcePath("rawResult/eclipse-3.1-res"),SavePath.getSourcePath("rawResult/aspectj-res")};
+        int[] dataSize = {10, 308, 29};
+        double[] ratio = {0.1, 0.6, 0.3};
+        GeneticAlgorithm ga = new GeneticAlgorithm(dataSetPath, dataSize, ratio, SavePath.getSourcePath("weights8.txt"));
         //ga.setBatchSize(50);
         ga.train();
 
