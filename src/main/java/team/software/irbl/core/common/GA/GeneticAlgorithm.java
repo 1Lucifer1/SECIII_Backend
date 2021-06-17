@@ -43,12 +43,13 @@ public class GeneticAlgorithm {
     private int repeatTimes;
     private int populationSize;
     private String savePath;
+    private String populationSave;
 
-    public GeneticAlgorithm(String[] dataSetPath, int[] dataSize, double[] ratio, String savePath){
-        this(dataSetPath,dataSize, ratio, savePath,100, 300, 1000);
+    public GeneticAlgorithm(String[] dataSetPath, int[] dataSize, double[] ratio, String savePopulationPath, String outPutPath){
+        this(dataSetPath,dataSize, ratio, savePopulationPath, outPutPath,100, 300, 1000);
     }
 
-    public GeneticAlgorithm(String[] dataSetPath,int[] dataSize, double[] ratio, String savePath, int populationSize, int batchSize, int repeatTimes){
+    public GeneticAlgorithm(String[] dataSetPath,int[] dataSize, double[] ratio, String savePopulationPath, String outPutPath, int populationSize, int batchSize, int repeatTimes){
         this.dataSetPath = dataSetPath;
         this.dataSize = dataSize;
         this.ratio = ratio;
@@ -56,7 +57,8 @@ public class GeneticAlgorithm {
         this.populationSize = populationSize;
         this.batchSize = batchSize;
         this.repeatTimes = repeatTimes;
-        this.savePath = savePath;
+        this.savePath = outPutPath;
+        this.populationSave = savePopulationPath;
         initial();
     }
 
@@ -89,6 +91,7 @@ public class GeneticAlgorithm {
             long startTime = System.currentTimeMillis();
             population = newGeneration(population, 10);
             long processEndTime = System.currentTimeMillis();
+            if(populationSave != null) savePopulation();
             Logger.log("Finish one generation in " + (processEndTime-startTime)/1000.0 + " seconds");
             for(int j=0; j<dataSetPath.length; ++j){
                 evaluateWhole(population[0], savePath, dataSetPath[j], dataSize[j]);
@@ -96,6 +99,10 @@ public class GeneticAlgorithm {
         }
         long end = System.currentTimeMillis();
         Logger.log("Finish train in " + (end - begin)/1000.0 + " seconds");
+    }
+
+    private void savePopulation(){
+        FileTranslator.writeObject(population, populationSave);
     }
 
     private void initial(){
@@ -323,7 +330,7 @@ public class GeneticAlgorithm {
         String[] dataSetPath = {SavePath.getSourcePath("rawResult/swt-3.1-res"),SavePath.getSourcePath("rawResult/eclipse-3.1-res"),SavePath.getSourcePath("rawResult/aspectj-res")};
         int[] dataSize = {10, 308, 29};
         double[] ratio = {0.1, 0.6, 0.3};
-        GeneticAlgorithm ga = new GeneticAlgorithm(dataSetPath, dataSize, ratio, SavePath.getSourcePath("weights8.txt"));
+        GeneticAlgorithm ga = new GeneticAlgorithm(dataSetPath, dataSize, ratio, SavePath.getSourcePath("population"), SavePath.getSourcePath("weights8.txt"));
         //ga.setBatchSize(50);
         ga.train();
 
