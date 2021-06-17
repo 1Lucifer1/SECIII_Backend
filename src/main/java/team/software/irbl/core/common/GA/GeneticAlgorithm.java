@@ -26,7 +26,7 @@ public class GeneticAlgorithm {
     private Unity[] population;
     private static int PresentBit = 10;
     private static long UnityLimit = (long) Math.pow(2, 50);
-    
+
     // 每次交叉替换会更换的位数
     private static int CrossSize = 10;
     // 每次突变会改变的位数
@@ -329,9 +329,9 @@ public class GeneticAlgorithm {
 //        System.out.println(results.size());
         String[] dataSetPath = {SavePath.getSourcePath("rawResult/swt-3.1-res"),SavePath.getSourcePath("rawResult/eclipse-3.1-res"),SavePath.getSourcePath("rawResult/aspectj-res")};
         int[] dataSize = {10, 308, 29};
-        double[] ratio = {0.1, 0.6, 0.3};
+        double[] ratio = {0.05, 0.65, 0.3};
         GeneticAlgorithm ga = new GeneticAlgorithm(dataSetPath, dataSize, ratio, SavePath.getSourcePath("population"), SavePath.getSourcePath("weights8.txt"));
-        //ga.setBatchSize(50);
+        ga.setBatchSize(64);
         ga.train();
 
         //        long unity1 = 240 + (long)Math.pow(2, 10)*351 + (long)Math.pow(2, 20)*10 + (long)Math.pow(2, 30)*1023 + (long)Math.pow(2, 40)*555;
@@ -378,5 +378,24 @@ class Unity implements Comparable<Unity>{
     @Override
     public int compareTo(Unity o) {
         return Double.compare(score, o.score);
+    }
+
+    public Unity() {
+    }
+
+    public long getValue() {
+        return value;
+    }
+
+    public void setValue(long value) {
+        this.value = value;
+    }
+
+    public double getScore() {
+        return score;
+    }
+
+    public void setScore(double score) {
+        this.score = score;
     }
 }
