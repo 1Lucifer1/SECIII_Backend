@@ -67,6 +67,7 @@ public class CodeFileServiceImpl implements CodeFileService {
                 CodeFile codeFile = codeFileMapper.selectById(file.getFileIndex());
                 file.setFileName(codeFile.getFileName());
                 file.setPackageName(codeFile.getPackageName());
+                file.setCosineSimilarity(record.getScore());
                 files.add(file);
             }
             return files;
