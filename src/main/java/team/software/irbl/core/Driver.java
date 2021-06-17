@@ -331,18 +331,19 @@ public class Driver {
 
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
-        String result = "result.txt";
+        String result = "result1.txt";
         Driver driver = new Driver(new DBProcessorFake());
 
-        driver.setWeights(new double[]{1, 2, 0.5, 0.1, 0.1});
+        driver.setWeights(new double[]{3.63, 7.93, 0.73, 0.45, 0.23});
         List<BugReport> bugReportsSwt = driver.startRank("swt-3.1", false);
         evaluateAndSave(bugReportsSwt, result, "swt-3.1");
 
-        driver.setWeights(new double[]{1, 2, 0.1, 0.1, 0.1});
-        List<BugReport> bugReportsEclipse = driver.startRank("eclipse-3.1", false);
-        evaluateAndSave(bugReportsEclipse, result, "eclipse-3.1");
+//        driver.setWeights(new double[]{1, 2, 0.1, 0.1, 0.1});
+//        List<BugReport> bugReportsEclipse = driver.startRank("eclipse-3.1", false);
+//        evaluateAndSave(bugReportsEclipse, result, "eclipse-3.1");
 
-        driver.setWeights(new double[]{1, 2, 0.5, 0.1, 0.1});
+//        driver.setWeights(new double[]{6.47, 10.14, 1.36, 0.53, 0.03});
+        driver.setWeights(new double[]{3.63, 7.93, 0.73, 0.45, 0.23});
         List<BugReport> bugReportsAspectj = driver.startRank("aspectj", false);
         evaluateAndSave(bugReportsAspectj, result, "aspectj");
         long processEndTime = System.currentTimeMillis();

@@ -1,14 +1,20 @@
 package team.software.irbl.core.common.GA;
 
 import com.baomidou.mybatisplus.extension.api.R;
+import team.software.irbl.core.IndicatorEvaluation;
 import team.software.irbl.core.domain.RawResult;
 import team.software.irbl.core.enums.ComponentType;
 import team.software.irbl.core.utils.filestore.FileTranslator;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.CodeFile;
 import team.software.irbl.domain.RankRecord;
+import team.software.irbl.dto.file.File;
+import team.software.irbl.dto.project.Indicator;
+import team.software.irbl.util.Logger;
 import team.software.irbl.util.SavePath;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.util.Map.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,6 +29,10 @@ public class GeneticAlgorithm {
     
     // 每次交叉替换会更换的位数
     private static int CrossSize = 10;
+    // 每次突变会改变的位数
+    private static int VariantSize = 2;
+    // 突变概率
+    private static double VariantP = 0.05;
 
     // 数据集路径
     private String dataSetPath;
@@ -31,22 +41,56 @@ public class GeneticAlgorithm {
     private int batchSize;
     private int repeatTimes;
     private int populationSize;
+    private String savePath;
 
-
-    public GeneticAlgorithm(String dataSetPath, int dataSize){
-        this(dataSetPath, 100, 300, 1000);
+    public GeneticAlgorithm(String dataSetPath, int dataSize, String savePath){
+        this(dataSetPath,dataSize, savePath,100, 300, 1000);
     }
 
-    public GeneticAlgorithm(String dataSetPath, int populationSize, int batchSize, int repeatTimes){
+    public GeneticAlgorithm(String dataSetPath,int dataSize, String savePath, int populationSize, int batchSize, int repeatTimes){
         this.dataSetPath = dataSetPath;
+        this.dataSize = dataSize;
         this.population = new Unity[populationSize];
         this.populationSize = populationSize;
         this.batchSize = batchSize;
         this.repeatTimes = repeatTimes;
+        this.savePath = savePath;
+        initial();
+    }
+
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
+    }
+
+    public void setPopulation(Unity[] population) {
+        this.population = population;
+        this.populationSize = population.length;
+    }
+
+    public void changeDataSet(String dataSetPath, int dataSize) {
+        this.dataSetPath = dataSetPath;
+        this.dataSize = dataSize;
+    }
+
+    public void setRepeatTimes(int repeatTimes) {
+        this.repeatTimes = repeatTimes;
+    }
+
+    public void setSavePath(String savePath) {
+        this.savePath = savePath;
     }
 
     public void train(){
-
+        long begin = System.currentTimeMillis();
+        for(int i=0; i<repeatTimes; ++i){
+            long startTime = System.currentTimeMillis();
+            population = newGeneration(population, 10);
+            long processEndTime = System.currentTimeMillis();
+            Logger.log("Finish one generation in " + (processEndTime-startTime)/1000.0 + " seconds");
+            evaluateWhole(population[0], savePath);
+        }
+        long end = System.currentTimeMillis();
+        Logger.log("Finish train in " + (end - begin)/1000.0 + " seconds");
     }
 
     private void initial(){
@@ -57,8 +101,41 @@ public class GeneticAlgorithm {
         }
     }
 
-    private Unity[] newGeneration(Unity[] old){
-        return null;
+    private Unity[] newGeneration(Unity[] old, int time){
+        List<RawResult> batch = getRandomBatch();
+        List<Unity> unities = new ArrayList<>(Arrays.asList(old));
+        unities.parallelStream().forEach(unity -> {
+            evaluate(unity, batch);
+        });
+        unities.sort(Collections.reverseOrder());
+
+        Random random = new Random();
+        for(int i=0; i<time; ++i){
+            long startTime = System.currentTimeMillis();
+            List<Integer> para = new ArrayList<>();
+             for(int j=0; j<populationSize/2; ++j){
+                 para.add(1);
+             }
+            List<Unity> newUnities = Collections.synchronizedList(new ArrayList<>());
+            List<Unity> finalUnities = unities;
+            para.parallelStream().forEach(integer -> {
+                 int parent1 = random.nextInt(populationSize/2);
+                 int parent2 = random.nextInt(populationSize/2);
+                 Unity[] sons = cross(finalUnities.get(parent1), finalUnities.get(parent2), false);
+                 for(Unity son:sons){
+                     evaluate(son, batch);
+                     if(random.nextDouble() < VariantP) variant(son);
+                     newUnities.add(son);
+                 }
+             });
+            unities.addAll(newUnities);
+            unities.sort(Collections.reverseOrder());
+            unities = unities.subList(0 ,populationSize);
+            long processEndTime = System.currentTimeMillis();
+            Logger.log("Finish once in " + (processEndTime-startTime)/1000.0 + " seconds");
+        }
+
+        return unities.toArray(old);
     }
 
     /**
@@ -89,27 +166,72 @@ public class GeneticAlgorithm {
     }
 
     /**
-     * 变异算子
+     * 变异算子，随机几位取反
      * @param unity
      * @return
      */
-    private long variant(long unity){
-
-        return unity;
+    private void variant(Unity unity){
+        long value = unity.value;
+        Random random = new Random();
+        for(int i=0; i<VariantSize; ++i){
+            int pos = random.nextInt(ComponentType.total.value()*PresentBit);
+            long mask = (long)Math.pow(2, pos);
+            //System.out.println(Long.toBinaryString(mask));
+            //System.out.println(Long.toBinaryString(value));
+            value = (value & ~mask) | (~(value & mask) & mask);
+            //System.out.println(Long.toBinaryString(value));
+        }
+        unity.value = value;
     }
 
-    private void evaluate(Unity unity, boolean useWhole, boolean print){
+    private List<RawResult> getRandomBatch(){
+        Random random = new Random();
+        List<RawResult> results = new ArrayList<>();
+        HashSet<Integer> added = new HashSet<>();
+        while (results.size() < batchSize && added.size() < dataSize){
+            int pos = random.nextInt(dataSize) + 1;
+            while (added.contains(pos)) pos = random.nextInt(dataSize) + 1;
+            results.addAll(FileTranslator.readRawResults(dataSetPath+pos));
+            added.add(pos);
+        }
+        return results;
+    }
+
+
+    private void evaluate(Unity unity, List<RawResult> data){
         double[] weights = extractWeights(unity.value);
 
-        List<RawResult> results = new ArrayList<>();
+        List<BugReport> reports = processResult(data, weights);
+        IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();
+        Indicator indicator = indicatorEvaluation.getEvaluationIndicator(reports);
+        unity.score = indicator.getMAP() + indicator.getMRR();
+        //indicator.print();
+    }
+
+    private void evaluateWhole(Unity unity, String savePath){
+        double[] weights = extractWeights(unity.value);
+        System.out.println(Arrays.toString(weights));
         List<BugReport> reports = new ArrayList<>();
-
-        if(useWhole){
-            for(int i=0; i<dataSize; ++i){
-
-            }
+        for(int i=1; i<=dataSize; ++i){
+            List<RawResult> results = FileTranslator.readRawResults(dataSetPath+i);
+            assert results != null;
+            reports.addAll(processResult(results, weights));
         }
-
+        IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();
+        Indicator indicator = indicatorEvaluation.getEvaluationIndicator(reports);
+        indicator.print();
+        try{
+            FileWriter writer = new FileWriter(savePath, true);
+            writer.write("Result evaluate using " + Arrays.toString(weights) +" :\n");
+            writer.write("Top@1:  "+indicator.getTop1() + '\n');
+            writer.write("Top@5:  "+indicator.getTop5() + '\n');
+            writer.write("Top@10: "+indicator.getTop10() + '\n');
+            writer.write("MRR:    "+indicator.getMRR() + '\n');
+            writer.write("MAP:    "+indicator.getMAP() + '\n'+'\n');
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -130,10 +252,21 @@ public class GeneticAlgorithm {
         return weights;
     }
 
+    private Unity presentWeight(double[] weights){
+        long res = 0;
+        for(int i=weights.length-1; i>=0; --i){
+            res <<= PresentBit;
+            res += weights[i]*100;
+        }
+        return new Unity(res);
+    }
+
     private List<BugReport> processResult(List<RawResult> results, double[] weights){
         List<BugReport> reports = new ArrayList<>();
         for(RawResult result: results) {
-            BugReport bugReport = result.getReport();
+            BugReport bugReport = new BugReport();
+            bugReport.setReportIndex(result.getReport().getReportIndex());
+            bugReport.setFixedFiles(result.getReport().getFixedFiles());
             ConcurrentHashMap<Integer, Double> scoreMap = new ConcurrentHashMap<>();
 
             // 根据论文公式计算与合并各部分打分
@@ -176,23 +309,53 @@ public class GeneticAlgorithm {
 //        assert results != null;
 //        System.out.println(results.size());
 
-        GeneticAlgorithm ga = new GeneticAlgorithm(null, 308);
-        long unity1 = 240 + (long)Math.pow(2, 10)*351 + (long)Math.pow(2, 20)*10 + (long)Math.pow(2, 30)*1023 + (long)Math.pow(2, 40)*555;
-        long unity2 = 255 + (long)Math.pow(2, 10)*457 + (long)Math.pow(2, 20)*1000 + (long)Math.pow(2, 30)*23 + (long)Math.pow(2, 40)*347;
-        Unity[] sons = ga.cross(new Unity(unity1), new Unity(unity2), true);
-        System.out.println((unity1|unity2)==(sons[0].value|sons[1].value));
-        System.out.println(Long.toBinaryString(unity1));
-        System.out.println(Long.toBinaryString(unity2));
-        System.out.println(Long.toBinaryString(sons[0].value));
-        System.out.println(Long.toBinaryString(sons[1].value));
+        GeneticAlgorithm ga = new GeneticAlgorithm(SavePath.getSourcePath("rawResult/eclipse-3.1-res"), 308, SavePath.getSourcePath("weights3.txt"));
+        //ga.setBatchSize(50);
+        ga.train();
+
+        //        long unity1 = 240 + (long)Math.pow(2, 10)*351 + (long)Math.pow(2, 20)*10 + (long)Math.pow(2, 30)*1023 + (long)Math.pow(2, 40)*555;
+//        long unity2 = 255 + (long)Math.pow(2, 10)*457 + (long)Math.pow(2, 20)*1000 + (long)Math.pow(2, 30)*23 + (long)Math.pow(2, 40)*347;
+//        Unity[] sons = ga.cross(new Unity(unity1), new Unity(unity2), true);
+//        System.out.println((unity1|unity2)==(sons[0].value|sons[1].value));
+//        System.out.println(Long.toBinaryString(unity1));
+//        System.out.println(Long.toBinaryString(unity2));
+//        System.out.println(Long.toBinaryString(sons[0].value));
+//        System.out.println(Long.toBinaryString(sons[1].value));
+//        List<BugReport> reports = new ArrayList<>();
+//        double[] weights = {1, 2, 0.1, 0.1, 0.1};
+//        for(int i=1; i<=308; ++i){
+//            List<RawResult> results = FileTranslator.readRawResults(SavePath.getSourcePath("rawResult/eclipse-3.1-res")+i);
+//            assert results != null;
+//            reports.addAll(ga.processResult(results, weights));
+//        }
+//        IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();
+//        Indicator indicator = indicatorEvaluation.getEvaluationIndicator(reports);
+//        indicator.print();
+//        double[] weights = {1, 2, 0.1, 0.1, 0.1};
+//        Unity unity = ga.presentWeight(weights);
+//        ga.variant(unity);
+//        System.out.println(Arrays.toString(ga.extractWeights(unity.value)));
+//        List<RawResult> results = ga.getRandomBatch();
+//        ga.evaluate(ga.presentWeight(weights), results);
+//        long startTime = System.currentTimeMillis();
+//        ga.initial();
+//        Unity[] res = ga.newGeneration(ga.population, 10);
+//        ga.evaluateWhole(res[0]);
+//        long processEndTime = System.currentTimeMillis();
+//        Logger.log("Finish all in " + (processEndTime-startTime)/1000.0 + " seconds");
     }
 }
 
-class Unity{
+class Unity implements Comparable<Unity>{
     protected long value;
     protected double score;
 
     protected Unity(long value){
         this.value = value;
+    }
+
+    @Override
+    public int compareTo(Unity o) {
+        return Double.compare(score, o.score);
     }
 }
