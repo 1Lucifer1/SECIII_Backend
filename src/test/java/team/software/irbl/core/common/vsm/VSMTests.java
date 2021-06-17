@@ -1,4 +1,4 @@
-package team.software.irbl.core.vsm;
+package team.software.irbl.core.common.vsm;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,6 @@ import team.software.irbl.core.domain.StructuredCodeFile;
 import team.software.irbl.core.utils.filestore.XMLParser;
 import team.software.irbl.core.utils.jdt.JavaParser;
 import team.software.irbl.core.common.maptool.CodeFileMap;
-import team.software.irbl.core.common.maptool.FilePathMap;
 import team.software.irbl.core.common.maptool.PackageMap;
 import team.software.irbl.core.component.reporterComponent.ReporterRank;
 import team.software.irbl.domain.BugReport;

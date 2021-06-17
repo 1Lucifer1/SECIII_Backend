@@ -13,13 +13,13 @@ public class SavePath {
     }
 
     // 实验项目原文件（包括项目源代码与错误报告）所在路径
-    private static String SOURCE_PATH = pathTransformFromWinToLinux(System.getProperty("user.dir")) + "/IRBL/data/";
+    private static String SOURCE_PATH = pathTransformFromWinToLinux(System.getProperty("user.dir")) + "/resource/data/";
     // 预处理文件存放路径
-    private static String Preprocess_FILE_PATH = pathTransformFromWinToLinux(System.getProperty("user.dir")) + "/IRBL/data/preprocess/";
+    private static String Preprocess_FILE_PATH = pathTransformFromWinToLinux(System.getProperty("user.dir")) + "/resource/data/preprocess/";
     // 测试所需文件存放路径，后面可能会与上述路径区分开
-    private static String TEST_FILE_PATH = pathTransformFromWinToLinux(System.getProperty("user.dir")) + "/IRBL/data/test/";
+    private static String TEST_FILE_PATH = pathTransformFromWinToLinux(System.getProperty("user.dir")) + "/resource/data/test/";
 
-    private static String LOG_FILE_PATH = pathTransformFromWinToLinux(System.getProperty("user.dir")) + "/IRBL/log/";
+    private static String LOG_FILE_PATH = pathTransformFromWinToLinux(System.getProperty("user.dir")) + "/resource/log/";
 
     public static String getSourcePath(String source){
         return SOURCE_PATH + source;

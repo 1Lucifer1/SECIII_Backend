@@ -9,7 +9,7 @@ CREATE TABLE `project`
     project_name        varchar(255) NOT NULL ,
     code_file_count     int(32) unsigned DEFAULT 0,
     report_count        int(32) unsigned DEFAULT 0
-)ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 BEGIN;
 INSERT INTO `project` VALUES(1, 'test', 2, 1);
@@ -22,7 +22,7 @@ CREATE TABLE `code_file` (
                              project_index       int(11) unsigned NOT NULL ,
                              file_path           varchar(1023) NOT NULL ,
                              package_name       varchar(1023) NOT NULL
-)ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 BEGIN;
 INSERT INTO `code_file` VALUES (1, 'test1.java', 1, 'test/test1.java', 'test.test1.java'),
@@ -63,20 +63,21 @@ CREATE TABLE `bug_report`(
     open_date           varchar(32) NOT NULL ,
     fix_date            varchar(32),
     summary             varchar(255)
-)ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 BEGIN;
 INSERT INTO `bug_report` VALUES (1, 1, 1000, '2020-11-12 08:40:00', '2020-12-12 08:40:00', 'test bug report');
 COMMIT;
 
 DROP TABLE IF EXISTS `fixed_file`;
 CREATE TABLE `fixed_file`(
-    id                  int(32) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY ,
     report_index        int(32) unsigned NOT NULL ,
     file_index          int(32) unsigned NOT NULL ,
+    file_identify       varchar (1023) NOT NULL ,
     file_package_name   varchar(1023) NOT NULL
-)ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+)ENGINE=InnoDB;
+ALTER TABLE `fixed_file` ADD PRIMARY KEY (report_index, file_index);
 BEGIN;
-INSERT INTO `fixed_file` VALUES (1, 1, 1, 'test.test1.java');
+INSERT INTO `fixed_file` VALUES ( 1, 1, 'test.test1.java','test.test1.java');
 COMMIT;
 
 DROP TABLE  IF EXISTS `rank_record`;
@@ -85,7 +86,7 @@ CREATE TABLE `rank_record`(
     file_index          int(32) unsigned NOT NULL ,
     file_rank           int(32) unsigned NOT NULL ,
     score               double  NOT NULL
-)ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 ALTER TABLE `rank_record` ADD PRIMARY KEY (report_index, file_index);
 BEGIN;
 INSERT INTO `rank_record` VALUES (1, 1, 2, 2.1), (1, 2, 1, 1.2);
