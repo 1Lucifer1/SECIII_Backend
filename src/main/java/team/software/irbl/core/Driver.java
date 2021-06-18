@@ -226,8 +226,9 @@ public class Driver {
                 recordList.get(i).setFileRank(i+1);
             }
             bugReport.setRanks(recordList);
-            records.addAll(recordList);
-            if(records.size() > 1000000){
+            if(recordList.size() >= 100) records.addAll(recordList.subList(0, 100));
+            else records.addAll(recordList);
+            if(records.size() > 30000){
                 dbProcessor.saveRankRecord(records);
                 records = new ArrayList<>();
             }
