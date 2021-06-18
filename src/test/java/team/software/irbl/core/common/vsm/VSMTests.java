@@ -2,6 +2,7 @@ package team.software.irbl.core.common.vsm;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import team.software.irbl.core.Driver;
 import team.software.irbl.core.IndicatorEvaluation;
 import team.software.irbl.core.common.dbstore.DBProcessor;
 import team.software.irbl.core.common.dbstore.DBProcessorFake;
@@ -203,6 +204,22 @@ public class VSMTests {
 
         IndicatorEvaluation indicatorEvaluation = new IndicatorEvaluation();
         Indicator indicator = indicatorEvaluation.getEvaluationIndicator(reports);
+        indicator.print();
+
+        Assert.assertTrue(indicator.getTop1() > 0.0);
+        Assert.assertTrue(indicator.getTop5() > 0.0);
+        Assert.assertTrue(indicator.getTop10() > 0.0);
+        Assert.assertTrue(indicator.getMRR() > 0.0);
+        Assert.assertTrue(indicator.getMAP() > 0.0);
+    }
+
+    @Test
+    public void testDriver(){
+        Driver driver = new Driver(new DBProcessorFake());
+        List<BugReport> bugReportsSwt = driver.startRank("swt-3.1", true);
+
+        IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();
+        Indicator indicator = indicatorEvaluation.getEvaluationIndicator(bugReportsSwt);
         indicator.print();
 
         Assert.assertTrue(indicator.getTop1() > 0.0);
