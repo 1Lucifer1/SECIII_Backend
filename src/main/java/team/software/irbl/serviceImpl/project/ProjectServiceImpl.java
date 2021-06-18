@@ -19,6 +19,7 @@ import team.software.irbl.service.project.ProjectService;
 import team.software.irbl.util.Err;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class ProjectServiceImpl implements ProjectService {
             bugReport.setFixedFiles(fixedFileMapper.selectList(new QueryWrapper<FixedFile>().eq("report_index", reportIndex)));
 
             List<RankRecord> rankRecordList = rankRecordMapper.selectList(new QueryWrapper<RankRecord>().eq("report_index", reportIndex));
-            rankRecordList.sort(Comparator.comparing(RankRecord::getFileRank));
+            rankRecordList.sort(Collections.reverseOrder());
             bugReport.setRanks(rankRecordList);
         }
 
