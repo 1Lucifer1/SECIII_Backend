@@ -122,18 +122,5 @@ public class VersionHistoryRank implements ComponentRank {
         IndicatorEvaluation indicatorEvaluation = new IndicatorEvaluation();
         Indicator indicator = indicatorEvaluation.getEvaluationIndicator(reports);
         indicator.print();
-
-//        try {
-//            Date date = format.parse("2021-06-04 11:00:00");
-//            System.out.println(date);
-//            int t=10;
-//            System.out.println(((1+Math.pow(2, 12*(1.0-((double) (k-t)/k))))));
-//            double x = (double) (k-t)/k;
-//            System.out.println(x);
-//
-//        }
-//        catch (ParseException e){
-//            e.printStackTrace();
-//        }
     }
 }

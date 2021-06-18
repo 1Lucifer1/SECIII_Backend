@@ -15,14 +15,12 @@ public class ProjectControllerTests {
     @Test
     public void getIndicatorEvaluationTest() throws Exception {
         ProjectService projectService = mock(ProjectService.class);
-//        when(projectService.getIndicatorEvaluation(2)).thenReturn();
 
         ProjectController controller = new ProjectController(projectService);
 
         MockMvc mockMvc = standaloneSetup(controller).build();
         mockMvc.perform(get("/api/project/getIndicatorEvaluation/{projectIndex}", 2))
                 .andExpect(status().isOk());
-//                .andExpect(view().name("getIndicatorEvaluation"));
 
         verify(projectService).getIndicatorEvaluation(2);
     }
