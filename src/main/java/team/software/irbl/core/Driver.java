@@ -221,12 +221,16 @@ public class Driver {
             }
             bugReport.setRanks(recordList);
             records.addAll(recordList);
+            if(records.size() > 1000000){
+                dbProcessor.saveRankRecord(records);
+                records = new ArrayList<>();
+            }
         }
         // 保存未加权的数据
 //        if(results.size() != 0) FileTranslator.writeRawResults(results, SavePath.getSourcePath("rawResult/"+project.getProjectName()+"-res" + batchCount));
         //Logger.log(count + " reports use stack rank.");
         // 保存排序结果
-        dbProcessor.saveRankRecord(records);
+        if(records.size()!=0) dbProcessor.saveRankRecord(records);
     }
 
     private void setWeights(double[] weights){
@@ -336,8 +340,8 @@ public class Driver {
         evaluateAndSave(bugReportsSwt, result, "swt-3.1");
 
 //        driver.setWeights(new double[]{1, 2, 0.1, 0.1, 0.1});
-//        List<BugReport> bugReportsEclipse = driver.startRank("eclipse-3.1", false);
-//        evaluateAndSave(bugReportsEclipse, result, "eclipse-3.1");
+        List<BugReport> bugReportsEclipse = driver.startRank("eclipse-3.1", false);
+        evaluateAndSave(bugReportsEclipse, result, "eclipse-3.1");
 
 //        driver.setWeights(new double[]{6.47, 10.14, 1.36, 0.53, 0.03});
 //        driver.setWeights(new double[]{3.63, 7.93, 0.73, 0.45, 0.23});
