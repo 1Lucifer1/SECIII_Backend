@@ -2,13 +2,8 @@ package team.software.irbl.service;
 
 import org.junit.Before;
 import org.junit.Test;
-import team.software.irbl.core.IndicatorEvaluation;
-import team.software.irbl.dto.project.Indicator;
-import team.software.irbl.mapper.BugReportMapper;
-import team.software.irbl.mapper.FixedFileMapper;
-import team.software.irbl.mapper.RankRecordMapper;
+import team.software.irbl.domain.Indicator;
 import team.software.irbl.service.project.ProjectService;
-import team.software.irbl.serviceImpl.project.ProjectServiceImpl;
 import team.software.irbl.util.Err;
 import static org.mockito.Mockito.*;
 

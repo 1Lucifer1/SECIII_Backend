@@ -20,6 +20,8 @@ public interface DBProcessor {
 
     int saveRankRecord(List<RankRecord> records);
 
+    int saveIndicator(Indicator indicator);
+
     Project getProjectByIndex(int projectIndex);
 
     Project getProjectByName(String projectName);
@@ -27,4 +29,5 @@ public interface DBProcessor {
     List<CodeFile> getCodeFilesByProjectIndex(int projectIndex);
 
     List<BugReport> getBugReportsByProjectIndex(int projectIndex);
+
 }

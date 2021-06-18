@@ -1,15 +1,12 @@
 package team.software.irbl.core.common.GA;
 
-import com.baomidou.mybatisplus.extension.api.R;
 import team.software.irbl.core.IndicatorEvaluation;
 import team.software.irbl.core.domain.RawResult;
 import team.software.irbl.core.enums.ComponentType;
 import team.software.irbl.core.utils.filestore.FileTranslator;
 import team.software.irbl.domain.BugReport;
-import team.software.irbl.domain.CodeFile;
 import team.software.irbl.domain.RankRecord;
-import team.software.irbl.dto.file.File;
-import team.software.irbl.dto.project.Indicator;
+import team.software.irbl.domain.Indicator;
 import team.software.irbl.util.Logger;
 import team.software.irbl.util.SavePath;
 
@@ -18,7 +15,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.Map.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
 
 public class GeneticAlgorithm {
 

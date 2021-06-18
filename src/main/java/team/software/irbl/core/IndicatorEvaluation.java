@@ -1,15 +1,10 @@
 package team.software.irbl.core;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import team.software.irbl.core.domain.StructuredBugReport;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.FixedFile;
 import team.software.irbl.domain.RankRecord;
-import team.software.irbl.dto.project.Indicator;
-import team.software.irbl.mapper.*;
-import team.software.irbl.util.Err;
+import team.software.irbl.domain.Indicator;
 
 import java.util.*;
 import java.util.stream.Collectors;

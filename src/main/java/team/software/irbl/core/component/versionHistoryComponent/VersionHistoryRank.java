@@ -1,6 +1,5 @@
 package team.software.irbl.core.component.versionHistoryComponent;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import team.software.irbl.core.IndicatorEvaluation;
 import team.software.irbl.core.common.dbstore.DBProcessor;
 import team.software.irbl.core.common.dbstore.DBProcessorFake;
@@ -11,8 +10,7 @@ import team.software.irbl.core.utils.jdt.JavaParser;
 import team.software.irbl.core.common.maptool.CodeFileMap;
 import team.software.irbl.core.common.maptool.PackageMap;
 import team.software.irbl.domain.*;
-import team.software.irbl.dto.project.Indicator;
-import team.software.irbl.mapper.ProjectMapper;
+import team.software.irbl.domain.Indicator;
 import team.software.irbl.util.SavePath;
 
 import java.text.ParseException;

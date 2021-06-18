@@ -95,6 +95,11 @@ public class DBProcessorFake implements DBProcessor {
     }
 
     @Override
+    public int saveIndicator(Indicator indicator) {
+        return 0;
+    }
+
+    @Override
     public Project getProjectByIndex(int projectIndex) {
         return null;
     }

@@ -21,8 +21,7 @@ import team.software.irbl.core.component.reporterComponent.ReporterRank;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.Project;
 import team.software.irbl.domain.RankRecord;
-import team.software.irbl.dto.project.Indicator;
-import team.software.irbl.util.Logger;
+import team.software.irbl.domain.Indicator;
 import team.software.irbl.util.SavePath;
 
 import java.util.ArrayList;

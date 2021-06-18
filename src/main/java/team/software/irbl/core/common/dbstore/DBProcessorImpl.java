@@ -30,9 +30,12 @@ public class DBProcessorImpl implements DBProcessor {
     @Autowired
     private RankRecordMapper rankRecordMapper;
 
+    @Autowired
+    private IndicatorMapper indicatorMapper;
+
     @Override
     public int saveCodeFiles(List<CodeFile> codeFiles) {
-        int current = codeFileMapper.selectCount(new QueryWrapper<CodeFile>().gt("file_index",0));
+        int current = codeFileMapper.selectOne(new QueryWrapper<CodeFile>().orderByDesc("file_index").last("limit 1")).getFileIndex();
         for(CodeFile codeFile:codeFiles){
             current++;
             codeFile.setFileIndex(current);
@@ -42,7 +45,7 @@ public class DBProcessorImpl implements DBProcessor {
 
     @Override
     public int saveBugReports(List<BugReport> bugReports, CodeFileMap codeFileMap) {
-        int current = bugReportMapper.selectCount(new QueryWrapper<BugReport>().gt("report_index",0));
+        int current = bugReportMapper.selectOne(new QueryWrapper<BugReport>().orderByDesc("report_index").last("limit 1")).getReportIndex();
         for(BugReport report: bugReports){
             current++;
             report.setReportIndex(current);
@@ -92,13 +95,11 @@ public class DBProcessorImpl implements DBProcessor {
     public int cleanProject(int projectIndex) {
         codeFileMapper.delete(new QueryWrapper<CodeFile>().eq("project_index", projectIndex));
         List<BugReport> bugReports = bugReportMapper.selectList(new QueryWrapper<BugReport>().eq("project_index", projectIndex));
-        List<Integer> reportIndexList = new ArrayList<>();
         for(BugReport report: bugReports){
-            reportIndexList.add(report.getReportIndex());
             fixedFileMapper.delete(new QueryWrapper<FixedFile>().eq("report_index", report.getReportIndex()));
             rankRecordMapper.delete(new QueryWrapper<RankRecord>().eq("report_index", report.getReportIndex()));
         }
-        bugReportMapper.deleteBatchIds(reportIndexList);
+        bugReportMapper.delete(new QueryWrapper<BugReport>().eq("project_index", projectIndex));
         return 0;
     }
 
@@ -113,6 +114,14 @@ public class DBProcessorImpl implements DBProcessor {
         }
         count += rankRecordMapper.insertOrUpdateBatch(records.subList(start, length));
         return count;
+    }
+
+    @Override
+    public int saveIndicator(Indicator indicator) {
+        if(indicatorMapper.selectOne(new QueryWrapper<Indicator>().eq("project_index", indicator.getProjectIndex()))!=null){
+            return indicatorMapper.update(indicator, new QueryWrapper<Indicator>().eq("project_index", indicator.getProjectIndex()));
+        }
+        return indicatorMapper.insert(indicator);
     }
 
     @Override

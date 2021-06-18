@@ -25,7 +25,7 @@ import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.CodeFile;
 import team.software.irbl.domain.Project;
 import team.software.irbl.domain.RankRecord;
-import team.software.irbl.dto.project.Indicator;
+import team.software.irbl.domain.Indicator;
 import team.software.irbl.util.Logger;
 import team.software.irbl.util.SavePath;
 
@@ -104,30 +104,31 @@ public class Driver {
                 codeFile.setProjectIndex(projectIndex);
                 codeFile.setFileIndex(-1);
             });
-            if(isNewProject){
+            //if(isNewProject){
                 // 数据库存保存读取的基础信息
-                dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
-                dbProcessor.saveBugReports(new ArrayList<>(bugReports), new FilePathMap(new ArrayList<>(codeFiles)));
-                project.setCodeFileCount(codeFiles.size());
-                project.setReportCount(bugReports.size());
-                dbProcessor.updateProject(project);
-            }else {
-                List<CodeFile> codeFilesFromDB = dbProcessor.getCodeFilesByProjectIndex(projectIndex);
-                List<BugReport> bugReportsFromDB = dbProcessor.getBugReportsByProjectIndex(projectIndex);
-                bugReportsFromDB.sort(Comparator.comparingInt(BugReport::getBugId));
-                if(bugReports.size() != bugReportsFromDB.size() || codeFiles.size() != codeFilesFromDB.size()){
-                    Logger.errorLog("Bug report num or code file num changed.");
-                    return null;
-                }
-                // 更新index
-                for(int i=0; i<bugReports.size(); ++i){
-                    bugReports.get(i).setReportIndex(bugReportsFromDB.get(i).getReportIndex());
-                }
-                FilePathMap filePathMap = new FilePathMap(codeFilesFromDB);
-                codeFiles.forEach(codeFile -> {
-                    codeFile.setFileIndex(filePathMap.getCodeFileFromMap(codeFile.getFilePath()).get(0).getFileIndex());
-                });
-            }
+            if(!isNewProject) dbProcessor.cleanProject(projectIndex);
+            dbProcessor.saveCodeFiles(new ArrayList<>(codeFiles));
+            dbProcessor.saveBugReports(new ArrayList<>(bugReports), new FilePathMap(new ArrayList<>(codeFiles)));
+            project.setCodeFileCount(codeFiles.size());
+            project.setReportCount(bugReports.size());
+            dbProcessor.updateProject(project);
+//            }else {
+//                List<CodeFile> codeFilesFromDB = dbProcessor.getCodeFilesByProjectIndex(projectIndex);
+//                List<BugReport> bugReportsFromDB = dbProcessor.getBugReportsByProjectIndex(projectIndex);
+//                bugReportsFromDB.sort(Comparator.comparingInt(BugReport::getBugId));
+//                if(bugReports.size() != bugReportsFromDB.size() || codeFiles.size() != codeFilesFromDB.size()){
+//                    Logger.errorLog("Bug report num or code file num changed.");
+//                    return null;
+//                }
+//                // 更新index
+//                for(int i=0; i<bugReports.size(); ++i){
+//                    bugReports.get(i).setReportIndex(bugReportsFromDB.get(i).getReportIndex());
+//                }
+//                FilePathMap filePathMap = new FilePathMap(codeFilesFromDB);
+//                codeFiles.forEach(codeFile -> {
+//                    codeFile.setFileIndex(filePathMap.getCodeFileFromMap(codeFile.getFilePath()).get(0).getFileIndex());
+//                });
+//            }
         }
 
         long preprocessEndTime = System.currentTimeMillis();
@@ -139,6 +140,10 @@ public class Driver {
         long endTime = System.currentTimeMillis();
         Logger.log("Rank for " + bugReports.size() + " bug reports among " + codeFiles.size() + " code files success in " +
                 (endTime - preprocessEndTime)/1000.0 + " seconds and result.");
+        IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();
+        Indicator indicator = indicatorEvaluation.getEvaluationIndicator(new ArrayList<>(bugReports));
+        indicator.setProjectIndex(project.getProjectIndex());
+        dbProcessor.saveIndicator(indicator);
         return new ArrayList<>(bugReports);
     }
 
@@ -211,8 +216,9 @@ public class Driver {
 //            recordList.forEach(rankRecord -> scoreMap.put(rankRecord.getFileIndex(), scoreMap.get(rankRecord.getFileIndex())+rankRecord.getScore()*weights[ComponentType.VERSION.value()]));
 
             List<RankRecord> recordList = new ArrayList<>();
-            for(CodeFile codeFile: codeFiles){
-                recordList.add(new RankRecord(bugReport.getReportIndex(), codeFile.getFileIndex(), -1, scoreMap.get(codeFile.getFileIndex())));
+            Set<Map.Entry<Integer, Double>> entrySet = scoreMap.entrySet();
+            for(Map.Entry<Integer, Double> entry:entrySet){
+                recordList.add(new RankRecord(bugReport.getReportIndex(), entry.getKey(), -1, entry.getValue()));
             }
 
             recordList.sort(Collections.reverseOrder());
@@ -337,17 +343,18 @@ public class Driver {
 
 //        driver.setWeights(new double[]{2.77, 10.05, 0.96, 0.43, 0.1});
         List<BugReport> bugReportsSwt = driver.startRank("swt-3.1", false);
+        FileTranslator.writeObject(bugReportsSwt, SavePath.getSourcePath("swt1"));
         evaluateAndSave(bugReportsSwt, result, "swt-3.1");
 
 //        driver.setWeights(new double[]{1, 2, 0.1, 0.1, 0.1});
-        List<BugReport> bugReportsEclipse = driver.startRank("eclipse-3.1", false);
-        evaluateAndSave(bugReportsEclipse, result, "eclipse-3.1");
+//        List<BugReport> bugReportsEclipse = driver.startRank("eclipse-3.1", false);
+//        evaluateAndSave(bugReportsEclipse, result, "eclipse-3.1");
 
 //        driver.setWeights(new double[]{6.47, 10.14, 1.36, 0.53, 0.03});
 //        driver.setWeights(new double[]{3.63, 7.93, 0.73, 0.45, 0.23});
 //        driver.setWeights(new double[]{2.77, 10.05, 0.96, 0.43, 0.1});
-        List<BugReport> bugReportsAspectj = driver.startRank("aspectj", false);
-        evaluateAndSave(bugReportsAspectj, result, "aspectj");
+//        List<BugReport> bugReportsAspectj = driver.startRank("aspectj", false);
+//        evaluateAndSave(bugReportsAspectj, result, "aspectj");
         long processEndTime = System.currentTimeMillis();
         Logger.log("Finish all rank in " + (processEndTime-startTime)/1000.0 + " seconds");
     }

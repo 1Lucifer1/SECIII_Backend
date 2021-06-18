@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 public class CodeFile {
-    @TableId(value = "file_index", type = IdType.AUTO)
+    @TableId(value = "file_index")
     protected int fileIndex;
     @TableField(value = "project_index")
     protected int projectIndex;

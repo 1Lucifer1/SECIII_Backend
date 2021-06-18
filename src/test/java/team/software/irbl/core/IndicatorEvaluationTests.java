@@ -9,11 +9,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.FixedFile;
 import team.software.irbl.domain.RankRecord;
-import team.software.irbl.dto.project.Indicator;
+import team.software.irbl.domain.Indicator;
 import team.software.irbl.mapper.BugReportMapper;
 import team.software.irbl.mapper.FixedFileMapper;
 import team.software.irbl.mapper.RankRecordMapper;
-import team.software.irbl.util.Err;
 
 import java.util.Comparator;
 import java.util.List;

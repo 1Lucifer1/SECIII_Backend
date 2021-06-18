@@ -15,6 +15,21 @@ BEGIN;
 INSERT INTO `project` VALUES(1, 'test', 2, 1);
 COMMIT;
 
+DROP TABLE IF EXISTS `indicator`;
+CREATE TABLE `indicator`
+(
+    project_index       int(11) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    top_1               double default 0,
+    top_5               double default 0,
+    top_10              double default 0,
+    mrr                 double default 0,
+    map                 double default 0
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+BEGIN;
+INSERT INTO `indicator` VALUES (1, 0.5, 0.5, 0.5, 0.5, 0.5);
+COMMIT;
+
 DROP TABLE IF EXISTS `code_file`;
 CREATE TABLE `code_file` (
                              file_index          int(32) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY ,

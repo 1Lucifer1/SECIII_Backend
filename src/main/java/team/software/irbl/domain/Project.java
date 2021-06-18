@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Project {
-    @TableId(value = "project_index", type = IdType.AUTO)
+    @TableId(value = "project_index")
     private int projectIndex;
     @TableField(value = "project_name")
     private String projectName;

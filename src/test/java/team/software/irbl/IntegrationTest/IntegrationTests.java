@@ -11,7 +11,7 @@ import team.software.irbl.controller.ProjectController;
 import team.software.irbl.controller.ReportController;
 import team.software.irbl.dto.file.File;
 import team.software.irbl.dto.file.FileContent;
-import team.software.irbl.dto.project.Indicator;
+import team.software.irbl.domain.Indicator;
 import team.software.irbl.dto.report.Report;
 import team.software.irbl.util.Err;
 import team.software.irbl.util.Res;

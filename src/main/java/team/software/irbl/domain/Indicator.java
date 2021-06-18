@@ -1,11 +1,20 @@
-package team.software.irbl.dto.project;
+package team.software.irbl.domain;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 
 public class Indicator {
+    @TableId(value = "project_index")
     private Integer projectIndex;
+    @TableField(value = "top_1")
     private double Top1;
+    @TableField(value = "top_5")
     private double Top5;
+    @TableField(value = "top_10")
     private double Top10;
+    @TableField(value = "mrr")
     private double MRR;
+    @TableField(value = "map")
     private double MAP;
 
     public Integer getProjectIndex() {

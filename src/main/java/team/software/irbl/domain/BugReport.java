@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.util.List;
 
 public class BugReport {
-    @TableId(value = "report_index", type = IdType.AUTO)
+    @TableId(value = "report_index")
     protected int reportIndex;
     @TableField(value = "project_index")
     protected int projectIndex;

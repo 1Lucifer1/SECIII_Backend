@@ -14,7 +14,7 @@ import team.software.irbl.domain.BugReport;
 import team.software.irbl.domain.CodeFile;
 import team.software.irbl.domain.FixedFile;
 import team.software.irbl.domain.RankRecord;
-import team.software.irbl.dto.project.Indicator;
+import team.software.irbl.domain.Indicator;
 import team.software.irbl.util.SavePath;
 
 import java.util.*;

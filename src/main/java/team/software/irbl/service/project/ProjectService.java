@@ -1,6 +1,6 @@
 package team.software.irbl.service.project;
 
-import team.software.irbl.dto.project.Indicator;
+import team.software.irbl.domain.Indicator;
 import team.software.irbl.dto.project.ProjectInfo;
 import team.software.irbl.util.Err;
 
