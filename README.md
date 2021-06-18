@@ -37,9 +37,9 @@ spring:
 
 
 
-预处理好之后的文件的存放路径：IRBL/data/preprocess
+预处理好之后的文件的存放路径：resource/data/preprocess
 
-测试所用文件存放路径：IRBL/data/test
+测试所用文件存放路径：resource/data/test
 
 
 
@@ -57,7 +57,7 @@ P: jenkins@irbl
 
 ### Harbor
 
-101.132.148.43
+[101.132.148.43](101.132.148.43)
 
 U: admin
 
