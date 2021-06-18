@@ -132,7 +132,7 @@ public class IntegrationTests {
         Res res = codeFileController.localizationOfBugReport(2);
         assertTrue(res.success);
         List<File> files = (List<File>) res.data;
-        assertEquals(484, files.size());
+        assertTrue(files.size() <= 100);
         int cnt = 0;
         for (File file : files) {
             ++cnt;
