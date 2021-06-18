@@ -9,7 +9,7 @@ CREATE TABLE `project`
     project_name        varchar(255) NOT NULL ,
     code_file_count     int(32) unsigned DEFAULT 0,
     report_count        int(32) unsigned DEFAULT 0
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 BEGIN;
 INSERT INTO `project` VALUES(1, 'test', 2, 1);
