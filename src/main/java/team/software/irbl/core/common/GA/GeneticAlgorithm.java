@@ -32,7 +32,7 @@ public class GeneticAlgorithm {
     // 每次突变会改变的位数
     private static int VariantSize = 2;
     // 突变概率
-    private static double VariantP = 0.05;
+    private static double VariantP = 0.1;
 
     // 数据集路径
     private String[] dataSetPath;
@@ -46,7 +46,7 @@ public class GeneticAlgorithm {
     private String populationSave;
 
     public GeneticAlgorithm(String[] dataSetPath, int[] dataSize, double[] ratio, String savePopulationPath, String outPutPath){
-        this(dataSetPath,dataSize, ratio, savePopulationPath, outPutPath,100, 300, 1000);
+        this(dataSetPath,dataSize, ratio, savePopulationPath, outPutPath,100, 300, 100);
     }
 
     public GeneticAlgorithm(String[] dataSetPath,int[] dataSize, double[] ratio, String savePopulationPath, String outPutPath, int populationSize, int batchSize, int repeatTimes){
@@ -210,7 +210,8 @@ public class GeneticAlgorithm {
         while (results.size() < batchSize && added.size() < dataSize){
             int pos = random.nextInt(dataSize) + 1;
             while (added.contains(pos)) pos = random.nextInt(dataSize) + 1;
-            results.addAll(FileTranslator.readRawResults(dataSetPath+pos));
+            List<RawResult> result = FileTranslator.readRawResults(dataSetPath+pos);
+            if(result != null) results.addAll(result);
             added.add(pos);
         }
         return results;
@@ -233,8 +234,7 @@ public class GeneticAlgorithm {
         List<BugReport> reports = new ArrayList<>();
         for(int i=1; i<=dataSize; ++i){
             List<RawResult> results = FileTranslator.readRawResults(dataSetPath+i);
-            assert results != null;
-            reports.addAll(processResult(results, weights));
+            if(results != null) reports.addAll(processResult(results, weights));
         }
         IndicatorEvaluation indicatorEvaluation =new IndicatorEvaluation();
         Indicator indicator = indicatorEvaluation.getEvaluationIndicator(reports);
@@ -280,7 +280,7 @@ public class GeneticAlgorithm {
         return new Unity(res);
     }
 
-    private List<BugReport> processResult(List<RawResult> results, double[] weights){
+    public static List<BugReport> processResult(List<RawResult> results, double[] weights){
         List<BugReport> reports = Collections.synchronizedList(new ArrayList<>());
         results.parallelStream().forEach(result -> {
             BugReport bugReport = new BugReport();
@@ -329,9 +329,11 @@ public class GeneticAlgorithm {
 //        System.out.println(results.size());
         String[] dataSetPath = {SavePath.getSourcePath("rawResult/swt-3.1-res"),SavePath.getSourcePath("rawResult/eclipse-3.1-res"),SavePath.getSourcePath("rawResult/aspectj-res")};
         int[] dataSize = {10, 308, 29};
-        double[] ratio = {0.05, 0.65, 0.3};
-        GeneticAlgorithm ga = new GeneticAlgorithm(dataSetPath, dataSize, ratio, SavePath.getSourcePath("population"), SavePath.getSourcePath("weights8.txt"));
-        ga.setBatchSize(64);
+        double[] ratio = {0, 0.6, 0.4};
+        GeneticAlgorithm ga = new GeneticAlgorithm(dataSetPath, dataSize, ratio, SavePath.getSourcePath("population"), SavePath.getSourcePath("weights10.txt"));
+        //ga.setBatchSize(64);
+        ga.setRepeatTimes(20);
+        ga.setBatchSize(300);
         ga.train();
 
         //        long unity1 = 240 + (long)Math.pow(2, 10)*351 + (long)Math.pow(2, 20)*10 + (long)Math.pow(2, 30)*1023 + (long)Math.pow(2, 40)*555;
