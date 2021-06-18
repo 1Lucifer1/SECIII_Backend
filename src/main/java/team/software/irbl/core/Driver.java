@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class Driver {
 
-    private double[] weights = {4.15, 9.0, 1.59, 0.45, 0.08};
+    private double[] weights = {3.1,6.4,1.11, 0.31, 0.08};
     private  DBProcessor dbProcessor;
 
     @Autowired
@@ -339,23 +339,25 @@ public class Driver {
 
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
-        String result = "result1.txt";
+        String result = "result.txt";
         Driver driver = new Driver(new DBProcessorFake());
 
-//        driver.setWeights(new double[]{2.77, 10.05, 0.96, 0.43, 0.1});
-        List<BugReport> bugReportsSwt = driver.startRank("swt-3.1", false);
+        // swt
+        List<BugReport> bugReportsSwt = driver.startRank("swt-3.1", true); // 如需预处理则使用此行并注释掉的下一行
+        //List<BugReport> bugReportsSwt = driver.startRank("swt-3.1", false);
         FileTranslator.writeObject(bugReportsSwt, SavePath.getSourcePath("swt1"));
         evaluateAndSave(bugReportsSwt, result, "swt-3.1");
 
-//        driver.setWeights(new double[]{1, 2, 0.1, 0.1, 0.1});
-//        List<BugReport> bugReportsEclipse = driver.startRank("eclipse-3.1", false);
-//        evaluateAndSave(bugReportsEclipse, result, "eclipse-3.1");
+        // aspectj
+        //List<BugReport> bugReportsSwt = driver.startRank("aspectj", true); // 如需预处理则使用此行并注释掉下一行
+        List<BugReport> bugReportsAspectj = driver.startRank("aspectj", false);
+        evaluateAndSave(bugReportsAspectj, result, "aspectj");
 
-//        driver.setWeights(new double[]{6.47, 10.14, 1.36, 0.53, 0.03});
-//        driver.setWeights(new double[]{3.63, 7.93, 0.73, 0.45, 0.23});
-//        driver.setWeights(new double[]{2.77, 10.05, 0.96, 0.43, 0.1});
-//        List<BugReport> bugReportsAspectj = driver.startRank("aspectj", false);
-//        evaluateAndSave(bugReportsAspectj, result, "aspectj");
+        // eclipse
+        //List<BugReport> bugReportsSwt = driver.startRank("eclipse-3.1", true); // 如需预处理则使用此行并注释掉下一行
+        List<BugReport> bugReportsEclipse = driver.startRank("eclipse-3.1", false);
+        evaluateAndSave(bugReportsEclipse, result, "eclipse-3.1");
+
         long processEndTime = System.currentTimeMillis();
         Logger.log("Finish all rank in " + (processEndTime-startTime)/1000.0 + " seconds");
     }
