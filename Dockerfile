@@ -7,7 +7,6 @@ ENV JAVA_OPTS ''
 
 WORKDIR /app
 ADD target/IRBL-0.0.1-SNAPSHOT.jar .
-COPY IRBL/ ./IRBL/
 
 ENTRYPOINT ["sh", "-c", "set -e && java -XX:+PrintFlagsFinal \
                                            -XX:+HeapDumpOnOutOfMemoryError \
