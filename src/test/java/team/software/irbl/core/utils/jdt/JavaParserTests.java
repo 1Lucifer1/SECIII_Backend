@@ -97,7 +97,7 @@ public class JavaParserTests {
 
     @Test
     public void testParseCodeFilesInDir(){
-        String dirPath = "./IRBL/data/test/";
+        String dirPath = "./resource/data/test/";
         List<StructuredCodeFile> codeFileList = JavaParser.parseCodeFilesInDir(dirPath, 1);
         assertEquals(1, codeFileList.size());
         equal(codeFiles.get(0), codeFileList.get(0));
@@ -105,7 +105,7 @@ public class JavaParserTests {
 
     @Test
     public void testReadFileToString(){
-        String filePath = "./IRBL/data/test/Test1.java";
+        String filePath = "./resource/data/test/Test1.java";
         String res = JavaParser.readFileToString(filePath);
         assertEquals(content, res);
     }

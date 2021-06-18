@@ -133,7 +133,7 @@ public class XMLParser {
 
     public static void main(String[] args) {
         //String filePath = "./IRBL/data/test/Test.xml";
-        String filePath = "./IRBL/data/swt-3.1/bugRepository.xml";
+        String filePath = "./resource/data/swt-3.1/bugRepository.xml";
         List<BugReport> reports = getBugReportsFromXML(filePath, 1);
     }
 

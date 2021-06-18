@@ -2,10 +2,13 @@ package team.software.irbl.IntegrationTest;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import team.software.irbl.IRBLProdApplication;
 import team.software.irbl.controller.CodeFileController;
 import team.software.irbl.controller.ProjectController;
 import team.software.irbl.controller.ReportController;
@@ -20,8 +23,9 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = IRBLProdApplication.class)
 @AutoConfigureMockMvc
+@ActiveProfiles("prod")
 public class IntegrationTests {
 
     @Autowired
@@ -35,7 +39,7 @@ public class IntegrationTests {
 
     @Test
     public void readFileTest() throws Exception{
-        Res res = codeFileController.readFile(4);
+        Res res = codeFileController.readFile(7);
         assertTrue(res.success);
         FileContent fileContent = (FileContent) res.data;
         String content = "/*******************************************************************************\n" +
@@ -115,7 +119,7 @@ public class IntegrationTests {
                 "\tpublic static final int TEXT_INSERT = 0;\n" +
                 "\tpublic static final int TEXT_DELETE = 1;\n" +
                 "}\n";
-        assertEquals(4, fileContent.getFileIndex());
+        assertEquals(7, fileContent.getFileIndex());
         assertEquals("ACC.java",fileContent.getFileName());
         assertEquals("src/org/eclipse/swt/accessibility/ACC.java",fileContent.getFilePath());
         assertEquals(content,fileContent.getContent());
@@ -125,14 +129,14 @@ public class IntegrationTests {
 
     @Test
     public void getSortedFilesTest() throws Exception{
-        Res res = codeFileController.localizationOfBugReport(1);
+        Res res = codeFileController.localizationOfBugReport(2);
         assertTrue(res.success);
         List<File> files = (List<File>) res.data;
         assertEquals(484, files.size());
         int cnt = 0;
         for (File file : files) {
             ++cnt;
-            assertTrue(file.getCosineSimilarity() >= 0 && file.getCosineSimilarity() <= 1);
+            assertTrue(file.getCosineSimilarity() >= 0);
             assertEquals(cnt, file.getFileRank());
         }
     }

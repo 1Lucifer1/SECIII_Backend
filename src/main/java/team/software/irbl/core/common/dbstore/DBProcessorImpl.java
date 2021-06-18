@@ -104,7 +104,7 @@ public class DBProcessorImpl implements DBProcessor {
 
     @Override
     public int saveRankRecord(List<RankRecord> records) {
-        int maxSize = 100000;
+        int maxSize = 50000;
         int length = records.size();
         int count = 0, start = 0;
         while (start + maxSize < length) {
